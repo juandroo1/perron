@@ -158,7 +158,31 @@ The reasons for each capability are in `bench/servers.json`. It exits with `0` i
 dotnet run --project src/Perron.Bench -- check --servers perron-rich,official
 ```
 
-CI (GitHub Actions) runs build, format check and tests, builds both images with layer cache and runs this check against the `mcp` container. MCP client configuration and benchmark commands will follow.
+CI (GitHub Actions) runs build, format check and tests, builds both images with layer cache and runs this check against `perron-rich` and its variants.
+
+### Run the benchmark
+
+`bench run` runs the tasks of a suite on the servers in an agent loop with Claude and writes what happened to `bench/results/<run-id>/`. It needs `ANTHROPIC_API_KEY` in `.env` and costs tokens, so estimate first:
+
+```bash
+GIT_SHA=$(git rev-parse HEAD) docker compose --profile bench build         # records the commit in every run manifest
+docker compose --profile bench up -d --wait mcp mcp-minimal mcp-json mcp-many
+docker compose --profile bench run --rm bench run --suite smoke --servers all --dry-run   # model calls and cost, no LLM
+docker compose --profile bench run --rm bench run --suite smoke --servers perron-rich
+```
+
+| Option | Meaning |
+|---|---|
+| `--suite` | `smoke` (dev tasks marked smoke, default), `full` (all dev tasks) or `test` (held-out set, final comparison only) |
+| `--servers` | `all` or IDs from `bench/servers.json` |
+| `--repeats` | runs per task and server (default 1) |
+| `--model` | `main` (`model` of `bench/bench.json`, default) or `control` (`control_model`) |
+| `--seed` | seed for the order of the servers (default random) |
+| `--dry-run` | estimate model calls and cost without calling the model |
+
+Every run uses the same system prompt, model, `effort`, `max_tokens`, reference time and tool-call limit for all servers; the methodology is versioned in `bench/bench.json`. The reference time is frozen per task, the order of the servers is shuffled per task, and a task whose capability a server does not cover is recorded as `not_covered` without a model call. Between runs the harness pauses (`pause_seconds`) to spare the transport API.
+
+Each run directory holds `manifest.json` (commit, harness version, model and settings, hashes of the system prompt template and the task set, per server its version, `tools/list` hash, tool tokens and covered capabilities), `runs.jsonl` (figures per run) and `traces/<task>__<server>__r<n>.json` (system prompt, every turn with tool calls, arguments, results, tokens, latency and cost). Results are committed: they are the basis of the report. On a Linux host, run the bench container with your user (`docker compose ... run --rm --user "$(id -u):$(id -g)" bench ...`) so it can write to `bench/results`.
 
 ## Results
 
