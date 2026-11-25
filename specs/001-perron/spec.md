@@ -127,6 +127,7 @@ Es gibt bewusst kein Ziel «Perron muss gewinnen». Das Ziel ist ein ehrlicher V
 - Lizenzen der fremden Server prüfen, bevor Ergebnisse mit Namen veröffentlicht werden. Den Autoren die Ergebnisse vorab zeigen?
 - Störungen und Auslastung später im eigenen Server ergänzen? Seit November 2026 liefert transport.opendata.ch eine Auslastungsprognose (`capacity1st`/`capacity2nd`) ohne zusätzlichen Key; Perron könnte die Fähigkeit `occupancy` damit abdecken.
 - `plan_trip` um `minTransferTime` (Mindest-Umsteigezeit, 0–60 min) ergänzen? Die API kann es direkt; heute muss der Agent selbst filtern.
+- `get_departures` um die weiteren Halte ergänzen (z. B. Parameter `stops_at`)? Die API liefert sie (`passList`), mitgeliefert kosten sie aber viele Tokens. Heute beantwortet `plan_trip` Fragen wie «hält der Zug in Thun?» (Task 2.3).
 - Bench als wiederverwendbares Werkzeug für beliebige MCP-Server veröffentlichen (`dotnet tool`)?
 - Tracing über OpenTelemetry (das MCP-SDK bietet eine `ActivitySource`)?
 - Volle 2×2-Ablation (Beschreibungen × Format, also auch `minimal` + `json`), um Wechselwirkungen zu messen?
