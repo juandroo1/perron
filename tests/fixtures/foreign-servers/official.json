@@ -1,0 +1,231 @@
+{
+  "server": "official",
+  "endpoint": "https://transport.opendata.ch/mcp",
+  "fetchedAt": "2026-11-25",
+  "initialize": {
+    "capabilities": {
+      "prompts": {
+        "listChanged": false
+      },
+      "resources": {
+        "listChanged": false,
+        "subscribe": false
+      },
+      "tools": {
+        "listChanged": false
+      }
+    },
+    "instructions": "Swiss public transport timetable with real-time delays, from the national timetable (opentransportdata.swiss), run by the association Opendata.ch. Times are Swiss local time (Europe/Zurich). Station names can be given as people say them ('Bern', 'Zürich HB', 'Lausanne, gare'); when a name is ambiguous, call find_stations first and use the exact name or id it returns. Addresses and places of interest work as start and destination of a connection too. Coverage is Switzerland (and border stations); for journeys abroad say that the data ends at the border. The timetable covers the days from a week ago to about three months ahead; nothing found for a date outside that range means no data, not no service.",
+    "protocolVersion": "2025-11-25",
+    "serverInfo": {
+      "description": "Stations, connections and departures of Swiss public transport.",
+      "icons": [
+        {
+          "mimeType": "image/svg+xml",
+          "src": "https://transport.opendata.ch/favicon.svg"
+        }
+      ],
+      "name": "transport.opendata.ch",
+      "title": "Swiss public transport (transport.opendata.ch)",
+      "version": "2c28784a",
+      "websiteUrl": "https://transport.opendata.ch"
+    }
+  },
+  "tools": [
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true,
+        "readOnlyHint": true
+      },
+      "description": "Find stations and stops by name. Returns their exact names and ids, best match first.",
+      "inputSchema": {
+        "properties": {
+          "query": {
+            "description": "Name or part of a name, e.g. 'Bern' or 'Basel, Bank'.",
+            "title": "Query",
+            "type": "string"
+          }
+        },
+        "required": [
+          "query"
+        ],
+        "type": "object",
+        "title": "find_stationsArguments"
+      },
+      "name": "find_stations",
+      "title": "Find stations"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true,
+        "readOnlyHint": true
+      },
+      "description": "The stops closest to a point, with their distance in metres.",
+      "inputSchema": {
+        "properties": {
+          "latitude": {
+            "description": "WGS84 latitude, e.g. 46.9488.",
+            "title": "Latitude",
+            "type": "number"
+          },
+          "longitude": {
+            "description": "WGS84 longitude, e.g. 7.4391.",
+            "title": "Longitude",
+            "type": "number"
+          }
+        },
+        "required": [
+          "latitude",
+          "longitude"
+        ],
+        "type": "object",
+        "title": "stations_nearbyArguments"
+      },
+      "name": "stations_nearby",
+      "title": "Stops nearby"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true,
+        "readOnlyHint": true
+      },
+      "description": "Public transport connections from A to B: times, platforms, delays, changes, lines.",
+      "inputSchema": {
+        "properties": {
+          "origin": {
+            "description": "Start: station name or id, address or place.",
+            "title": "Origin",
+            "type": "string"
+          },
+          "destination": {
+            "description": "Destination, like origin.",
+            "title": "Destination",
+            "type": "string"
+          },
+          "date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "YYYY-MM-DD; today if left out.",
+            "title": "Date"
+          },
+          "time": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "hh:mm, Swiss local time; now if left out.",
+            "title": "Time"
+          },
+          "arrive_by": {
+            "default": false,
+            "description": "True if `time` is the latest arrival rather than departure.",
+            "title": "Arrive By",
+            "type": "boolean"
+          },
+          "via": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Up to two stations the journey must pass.",
+            "title": "Via"
+          },
+          "limit": {
+            "default": 4,
+            "description": "Number of connections.",
+            "maximum": 8,
+            "minimum": 1,
+            "title": "Limit",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "origin",
+          "destination"
+        ],
+        "type": "object",
+        "title": "connectionsArguments"
+      },
+      "name": "connections",
+      "title": "Connections"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true,
+        "readOnlyHint": true
+      },
+      "description": "The departure (or arrival) board of a station, with platforms, delays and cancellations.",
+      "inputSchema": {
+        "properties": {
+          "station": {
+            "description": "Station name or id.",
+            "title": "Station",
+            "type": "string"
+          },
+          "when": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "'YYYY-MM-DD hh:mm', Swiss local time; now if left out.",
+            "title": "When"
+          },
+          "limit": {
+            "default": 10,
+            "description": "Number of entries.",
+            "maximum": 40,
+            "minimum": 1,
+            "title": "Limit",
+            "type": "integer"
+          },
+          "arrivals": {
+            "default": false,
+            "description": "True for arrivals instead of departures.",
+            "title": "Arrivals",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "station"
+        ],
+        "type": "object",
+        "title": "departuresArguments"
+      },
+      "name": "departures",
+      "title": "Departures"
+    }
+  ]
+}

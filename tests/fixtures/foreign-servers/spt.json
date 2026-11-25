@@ -1,0 +1,325 @@
+{
+  "server": "spt",
+  "package": "swiss-public-transport-mcp",
+  "version": "0.1.10",
+  "released": "2026-05-15",
+  "start": "uvx --exclude-newer 2026-05-16T00:00:00Z --from swiss-public-transport-mcp==0.1.10 swiss-public-transport-mcp",
+  "fetchedAt": "2026-11-25",
+  "initialize": {
+    "protocolVersion": "2025-11-25",
+    "capabilities": {
+      "experimental": {},
+      "prompts": {
+        "listChanged": false
+      },
+      "resources": {
+        "subscribe": false,
+        "listChanged": false
+      },
+      "tools": {
+        "listChanged": false
+      }
+    },
+    "serverInfo": {
+      "name": "Swiss Public Transport",
+      "version": "1.27.1"
+    },
+    "instructions": "Real-time Swiss public transport: connections, stationboards, and station search"
+  },
+  "tools": [
+    {
+      "name": "search_locations",
+      "description": "Find Swiss train stations, bus stops, and other transport locations.\n\n    Use this to:\n    - Look up a station name (e.g., \"Bern\", \"Zürich HB\", \"Interlaken\")\n    - Find stations near GPS coordinates (e.g., near your hotel)\n    - Resolve ambiguous names before planning a journey\n\n    Returns station IDs, coordinates, and relevance scores.\n    ",
+      "inputSchema": {
+        "properties": {
+          "query": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Query"
+          },
+          "latitude": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Latitude"
+          },
+          "longitude": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Longitude"
+          },
+          "type": {
+            "default": "station",
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "title": "search_locationsArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "properties": {
+          "result": {
+            "title": "Result",
+            "type": "string"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "title": "search_locationsOutput",
+        "type": "object"
+      }
+    },
+    {
+      "name": "plan_journey",
+      "description": "Plan a journey through Switzerland by train, bus, tram, boat, or cableway.\n\n    Use this whenever someone wants to:\n    - Travel from A to B (e.g., \"how do I get from Zürich to Zermatt?\")\n    - Plan a multi-stop trip (use `via` for intermediate stops)\n    - Find the best connection for a specific date/time\n    - Arrive somewhere by a deadline (set `is_arrival_time=True`)\n    - Compare route options across different transport types\n\n    Returns real-time schedules with platform numbers, delays, transfers,\n    and occupancy levels. Call multiple times with different legs to plan\n    a full day itinerary visiting several places.\n    ",
+      "inputSchema": {
+        "properties": {
+          "from_station": {
+            "title": "From Station",
+            "type": "string"
+          },
+          "to_station": {
+            "title": "To Station",
+            "type": "string"
+          },
+          "via": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Via"
+          },
+          "date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Date"
+          },
+          "time": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Time"
+          },
+          "is_arrival_time": {
+            "default": false,
+            "title": "Is Arrival Time",
+            "type": "boolean"
+          },
+          "transport_types": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Transport Types"
+          },
+          "limit": {
+            "default": 4,
+            "title": "Limit",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "from_station",
+          "to_station"
+        ],
+        "title": "plan_journeyArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "properties": {
+          "result": {
+            "title": "Result",
+            "type": "string"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "title": "plan_journeyOutput",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_stationboard",
+      "description": "Check what's departing or arriving at a Swiss station right now.\n\n    Use this to:\n    - See upcoming departures (\"what trains leave from Bern soon?\")\n    - Check if a specific service is delayed or cancelled\n    - Browse arrivals at a station\n    - Filter by transport type (trains only, buses only, etc.)\n\n    Returns a live board with times, platforms, destinations, and delay status.\n    ",
+      "inputSchema": {
+        "properties": {
+          "station": {
+            "title": "Station",
+            "type": "string"
+          },
+          "mode": {
+            "default": "departure",
+            "title": "Mode",
+            "type": "string"
+          },
+          "limit": {
+            "default": 15,
+            "title": "Limit",
+            "type": "integer"
+          },
+          "datetime": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Datetime"
+          },
+          "transport_types": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Transport Types"
+          }
+        },
+        "required": [
+          "station"
+        ],
+        "title": "get_stationboardArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "properties": {
+          "result": {
+            "title": "Result",
+            "type": "string"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "title": "get_stationboardOutput",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_booking_link",
+      "description": "Get a direct link to buy tickets on sbb.ch for a specific journey.\n\n    Use this when someone wants to:\n    - Buy a ticket (\"book me a train from Zürich to Bern\")\n    - Get a link to the SBB website for a specific route and time\n    - Share a timetable link with someone\n\n    Returns a ready-to-click URL that opens SBB's timetable with the search pre-filled.\n    ",
+      "inputSchema": {
+        "properties": {
+          "from_station": {
+            "title": "From Station",
+            "type": "string"
+          },
+          "to_station": {
+            "title": "To Station",
+            "type": "string"
+          },
+          "date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Date"
+          },
+          "time": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Time"
+          },
+          "is_arrival_time": {
+            "default": false,
+            "title": "Is Arrival Time",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "from_station",
+          "to_station"
+        ],
+        "title": "get_booking_linkArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "properties": {
+          "result": {
+            "title": "Result",
+            "type": "string"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "title": "get_booking_linkOutput",
+        "type": "object"
+      }
+    }
+  ]
+}
