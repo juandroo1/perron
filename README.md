@@ -1,5 +1,7 @@
 # Perron
 
+[![CI](https://github.com/juandroo1/perron/actions/workflows/ci.yml/badge.svg)](https://github.com/juandroo1/perron/actions/workflows/ci.yml)
+
 **How much does tool design (number of tools, descriptions, result format) affect how well an agent solves tasks?**
 
 Perron answers this for Swiss public transport, a domain with several existing MCP servers and live data:
@@ -53,11 +55,19 @@ Docker is the reference environment.
 cp .env.example .env                                  # once; optional until API keys are needed
 docker compose up -d --build                          # Perron MCP on http://127.0.0.1:8080/mcp
 docker compose ps                                     # mcp should be "healthy"
-docker compose --profile bench run --rm bench check   # Perron Bench (commands follow)
+docker compose --profile bench run --rm bench check --servers perron --expect-tools ping   # connect, list tools
 docker compose down
 ```
 
-Images run as a non-root user and the port is bound to `127.0.0.1` only. MCP client configuration and benchmark commands will follow.
+Images run as a non-root user and the port is bound to `127.0.0.1` only.
+
+`bench check` exits with `0` if every server is reachable (and, with `--expect-tools`, offers exactly the expected tools), `1` if a check fails and `2` on usage or configuration errors. Until the server registry exists, it only knows the Perron server. Outside Docker it uses `PERRON_MCP_URL` (default `http://localhost:8080/mcp`):
+
+```bash
+dotnet run --project src/Perron.Bench -- check
+```
+
+CI (GitHub Actions) runs build, format check and tests, builds both images with layer cache and runs this check against the `mcp` container. MCP client configuration and benchmark commands will follow.
 
 ## Results
 
