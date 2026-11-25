@@ -23,7 +23,7 @@ public static class McpServerSetup
                 Version = GetVersion(),
             })
             // Explicit collection: WithTools(typeof(X)) would bind to WithTools<T>(T target) with T = Type.
-            .WithTools([typeof(FindStopsTool)]);
+            .WithTools([typeof(FindStopsTool), typeof(PlanTripTool)]);
     }
 
     private static string GetVersion()

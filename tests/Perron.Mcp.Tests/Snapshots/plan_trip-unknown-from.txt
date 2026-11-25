@@ -1,0 +1,2 @@
+No connections found from 8507000 to 8503000, leaving after Thu 26.11.2026 08:00. Try another time, fewer via stops or other means of transport.
+Fahrplandaten: opentransportdata.swiss

@@ -1,0 +1,14 @@
+Connections Zürich HB (8503000) → Bern (8507000), leaving now:
+1) Wed 25.11.2026 17:32 → 18:28 | 56 min | 0 transfers
+   IC 1 to Genève-Aéroport: Zürich HB 17:32 pl. 32 → Bern 18:28 pl. 6
+2) Wed 25.11.2026 17:38 → 18:56 | 1h 18min | 2 transfers
+   RE 37 to Aarau: Zürich HB 17:38 pl. 14 → Lenzburg 17:57 pl. 3
+   transfer at Lenzburg 3 min
+   S 26 to Olten: Lenzburg 18:00 pl. 5 (+1 min) → Olten 18:21 pl. 3CD
+   transfer at Olten 8 min
+   IC 61 to Interlaken West: Olten 18:29 pl. 11 → Bern 18:56 pl. 8
+3) Wed 25.11.2026 18:02 → 18:58 | 56 min | 0 transfers
+   IC 8 to Brig: Zürich HB 18:02 pl. 31 → Bern 18:58 pl. 6
+4) Wed 25.11.2026 18:06 → 19:24 | 1h 18min | 0 transfers
+   IR 16 to Bern: Zürich HB 18:06 pl. 14 → Bern 19:24 pl. 12
+Fahrplandaten: opentransportdata.swiss

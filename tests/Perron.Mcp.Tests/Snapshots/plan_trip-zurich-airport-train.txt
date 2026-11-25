@@ -1,0 +1,8 @@
+Connections Zürich HB (8503000) → Zürich Flughafen (8503016), leaving after Thu 26.11.2026 08:00:
+1) Thu 26.11.2026 08:02 → 08:11 | 9 min | 0 transfers
+   IC 5 to Rorschach: Zürich HB 08:02 pl. 33 → Zürich Flughafen 08:11 pl. 1
+2) Thu 26.11.2026 08:04 → 08:14 | 10 min | 0 transfers
+   IC 8 to Romanshorn: Zürich HB 08:04 pl. 34 → Zürich Flughafen 08:14 pl. 2
+3) Thu 26.11.2026 08:08 → 08:21 | 13 min | 0 transfers
+   IR 13 to Sargans: Zürich HB 08:08 pl. 12 → Zürich Flughafen 08:21 pl. 1
+Fahrplandaten: opentransportdata.swiss

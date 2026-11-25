@@ -1,0 +1,8 @@
+Connections Genève (8501008) → Lausanne (8501120), leaving after Thu 26.11.2026 08:00:
+1) Thu 26.11.2026 08:05 → 08:44 | 39 min | 0 transfers
+   IR 90 to Brig: Genève 08:05 pl. 4 → Lausanne 08:44 pl. 3
+2) Thu 26.11.2026 08:08 → 08:59 | 51 min | 0 transfers
+   RE 33 to St-Maurice: Genève 08:08 pl. 2 → Lausanne 08:59 pl. 4
+3) Thu 26.11.2026 08:24 → 09:10 | 46 min | 0 transfers
+   IR 95 to Brig: Genève 08:24 pl. 4 → Lausanne 09:10 pl. 3
+Fahrplandaten: opentransportdata.swiss

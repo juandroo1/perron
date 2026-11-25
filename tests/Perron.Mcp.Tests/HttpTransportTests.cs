@@ -1,4 +1,5 @@
 using System.Net;
+using System.Text.Json;
 
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -32,28 +33,72 @@ public sealed class HttpTransportTests(WebApplicationFactory<Program> factory)
     [Theory]
     [InlineData(null)]
     [InlineData(InitializeHandshakeRevision)]
-    public async Task ListTools_ReturnsFindStops_MarkedReadOnly(string? requested)
+    public async Task ListTools_ReturnsTheTools_MarkedReadOnly(string? requested)
     {
         await using var client = await ConnectAsync(factory, requested);
 
         var tools = await client.ListToolsAsync(cancellationToken: TestContext.Current.CancellationToken);
 
-        var tool = Assert.Single(tools);
-        Assert.Equal("find_stops", tool.Name);
-        var annotations = tool.ProtocolTool.Annotations;
-        Assert.NotNull(annotations);
-        Assert.True(annotations.ReadOnlyHint);
-        Assert.True(annotations.IdempotentHint);
-        Assert.False(annotations.DestructiveHint);
-        Assert.True(annotations.OpenWorldHint);
+        Assert.Equal(["find_stops", "plan_trip"], tools.Select(tool => tool.Name).Order(StringComparer.Ordinal));
+        foreach (var tool in tools)
+        {
+            var annotations = tool.ProtocolTool.Annotations;
+            Assert.NotNull(annotations);
+            Assert.True(annotations.ReadOnlyHint);
+            Assert.True(annotations.IdempotentHint);
+            Assert.False(annotations.DestructiveHint);
+            Assert.True(annotations.OpenWorldHint);
+        }
 
-        var schema = tool.ProtocolTool.InputSchema;
+        var findStops = tools.Single(tool => tool.Name == "find_stops").ProtocolTool.InputSchema;
+        Assert.Equal(["latitude", "limit", "longitude", "query"], PropertyNames(findStops));
+        Assert.Empty(Required(findStops));
+    }
+
+    [Fact]
+    public async Task PlanTripSchema_HasSnakeCaseParameters_AndStringEnums()
+    {
+        await using var client = await ConnectAsync(factory, null);
+
+        var tools = await client.ListToolsAsync(cancellationToken: TestContext.Current.CancellationToken);
+
+        var schema = tools.Single(tool => tool.Name == "plan_trip").ProtocolTool.InputSchema;
+        Assert.Equal(["datetime", "from", "limit", "time_is", "to", "transport_types", "via"], PropertyNames(schema));
+        Assert.Equal(["from", "to"], Required(schema).Order(StringComparer.Ordinal));
+
+        var properties = schema.GetProperty("properties");
+        Assert.Equal(["departure", "arrival"], EnumValues(properties.GetProperty("time_is")));
         Assert.Equal(
-            ["latitude", "limit", "longitude", "query"],
-            schema.GetProperty("properties").EnumerateObject().Select(p => p.Name).Order(StringComparer.Ordinal));
-        Assert.True(
-            !schema.TryGetProperty("required", out var required) || required.GetArrayLength() == 0,
-            "find_stops must not have required parameters");
+            ["train", "tram", "bus", "ship", "cableway"],
+            EnumValues(properties.GetProperty("transport_types").GetProperty("items")));
+    }
+
+    [Fact]
+    public async Task CallPlanTrip_AcceptsStringEnums_AndReturnsConnections()
+    {
+        var handler = new FixtureHandler(uri => uri.AbsolutePath.EndsWith("/locations", StringComparison.Ordinal)
+            ? "locations-zurich-hb.json"
+            : "connections-zurich-airport-train.json");
+        await using var app = WithTransportHandler(handler);
+        await using var client = await ConnectAsync(app, null);
+
+        var result = await client.CallToolAsync(
+            "plan_trip",
+            new Dictionary<string, object?>
+            {
+                ["from"] = "Zürich HB",
+                ["to"] = "8503016",
+                ["datetime"] = "2026-11-26T08:00",
+                ["time_is"] = "departure",
+                ["transport_types"] = new[] { "train" },
+                ["limit"] = 3,
+            },
+            cancellationToken: TestContext.Current.CancellationToken);
+
+        Assert.NotEqual(true, result.IsError);
+        var text = Assert.IsType<TextContentBlock>(Assert.Single(result.Content)).Text;
+        Assert.StartsWith("Connections Zürich HB (8503000) → ", text);
+        Assert.Equal("train", System.Web.HttpUtility.ParseQueryString(handler.Requests.Last().Query)["transportations[]"]);
     }
 
     [Fact]
@@ -101,6 +146,15 @@ public sealed class HttpTransportTests(WebApplicationFactory<Program> factory)
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         Assert.Equal("Healthy", await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken));
     }
+
+    private static IEnumerable<string> PropertyNames(JsonElement schema) =>
+        schema.GetProperty("properties").EnumerateObject().Select(p => p.Name).Order(StringComparer.Ordinal);
+
+    private static IEnumerable<string> Required(JsonElement schema) =>
+        schema.TryGetProperty("required", out var required) ? required.EnumerateArray().Select(r => r.GetString()!) : [];
+
+    private static IEnumerable<string> EnumValues(JsonElement property) =>
+        property.GetProperty("enum").EnumerateArray().Select(value => value.GetString()!);
 
     private WebApplicationFactory<Program> WithTransportHandler(FixtureHandler handler) =>
         factory.WithWebHostBuilder(builder => builder.ConfigureTestServices(services =>

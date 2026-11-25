@@ -10,13 +10,13 @@ public sealed class BenchCliTests(PerronMcpFactory server) : IClassFixture<Perro
     [Fact]
     public async Task Check_ExpectedToolsMatch_ReturnsZeroAndPrintsOk()
     {
-        var (exitCode, output, _) = await RunAsync("check", "--servers", "perron", "--expect-tools", "find_stops");
+        var (exitCode, output, _) = await RunAsync("check", "--servers", "perron", "--expect-tools", "find_stops,plan_trip");
 
         Assert.Equal(ExitCodes.Success, exitCode);
         Assert.Contains("perron", output);
         Assert.Contains("OK", output);
         Assert.Contains("serverInfo perron", output);
-        Assert.Contains("tools (1): find_stops", output);
+        Assert.Contains("tools (2): find_stops, plan_trip", output);
     }
 
     [Fact]
@@ -35,7 +35,7 @@ public sealed class BenchCliTests(PerronMcpFactory server) : IClassFixture<Perro
 
         Assert.Equal(ExitCodes.CheckFailed, exitCode);
         Assert.Contains("FAIL", output);
-        Assert.Contains("missing: get_departures, plan_trip", output);
+        Assert.Contains("missing: get_departures", output);
         Assert.Contains("unexpected: -", output);
     }
 

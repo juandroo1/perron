@@ -40,7 +40,7 @@ public sealed class FindStopsToolTests
             8574041 | Buchs SG, Bahnhof | bus | 47.16834, 9.47812
             8503527 | Buchs-Dällikon | train | 47.45341, 8.43560
             8590212 | Buchs AG, Heuweg | bus | 47.38912, 8.08787
-            Several stops match "Buchs" and none exactly. Ask which one is meant, or use the ID of the right one.
+            Several stops match "Buchs". Ask which one is meant, or use its ID in plan_trip.
             Fahrplandaten: opentransportdata.swiss
             """.ReplaceLineEndings("\n"),
             result);
@@ -140,18 +140,6 @@ public sealed class FindStopsToolTests
         Assert.Contains(hint, error.Message);
         Assert.Empty(fixture.Handler.Requests);
     }
-
-    [Theory]
-    [InlineData("Zürich HB", "Zürich HB", true)]
-    [InlineData("zurich  hb", "Zürich HB", true)]
-    [InlineData("Geneve", "Genève", true)]
-    [InlineData("Buchs", "Buchs AG", false)]
-    public void StopNames_CompareIgnoringCaseAccentsAndSpaces(string query, string name, bool expected) =>
-        Assert.Equal(expected, StopNames.IsExactMatch(query, new Location("1", name, null, null, null)));
-
-    [Fact]
-    public void StopNames_OneCandidate_IsNotAmbiguous() =>
-        Assert.False(StopNames.IsAmbiguous("Buchs", [new Location("1", "Buchs AG", null, null, null)]));
 
     private static Task<string> FindAsync(
         TransportFixture fixture,

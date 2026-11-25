@@ -1,0 +1,15 @@
+Connections Buchs AG (8502123) → Zürich HB (8503000), leaving after Thu 26.11.2026 08:00:
+1) Thu 26.11.2026 08:15 → 08:52 | 37 min | 1 transfer
+   S 14 to Schöftland: Buchs AG 08:15 pl. 2 → Aarau 08:19 pl. 13
+   transfer at Aarau 4 min
+   IR 37 to Zürich HB: Aarau 08:23 pl. 3 → Zürich HB 08:52 pl. 13
+2) Thu 26.11.2026 08:18 → 08:56 | 38 min | 1 transfer
+   B 1 to Küttigen, Kreuz: Buchs AG, Brauerei 08:18 → Aarau, Bahnhof 08:25 pl. B
+   walk 4 min to Aarau
+   transfer 6 min incl. walk
+   IC 5 to Rorschach: Aarau 08:31 pl. 3 → Zürich HB 08:56 pl. 33
+3) Thu 26.11.2026 08:45 → 09:22 | 37 min | 1 transfer
+   S 14 to Schöftland: Buchs AG 08:45 pl. 2 → Aarau 08:49 pl. 13
+   transfer at Aarau 4 min
+   RE 37 to Zürich HB: Aarau 08:53 pl. 3 → Zürich HB 09:22 pl. 18
+Fahrplandaten: opentransportdata.swiss

@@ -1,0 +1,12 @@
+Connections Zürich HB (8503000) → Bern (8507000), leaving after Thu 26.11.2026 08:00:
+1) Thu 26.11.2026 08:02 → 08:58 | 56 min | 0 transfers
+   IC 8 to Brig: Zürich HB 08:02 pl. 31 → Bern 08:58 pl. 6
+2) Thu 26.11.2026 08:06 → 09:24 | 1h 18min | 0 transfers
+   IR 16 to Bern: Zürich HB 08:06 pl. 15 → Bern 09:24 pl. 12
+3) Thu 26.11.2026 08:08 → 09:24 | 1h 16min | 1 transfer
+   IR 37 to Basel SBB: Zürich HB 08:08 pl. 16 → Aarau 08:35 pl. 4
+   transfer at Aarau 11 min
+   IR 16 to Bern: Aarau 08:46 pl. 5 → Bern 09:24 pl. 12
+4) Thu 26.11.2026 08:32 → 09:28 | 56 min | 0 transfers
+   IC 1 to Genève-Aéroport: Zürich HB 08:32 pl. 32 → Bern 09:28 pl. 6
+Fahrplandaten: opentransportdata.swiss
