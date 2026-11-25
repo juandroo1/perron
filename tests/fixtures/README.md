@@ -65,3 +65,8 @@ Tests for throttling use a synthetic response, marked as such.
 
 The Python servers were started in a throwaway container (`ghcr.io/astral-sh/uv:python3.12-bookworm-slim`) with the
 start command stored in each file; nothing ran on the host.
+
+Capability probes for task 3.1 (one call each, recorded on 2026-11-25 with the MCP Inspector CLI): does a connection
+result include the occupancy forecast? `official-connections-probe.json` (`connections`, Zürich HB → Bern): no.
+`spt-plan_journey-probe.json` (`plan_journey`, same trip, same throwaway container as above): yes
+(`Occupancy: 1st ●●○ | 2nd ●●●`).
