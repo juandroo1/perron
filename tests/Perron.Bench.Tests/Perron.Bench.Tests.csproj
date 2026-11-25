@@ -4,6 +4,11 @@
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
   </ItemGroup>
 
+  <!-- Task sets, available at <output>/tasks for the format tests. -->
+  <ItemGroup>
+    <None Include="..\..\bench\tasks\*.jsonl" LinkBase="tasks" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\..\src\Perron.Bench\Perron.Bench.csproj" />
     <!-- Perron MCP runs in memory as the server under check. Alias: both projects define a global Program class. -->
