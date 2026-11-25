@@ -77,21 +77,16 @@ public sealed class CheckCommand(McpServerCheck check, IToolTokenCounter tokenCo
         return allPassed ? ExitCodes.Success : ExitCodes.CheckFailed;
     }
 
-    /// <summary>For HTTP servers: the URL from <see cref="ServerDefinition.UrlEnv"/> if set, else the registry's.</summary>
-    public Uri? Endpoint(ServerDefinition server) =>
-        server.Transport != ServerDefinition.Http
-            ? null
-            : new Uri(server.UrlEnv is { } variable && IsSet(variable) ? configuration[variable]!.Trim() : server.Url!, UriKind.Absolute);
+    public Uri? Endpoint(ServerDefinition server) => ServerEnvironment.Endpoint(server, configuration);
 
     /// <summary>Covered capabilities, and the ones that are not covered for lack of a key.</summary>
     public string Coverage(ServerDefinition server)
     {
-        var covered = server.Capabilities.Where(capability => (capability.RequiresEnv ?? []).All(IsSet)).Select(capability => capability.Name);
-        var lacking = server.Capabilities
-            .Where(capability => !(capability.RequiresEnv ?? []).All(IsSet))
-            .Select(capability => $"{capability.Name} needs {string.Join(", ", capability.RequiresEnv!.Where(key => !IsSet(key)))}");
+        var (covered, notCovered) = ServerCoverage.Of(server, IsSet);
         var text = string.Join(", ", covered);
-        return lacking.Any() ? $"{text} (not covered: {string.Join("; ", lacking)})" : text;
+        return notCovered.Count > 0
+            ? $"{text} (not covered: {string.Join("; ", notCovered.Select(item => $"{item.Name} needs {string.Join(", ", item.MissingKeys)}"))})"
+            : text;
     }
 
     private async Task<string> CountTokensAsync(ServerCheckResult result, CancellationToken cancellationToken)
@@ -112,13 +107,9 @@ public sealed class CheckCommand(McpServerCheck check, IToolTokenCounter tokenCo
         }
     }
 
-    /// <summary>Variables for a stdio server, taken from the environment under their names in <c>.env</c>.</summary>
-    private Dictionary<string, string?> ProcessEnvironment(ServerDefinition server) =>
-        (server.Env ?? new Dictionary<string, string>())
-            .Where(mapping => IsSet(mapping.Value))
-            .ToDictionary(mapping => mapping.Key, mapping => configuration[mapping.Value]);
+    private Dictionary<string, string?> ProcessEnvironment(ServerDefinition server) => ServerEnvironment.Process(server, configuration);
 
-    private bool IsSet(string key) => !string.IsNullOrWhiteSpace(configuration[key]);
+    private bool IsSet(string key) => ServerEnvironment.IsSet(configuration, key);
 
     private static string Short(string? hash) => hash is null ? "-" : hash[..Math.Min(12, hash.Length)];
 

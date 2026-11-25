@@ -10,7 +10,9 @@ using Microsoft.Extensions.Options;
 
 using Perron.Bench.Checks;
 using Perron.Bench.Registry;
+using Perron.Bench.Run;
 using Perron.Bench.Settings;
+using Perron.Bench.Tasks;
 
 namespace Perron.Bench;
 
@@ -64,13 +66,15 @@ public static class BenchCli
         IReadOnlyDictionary<string, string?>? configuration,
         Action<IServiceCollection>? configureServices)
     {
-        var serversOption = new Option<string[]>("--servers")
+        static Option<string[]> ServersOption(string verb) => new("--servers")
         {
-            Description = $"Servers to check: '{AllServers}' or a list of IDs from bench/servers.json.",
+            Description = $"Servers to {verb}: '{AllServers}' or a list of IDs from bench/servers.json.",
             AllowMultipleArgumentsPerToken = true,
             DefaultValueFactory = _ => [AllServers],
         };
 
+        // check
+        var checkServers = ServersOption("check");
         var expectToolsOption = new Option<string[]>("--expect-tools")
         {
             Description = "Expected tool names (exact set); the check fails if a server's tools differ.",
@@ -78,31 +82,60 @@ public static class BenchCli
         };
 
         var check = new Command("check", "Connect to the MCP servers of the registry, list their tools, hash tools/list and count the tokens of the tool definitions.");
-        check.Options.Add(serversOption);
+        check.Options.Add(checkServers);
         check.Options.Add(expectToolsOption);
-        check.SetAction(async (parseResult, cancellationToken) =>
-        {
-            using var host = BuildHost(configuration, configureServices);
-            try
+        check.SetAction((parseResult, cancellationToken) => WithContextAsync(
+            configuration, configureServices, error, parseResult.GetValue(checkServers), cancellationToken,
+            context =>
             {
-                await host.StartAsync(cancellationToken);
-            }
-            catch (OptionsValidationException ex)
-            {
-                await error.WriteLineAsync($"Invalid configuration: {string.Join(" ", ex.Failures)}");
-                return ExitCodes.UsageError;
-            }
+                var command = ActivatorUtilities.CreateInstance<CheckCommand>(context.Services, context.TokenCounter);
+                return command.RunAsync(
+                    context.Registry, context.ServerIds, SplitValues(parseResult.GetValue(expectToolsOption)), output, cancellationToken);
+            }));
 
-            try
+        // run
+        var runServers = ServersOption("run the tasks on");
+        var suiteOption = new Option<string>("--suite")
+        {
+            Description = $"Task suite: {TaskSuites.Smoke} (dev tasks marked smoke), {TaskSuites.Full} (all dev tasks) or {TaskSuites.Test} (held-out set, final comparison only).",
+            DefaultValueFactory = _ => TaskSuites.Smoke,
+        };
+        suiteOption.AcceptOnlyFromAmong([.. TaskSuites.Names]);
+        var repeatsOption = new Option<int>("--repeats")
+        {
+            Description = "Runs per task and server.",
+            DefaultValueFactory = _ => 1,
+        };
+        var modelOption = new Option<string>("--model")
+        {
+            Description = "main (model of bench.json) or control (control_model).",
+            DefaultValueFactory = _ => "main",
+        };
+        modelOption.AcceptOnlyFromAmong("main", "control");
+        var dryRunOption = new Option<bool>("--dry-run") { Description = "Estimate model calls and cost without calling the model." };
+        var seedOption = new Option<int?>("--seed") { Description = "Seed for the order of the servers (default: random, recorded in the manifest)." };
+
+        var run = new Command("run", "Run the tasks of a suite on the servers in the agent loop and write traces to bench/results.");
+        foreach (var option in new Option[] { suiteOption, runServers, repeatsOption, modelOption, dryRunOption, seedOption })
+        {
+            run.Options.Add(option);
+        }
+
+        run.SetAction((parseResult, cancellationToken) => WithContextAsync(
+            configuration, configureServices, error, parseResult.GetValue(runServers), cancellationToken,
+            async context =>
             {
-                var config = host.Services.GetRequiredService<IConfiguration>();
-                var directory = host.Services.GetRequiredService<IOptions<BenchDirectoryOptions>>().Value;
-                ServerRegistry registry;
-                BenchSettings settings;
+                var repeats = parseResult.GetValue(repeatsOption);
+                if (repeats < 1)
+                {
+                    await error.WriteLineAsync("--repeats must be at least 1.");
+                    return ExitCodes.UsageError;
+                }
+
+                TaskSuite suite;
                 try
                 {
-                    registry = ServerRegistry.Load(directory.File(ServerRegistry.FileName));
-                    settings = BenchSettings.Load(directory.File(BenchSettings.FileName));
+                    suite = TaskSuites.Load(context.Directory.Directory, parseResult.GetValue(suiteOption)!);
                 }
                 catch (InvalidDataException ex)
                 {
@@ -110,41 +143,90 @@ public static class BenchCli
                     return ExitCodes.UsageError;
                 }
 
-                var requested = SplitValues(parseResult.GetValue(serversOption));
-                var known = registry.Servers.Select(server => server.Id).ToList();
-                var unknown = requested.Where(id => id != AllServers && !known.Contains(id)).ToList();
-                if (unknown.Count > 0)
-                {
-                    await error.WriteLineAsync(
-                        $"Unknown server(s): {string.Join(", ", unknown)}. Servers in bench/servers.json: {string.Join(", ", known)}.");
-                    return ExitCodes.UsageError;
-                }
-
-                List<string> serverIds = requested.Contains(AllServers) ? known : [.. requested.Distinct()];
-                foreach (var server in serverIds.Select(id => registry.Find(id)!))
-                {
-                    if (server.UrlEnv is { } variable && config[variable] is { } url && !string.IsNullOrWhiteSpace(url)
-                        && !(Uri.TryCreate(url.Trim(), UriKind.Absolute, out var uri) && uri.Scheme is "http" or "https"))
-                    {
-                        await error.WriteLineAsync($"Invalid configuration: {variable} must be an absolute http(s) URL, got '{url}'.");
-                        return ExitCodes.UsageError;
-                    }
-                }
-
-                var tokenCounter = host.Services.GetService<IToolTokenCounter>() ?? CreateTokenCounter(config, settings);
-                var command = ActivatorUtilities.CreateInstance<CheckCommand>(host.Services, tokenCounter);
+                var options = new RunOptions(
+                    suite.Name,
+                    context.ServerIds,
+                    repeats,
+                    parseResult.GetValue(modelOption) == "control",
+                    parseResult.GetValue(dryRunOption),
+                    parseResult.GetValue(seedOption));
+                var model = context.Services.GetService<IModelClient>() ?? CreateModelClient(context.Configuration);
+                var command = ActivatorUtilities.CreateInstance<RunCommand>(context.Services, context.TokenCounter);
                 return await command.RunAsync(
-                    registry, serverIds, SplitValues(parseResult.GetValue(expectToolsOption)), output, cancellationToken);
-            }
-            finally
-            {
-                await host.StopAsync(CancellationToken.None);
-            }
-        });
+                    context.Settings, context.Registry, suite, context.Directory.Directory, options, model, output, cancellationToken);
+            }));
 
         var root = new RootCommand("Perron Bench: runs agent tasks against MCP servers and compares the results.");
         root.Subcommands.Add(check);
+        root.Subcommands.Add(run);
         return root;
+    }
+
+    /// <summary>Starts the host, loads registry and settings, resolves the requested servers, then runs the command.</summary>
+    private static async Task<int> WithContextAsync(
+        IReadOnlyDictionary<string, string?>? configuration,
+        Action<IServiceCollection>? configureServices,
+        TextWriter error,
+        string[]? servers,
+        CancellationToken cancellationToken,
+        Func<CommandContext, Task<int>> command)
+    {
+        using var host = BuildHost(configuration, configureServices);
+        try
+        {
+            await host.StartAsync(cancellationToken);
+        }
+        catch (OptionsValidationException ex)
+        {
+            await error.WriteLineAsync($"Invalid configuration: {string.Join(" ", ex.Failures)}");
+            return ExitCodes.UsageError;
+        }
+
+        try
+        {
+            var config = host.Services.GetRequiredService<IConfiguration>();
+            var directory = host.Services.GetRequiredService<IOptions<BenchDirectoryOptions>>().Value;
+            ServerRegistry registry;
+            BenchSettings settings;
+            try
+            {
+                registry = ServerRegistry.Load(directory.File(ServerRegistry.FileName));
+                settings = BenchSettings.Load(directory.File(BenchSettings.FileName));
+            }
+            catch (InvalidDataException ex)
+            {
+                await error.WriteLineAsync($"Invalid configuration: {ex.Message}");
+                return ExitCodes.UsageError;
+            }
+
+            var requested = SplitValues(servers);
+            var known = registry.Servers.Select(server => server.Id).ToList();
+            var unknown = requested.Where(id => id != AllServers && !known.Contains(id)).ToList();
+            if (unknown.Count > 0)
+            {
+                await error.WriteLineAsync(
+                    $"Unknown server(s): {string.Join(", ", unknown)}. Servers in bench/servers.json: {string.Join(", ", known)}.");
+                return ExitCodes.UsageError;
+            }
+
+            List<string> serverIds = requested.Contains(AllServers) ? known : [.. requested.Distinct()];
+            foreach (var server in serverIds.Select(id => registry.Find(id)!))
+            {
+                if (server.UrlEnv is { } variable && config[variable] is { } url && !string.IsNullOrWhiteSpace(url)
+                    && !(Uri.TryCreate(url.Trim(), UriKind.Absolute, out var uri) && uri.Scheme is "http" or "https"))
+                {
+                    await error.WriteLineAsync($"Invalid configuration: {variable} must be an absolute http(s) URL, got '{url}'.");
+                    return ExitCodes.UsageError;
+                }
+            }
+
+            var tokenCounter = host.Services.GetService<IToolTokenCounter>() ?? CreateTokenCounter(config, settings);
+            return await command(new CommandContext(host.Services, config, directory, registry, settings, serverIds, tokenCounter));
+        }
+        finally
+        {
+            await host.StopAsync(CancellationToken.None);
+        }
     }
 
     private static IHost BuildHost(
@@ -173,8 +255,10 @@ public static class BenchCli
                 }
             });
 
-        builder.Services.AddHttpClient(McpServerCheck.HttpClientName).AddStandardResilienceHandler();
+        builder.Services.AddHttpClient(McpServerConnector.HttpClientName).AddStandardResilienceHandler();
+        builder.Services.AddTransient<McpServerConnector>();
         builder.Services.AddTransient<McpServerCheck>();
+        builder.Services.AddSingleton(TimeProvider.System);
 
         configureServices?.Invoke(builder.Services);
 
@@ -190,6 +274,22 @@ public static class BenchCli
             : new AnthropicToolTokenCounter(new AnthropicClient { ApiKey = key.Trim() }, settings.Model);
     }
 
+    /// <summary>Claude over the Messages API, or <c>null</c> without ANTHROPIC_API_KEY.</summary>
+    private static AnthropicModelClient? CreateModelClient(IConfiguration configuration)
+    {
+        var key = configuration["ANTHROPIC_API_KEY"];
+        return string.IsNullOrWhiteSpace(key) ? null : new AnthropicModelClient(new AnthropicClient { ApiKey = key.Trim() });
+    }
+
     private static List<string> SplitValues(string[]? values) =>
         [.. (values ?? []).SelectMany(value => value.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))];
+
+    private sealed record CommandContext(
+        IServiceProvider Services,
+        IConfiguration Configuration,
+        BenchDirectoryOptions Directory,
+        ServerRegistry Registry,
+        BenchSettings Settings,
+        List<string> ServerIds,
+        IToolTokenCounter TokenCounter);
 }
