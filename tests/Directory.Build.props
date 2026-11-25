@@ -14,4 +14,9 @@
     <Using Include="Xunit" />
   </ItemGroup>
 
+  <!-- Recorded real responses (tests/fixtures), available at <output>/fixtures. -->
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)fixtures/**/*" LinkBase="fixtures" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
 </Project>

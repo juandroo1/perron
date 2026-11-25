@@ -11,7 +11,7 @@ Immer nur einen Task gleichzeitig bearbeiten. Ein Task ist erst erledigt, wenn d
 
 ## Phase 1 – Datenzugriff, Vergleichsobjekte, Aufgaben
 
-- [ ] 1.1 transport.opendata.ch erkunden (`/locations`, `/connections`, `/stationboard`): Parameter, Antworten, Zeitformate, mehrdeutige Namen (welche unterscheidenden Felder), Werte für `transport_types`, Fehler, Drosselungsantwort. Fixtures speichern. Die drei fremden Server ansehen (Tools, `instructions`, Start, Versionen, Lizenzen) und Ergebnis in plan.md, Abschnitt 3 und spec.md, Abschnitt 5, nachtragen
+- [x] 1.1 transport.opendata.ch erkunden (`/locations`, `/connections`, `/stationboard`): Parameter, Antworten, Zeitformate, mehrdeutige Namen (welche unterscheidenden Felder), Werte für `transport_types`, Fehler, Drosselungsantwort. Fixtures speichern. Die drei fremden Server ansehen (Tools, `instructions`, Start, Versionen, Lizenzen) und Ergebnis in plan.md, Abschnitt 3 und spec.md, Abschnitt 5, nachtragen
 - [ ] 1.2 `Perron.Transport`: typisierter Client, Resilience, Caching gemäss plan.md, Abschnitt 5. Tests mit Fixtures
 - [ ] 1.3 Aufgaben-Set v1 von Hand schreiben (Format gemäss plan.md, Abschnitt 6): ca. 25 Aufgaben `dev` und ca. 20 Aufgaben `test`, nach Kategorie stratifiziert gemäss spec.md, Abschnitt 6; rund 6 `dev`-Aufgaben als `smoke` markieren. Claude darf Format und Abdeckung von `dev` prüfen, schreibt aber keine Aufgaben und liest `test.jsonl` nicht. `test.jsonl` einfrieren, SHA-256 ins Entscheidungsprotokoll
 

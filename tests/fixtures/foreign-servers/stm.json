@@ -1,0 +1,1073 @@
+{
+  "server": "stm",
+  "package": "swiss-transport-mcp",
+  "version": "0.5.0",
+  "released": "2026-09-26",
+  "start": "uvx --exclude-newer 2026-09-27T00:00:00Z --from swiss-transport-mcp==0.5.0 swiss-transport-mcp",
+  "fetchedAt": "2026-11-25",
+  "initialize": {
+    "capabilities": {
+      "experimental": {},
+      "prompts": {
+        "listChanged": false
+      },
+      "resources": {
+        "listChanged": false,
+        "subscribe": false
+      },
+      "tools": {
+        "listChanged": false
+      }
+    },
+    "instructions": "Swiss public transport data server with 10 tools. Provides journey planning, real-time departures, disruptions, occupancy forecasts, ticket prices, train formations, stop search, and transport dataset catalog for all of Switzerland via opentransportdata.swiss. Use transport_search_stop to find stop IDs, then use those IDs for departures, trip planning, or ticket prices. Extension tools (disruptions, occupancy, prices, formations) require separate API keys – they return helpful messages if not configured.",
+    "protocolVersion": "2025-11-25",
+    "serverInfo": {
+      "name": "swiss_transport_mcp",
+      "title": "Swiss Public Transport",
+      "version": "0.5.0",
+      "websiteUrl": "https://github.com/malkreide/swiss-transport-mcp"
+    }
+  },
+  "tools": [
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true,
+        "readOnlyHint": true,
+        "title": "Search Swiss Stops & Stations"
+      },
+      "description": "Search for Swiss public transport stops and stations by name.\n\n    Searches across all Swiss public transport stops (train stations,\n    tram/bus stops, boat stations). Returns stop IDs needed for\n    transport_departures and transport_trip_plan.\n\n    Returns:\n        Matching stops with id, name, coordinates, and transport modes.\n    ",
+      "inputSchema": {
+        "properties": {
+          "params": {
+            "$ref": "#/$defs/SearchStopInput"
+          }
+        },
+        "required": [
+          "params"
+        ],
+        "type": "object",
+        "$defs": {
+          "SearchStopInput": {
+            "additionalProperties": false,
+            "description": "Input for searching stops/stations.",
+            "properties": {
+              "query": {
+                "description": "Search text for stop name (e.g., 'Zürich HB', 'Bern Bahnhof', 'Winterthur')",
+                "maxLength": 200,
+                "minLength": 2,
+                "title": "Query",
+                "type": "string"
+              },
+              "limit": {
+                "default": 10,
+                "description": "Maximum number of results (1–20)",
+                "maximum": 20,
+                "minimum": 1,
+                "title": "Limit",
+                "type": "integer"
+              }
+            },
+            "required": [
+              "query"
+            ],
+            "title": "SearchStopInput",
+            "type": "object"
+          }
+        },
+        "title": "transport_search_stopArguments"
+      },
+      "name": "transport_search_stop",
+      "outputSchema": {
+        "properties": {
+          "query": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Query"
+          },
+          "count": {
+            "default": 0,
+            "title": "Count",
+            "type": "integer"
+          },
+          "stops": {
+            "default": [],
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Stops",
+            "type": "array"
+          },
+          "hint": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Hint"
+          },
+          "message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Message"
+          }
+        },
+        "type": "object",
+        "description": "Result of transport_search_stop.",
+        "title": "StopSearchResult"
+      }
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true,
+        "readOnlyHint": true,
+        "title": "Find Nearby Stops by Coordinates"
+      },
+      "description": "Find public transport stops near a geographic location.\n\n    Useful for finding stops near a school, address, or point of interest.\n    Swiss coordinates only (lat 45–48.5, lon 5.5–10.8).\n\n    Returns:\n        Nearby stops with id, name, coordinates, and distance info.\n    ",
+      "inputSchema": {
+        "properties": {
+          "params": {
+            "$ref": "#/$defs/SearchStopByCoordInput"
+          }
+        },
+        "required": [
+          "params"
+        ],
+        "type": "object",
+        "$defs": {
+          "SearchStopByCoordInput": {
+            "additionalProperties": false,
+            "description": "Input for finding nearby stops by coordinates.",
+            "properties": {
+              "latitude": {
+                "description": "Latitude (WGS84), e.g. 47.3769 for Zürich HB",
+                "maximum": 48.5,
+                "minimum": 45.0,
+                "title": "Latitude",
+                "type": "number"
+              },
+              "longitude": {
+                "description": "Longitude (WGS84), e.g. 8.5417 for Zürich HB",
+                "maximum": 10.8,
+                "minimum": 5.5,
+                "title": "Longitude",
+                "type": "number"
+              },
+              "limit": {
+                "default": 10,
+                "description": "Maximum number of results (1–20)",
+                "maximum": 20,
+                "minimum": 1,
+                "title": "Limit",
+                "type": "integer"
+              }
+            },
+            "required": [
+              "latitude",
+              "longitude"
+            ],
+            "title": "SearchStopByCoordInput",
+            "type": "object"
+          }
+        },
+        "title": "transport_nearby_stopsArguments"
+      },
+      "name": "transport_nearby_stops",
+      "outputSchema": {
+        "properties": {
+          "latitude": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Latitude"
+          },
+          "longitude": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Longitude"
+          },
+          "count": {
+            "default": 0,
+            "title": "Count",
+            "type": "integer"
+          },
+          "nearby_stops": {
+            "default": [],
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Nearby Stops",
+            "type": "array"
+          },
+          "hint": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Hint"
+          },
+          "message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Message"
+          }
+        },
+        "type": "object",
+        "description": "Result of transport_nearby_stops.",
+        "title": "NearbyStopsResult"
+      }
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true,
+        "readOnlyHint": true,
+        "title": "Live Departures at a Stop"
+      },
+      "description": "Get upcoming departures or arrivals at a Swiss public transport stop.\n\n    Shows real-time information including delays when available.\n    Like a digital departure board at a train station.\n\n    Use transport_search_stop first to get the stop_id.\n\n    Returns:\n        Departures with line, destination, scheduled time, real-time time,\n        delay, and platform.\n    ",
+      "inputSchema": {
+        "properties": {
+          "params": {
+            "$ref": "#/$defs/DeparturesInput"
+          }
+        },
+        "required": [
+          "params"
+        ],
+        "type": "object",
+        "$defs": {
+          "DeparturesInput": {
+            "additionalProperties": false,
+            "description": "Input for fetching departures/arrivals at a stop.",
+            "properties": {
+              "stop_id": {
+                "description": "Stop ID from transport_search_stop (e.g., '8503000' for Zürich HB). Use transport_search_stop first to find the ID.",
+                "minLength": 1,
+                "title": "Stop Id",
+                "type": "string"
+              },
+              "stop_name": {
+                "default": "",
+                "description": "Optional stop name for display purposes",
+                "title": "Stop Name",
+                "type": "string"
+              },
+              "time": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "description": "Departure time in ISO 8601 (e.g., '2026-03-01T08:00:00Z'). Defaults to now.",
+                "title": "Time"
+              },
+              "limit": {
+                "default": 10,
+                "description": "Number of departures to show (1–30)",
+                "maximum": 30,
+                "minimum": 1,
+                "title": "Limit",
+                "type": "integer"
+              },
+              "event_type": {
+                "default": "departure",
+                "description": "'departure' or 'arrival'",
+                "pattern": "^(departure|arrival)$",
+                "title": "Event Type",
+                "type": "string"
+              }
+            },
+            "required": [
+              "stop_id"
+            ],
+            "title": "DeparturesInput",
+            "type": "object"
+          }
+        },
+        "title": "transport_departuresArguments"
+      },
+      "name": "transport_departures",
+      "outputSchema": {
+        "properties": {
+          "stop_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Stop Id"
+          },
+          "stop_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Stop Name"
+          },
+          "type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Type"
+          },
+          "count": {
+            "default": 0,
+            "title": "Count",
+            "type": "integer"
+          },
+          "departures": {
+            "default": [],
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Departures",
+            "type": "array"
+          },
+          "hint": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Hint"
+          },
+          "message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Message"
+          }
+        },
+        "type": "object",
+        "description": "Result of transport_departures.",
+        "title": "DeparturesResult"
+      }
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true,
+        "readOnlyHint": true,
+        "title": "Plan a Journey (Swiss ÖV)"
+      },
+      "description": "Plan a journey between two locations in Switzerland.\n\n    Works like the SBB app: enter origin and destination (stop IDs or\n    place names), get multiple trip options with transfers, durations,\n    and transport modes.\n\n    For best results, use stop IDs from transport_search_stop.\n    Place names (addresses) also work but may be slower.\n\n    Returns:\n        Trip options, each with legs (individual journey segments),\n        total duration, number of transfers, and transport modes used.\n    ",
+      "inputSchema": {
+        "properties": {
+          "params": {
+            "$ref": "#/$defs/TripPlanInput"
+          }
+        },
+        "required": [
+          "params"
+        ],
+        "type": "object",
+        "$defs": {
+          "TripPlanInput": {
+            "additionalProperties": false,
+            "description": "Input for planning a journey between two locations.",
+            "properties": {
+              "origin": {
+                "description": "Start location. Either a stop ID (e.g., '8503000' for Zürich HB) or a place name (e.g., 'Langstrasse 100, Zürich'). Use transport_search_stop first for exact stop IDs.",
+                "minLength": 1,
+                "title": "Origin",
+                "type": "string"
+              },
+              "destination": {
+                "description": "End location. Either a stop ID or a place name. Use transport_search_stop first for exact stop IDs.",
+                "minLength": 1,
+                "title": "Destination",
+                "type": "string"
+              },
+              "time": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "description": "Departure time in ISO 8601. Defaults to now.",
+                "title": "Time"
+              },
+              "limit": {
+                "default": 5,
+                "description": "Number of trip options (1–6)",
+                "maximum": 6,
+                "minimum": 1,
+                "title": "Limit",
+                "type": "integer"
+              }
+            },
+            "required": [
+              "origin",
+              "destination"
+            ],
+            "title": "TripPlanInput",
+            "type": "object"
+          }
+        },
+        "title": "transport_trip_planArguments"
+      },
+      "name": "transport_trip_plan",
+      "outputSchema": {
+        "properties": {
+          "origin": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Origin"
+          },
+          "destination": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Destination"
+          },
+          "count": {
+            "default": 0,
+            "title": "Count",
+            "type": "integer"
+          },
+          "trips": {
+            "default": [],
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Trips",
+            "type": "array"
+          },
+          "hint": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Hint"
+          },
+          "message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Message"
+          }
+        },
+        "type": "object",
+        "description": "Result of transport_trip_plan.",
+        "title": "TripPlanResult"
+      }
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true,
+        "readOnlyHint": true,
+        "title": "Search Transport Data Catalog"
+      },
+      "description": "Search the Swiss transport open data catalog (~90 datasets).\n\n    Find datasets about timetables, real-time data, GTFS feeds,\n    accessibility info, traffic counters, and more from\n    opentransportdata.swiss.\n\n    Returns:\n        Matching datasets with name, description, formats, and download URLs.\n    ",
+      "inputSchema": {
+        "properties": {
+          "params": {
+            "$ref": "#/$defs/DatasetSearchInput"
+          }
+        },
+        "required": [
+          "params"
+        ],
+        "type": "object",
+        "$defs": {
+          "DatasetSearchInput": {
+            "additionalProperties": false,
+            "description": "Input for searching the transport data catalog.",
+            "properties": {
+              "query": {
+                "description": "Search term (e.g., 'gtfs', 'fahrplan', 'realtime', 'ojp', 'parking')",
+                "maxLength": 200,
+                "minLength": 1,
+                "title": "Query",
+                "type": "string"
+              },
+              "limit": {
+                "default": 10,
+                "description": "Maximum number of results (1–50)",
+                "maximum": 50,
+                "minimum": 1,
+                "title": "Limit",
+                "type": "integer"
+              }
+            },
+            "required": [
+              "query"
+            ],
+            "title": "DatasetSearchInput",
+            "type": "object"
+          }
+        },
+        "title": "transport_search_datasetsArguments"
+      },
+      "name": "transport_search_datasets",
+      "outputSchema": {
+        "properties": {
+          "query": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Query"
+          },
+          "total_found": {
+            "default": 0,
+            "title": "Total Found",
+            "type": "integer"
+          },
+          "showing": {
+            "default": 0,
+            "title": "Showing",
+            "type": "integer"
+          },
+          "datasets": {
+            "default": [],
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Datasets",
+            "type": "array"
+          },
+          "hint": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Hint"
+          },
+          "message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Message"
+          }
+        },
+        "type": "object",
+        "description": "Result of transport_search_datasets.",
+        "title": "DatasetSearchResult"
+      }
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true,
+        "readOnlyHint": true,
+        "title": "Get Transport Dataset Details"
+      },
+      "description": "Get full details of a specific transport dataset.\n\n    Returns metadata, description, all available resources (files/APIs)\n    with download URLs and formats.\n\n    Use transport_search_datasets first to find the dataset ID.\n\n    Returns:\n        Full dataset metadata, resources with URLs, and format info.\n    ",
+      "inputSchema": {
+        "properties": {
+          "params": {
+            "$ref": "#/$defs/DatasetDetailInput"
+          }
+        },
+        "required": [
+          "params"
+        ],
+        "type": "object",
+        "$defs": {
+          "DatasetDetailInput": {
+            "additionalProperties": false,
+            "description": "Input for getting dataset details.",
+            "properties": {
+              "dataset_id": {
+                "description": "Dataset ID/slug from transport_search_datasets (e.g., 'ojp2-0', 'gtfsrt', 'timetable')",
+                "minLength": 1,
+                "title": "Dataset Id",
+                "type": "string"
+              }
+            },
+            "required": [
+              "dataset_id"
+            ],
+            "title": "DatasetDetailInput",
+            "type": "object"
+          }
+        },
+        "title": "transport_get_datasetArguments"
+      },
+      "name": "transport_get_dataset",
+      "outputSchema": {
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Id"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Title"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "organization": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Organization"
+          },
+          "license": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "License"
+          },
+          "tags": {
+            "default": [],
+            "items": {
+              "type": "string"
+            },
+            "title": "Tags",
+            "type": "array"
+          },
+          "last_modified": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Last Modified"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "resources": {
+            "default": [],
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Resources",
+            "type": "array"
+          },
+          "message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Message"
+          }
+        },
+        "type": "object",
+        "description": "Result of transport_get_dataset.",
+        "title": "DatasetDetailResult"
+      }
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true,
+        "readOnlyHint": true,
+        "title": "Current Disruptions (SIRI-SX)"
+      },
+      "description": "Aktuelle Störungsmeldungen im Schweizer öffentlichen Verkehr abrufen.\n\n    Liefert Informationen zu Zugausfällen, Verspätungen, Gleisänderungen,\n    Streckensperrungen und anderen Betriebsstörungen.\n\n    Args:\n        filter_text: Suchbegriff zum Filtern (z.B. \"Zürich\", \"S-Bahn\", \"IC 1\",\n                     \"Bern-Thun\"). Leer = alle Störungen.\n        language: Sprache der Meldungen. DE (Deutsch), FR (Französisch),\n                  IT (Italienisch), EN (Englisch).\n        max_results: Maximale Anzahl Ergebnisse (1-50). Standard: 15.\n\n    Beispiele:\n        - Alle aktuellen Störungen: get_transport_disruptions()\n        - Störungen in Zürich: get_transport_disruptions(filter_text=\"Zürich\")\n        - S-Bahn Störungen: get_transport_disruptions(filter_text=\"S-Bahn\")\n        - Strecke prüfen: get_transport_disruptions(filter_text=\"Bern\")\n    ",
+      "inputSchema": {
+        "properties": {
+          "filter_text": {
+            "default": "",
+            "title": "Filter Text",
+            "type": "string"
+          },
+          "language": {
+            "default": "DE",
+            "title": "Language",
+            "type": "string"
+          },
+          "max_results": {
+            "default": 15,
+            "title": "Max Results",
+            "type": "integer"
+          }
+        },
+        "type": "object",
+        "title": "get_transport_disruptionsArguments"
+      },
+      "name": "get_transport_disruptions",
+      "outputSchema": {
+        "properties": {
+          "result": {
+            "title": "Result",
+            "type": "string"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "type": "object",
+        "title": "get_transport_disruptionsOutput"
+      }
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true,
+        "readOnlyHint": true,
+        "title": "Train Occupancy Forecast"
+      },
+      "description": "Auslastungsprognose für Schweizer Züge abrufen.\n\n    Zeigt, wie voll ein bestimmter Zug voraussichtlich sein wird,\n    aufgeteilt nach 1. und 2. Klasse pro Streckenabschnitt.\n    Auslastungsstufen: wenig belegt, mässig belegt, nur Stehplätze.\n\n    Zwei Abfragemodi:\n    1. Nach Zugnummer: train_number + operator angeben\n    2. Nach Strecke: departure_station + arrival_station angeben\n\n    Args:\n        train_number: Zugnummer (z.B. \"1009\", \"IC 708\").\n                      Zugtyp-Präfixe werden automatisch entfernt.\n        departure_station: Abfahrtsort für Streckensuche (z.B. \"Zürich HB\")\n        arrival_station: Ankunftsort für Streckensuche (z.B. \"Bern\")\n        operation_date: Betriebstag YYYY-MM-DD (Standard: heute).\n                        Prognosen sind bis 3 Monate voraus verfügbar.\n        operator: Betreiber-Code. \"11\"=SBB, \"33\"=BLS, \"65\"=Thurbo, \"82\"=SOB.\n\n    Beispiele:\n        - Bestimmter Zug: get_train_occupancy(train_number=\"1009\")\n        - BLS-Zug: get_train_occupancy(train_number=\"2806\", operator=\"33\")\n        - Strecke: get_train_occupancy(departure_station=\"Zürich HB\", arrival_station=\"Bern\")\n    ",
+      "inputSchema": {
+        "properties": {
+          "train_number": {
+            "default": "",
+            "title": "Train Number",
+            "type": "string"
+          },
+          "departure_station": {
+            "default": "",
+            "title": "Departure Station",
+            "type": "string"
+          },
+          "arrival_station": {
+            "default": "",
+            "title": "Arrival Station",
+            "type": "string"
+          },
+          "operation_date": {
+            "default": "",
+            "title": "Operation Date",
+            "type": "string"
+          },
+          "operator": {
+            "default": "11",
+            "title": "Operator",
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "title": "get_train_occupancyArguments"
+      },
+      "name": "get_train_occupancy",
+      "outputSchema": {
+        "properties": {
+          "result": {
+            "title": "Result",
+            "type": "string"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "type": "object",
+        "title": "get_train_occupancyOutput"
+      }
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true,
+        "readOnlyHint": true,
+        "title": "Ticket Price (OJP Fare)"
+      },
+      "description": "Ticketpreise für eine ÖV-Verbindung in der Schweiz abfragen.\n\n    Berechnet den Fahrpreis für eine Verbindung inklusive Routeninformation.\n    Zeigt reguläre Tarife an. Rabatte (Halbtax, GA) sind möglicherweise\n    nicht vollständig berücksichtigt.\n\n    Args:\n        origin: Abfahrtsort (z.B. \"Zürich HB\", \"Wädenswil\", \"Bern\")\n        destination: Ankunftsort (z.B. \"Bern\", \"Luzern\", \"Basel SBB\")\n        departure_time: Abfahrtszeit im Format YYYY-MM-DDTHH:MM\n                        (z.B. \"2026-03-01T08:00\"). Standard: jetzt.\n        travel_class: Reiseklasse. \"first\" = 1. Klasse, \"second\" = 2. Klasse.\n\n    Beispiele:\n        - Einfache Preisabfrage: get_ticket_price(origin=\"Zürich HB\", destination=\"Bern\")\n        - Mit Zeitangabe: get_ticket_price(origin=\"Wädenswil\", destination=\"Luzern\",\n                                            departure_time=\"2026-03-01T08:00\")\n        - 1. Klasse: get_ticket_price(origin=\"Basel SBB\", destination=\"Genf\",\n                                       travel_class=\"first\")\n\n    Hinweis: Für verbindliche Preise immer sbb.ch oder den Schalter konsultieren.\n    ",
+      "inputSchema": {
+        "properties": {
+          "origin": {
+            "title": "Origin",
+            "type": "string"
+          },
+          "destination": {
+            "title": "Destination",
+            "type": "string"
+          },
+          "departure_time": {
+            "default": "",
+            "title": "Departure Time",
+            "type": "string"
+          },
+          "travel_class": {
+            "default": "second",
+            "title": "Travel Class",
+            "type": "string"
+          }
+        },
+        "required": [
+          "origin",
+          "destination"
+        ],
+        "type": "object",
+        "title": "get_ticket_priceArguments"
+      },
+      "name": "get_ticket_price",
+      "outputSchema": {
+        "properties": {
+          "result": {
+            "title": "Result",
+            "type": "string"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "type": "object",
+        "title": "get_ticket_priceOutput"
+      }
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true,
+        "readOnlyHint": true,
+        "title": "Train Formation"
+      },
+      "description": "Zugzusammensetzung und Wagenreihung für einen Schweizer Zug abrufen.\n\n    Zeigt die Wagenreihung, Klassen, Sektoren, Ausstattung (Rollstuhlplatz,\n    Velohaken, Speisewagen, Familienzone) und Gleisbelegung an.\n\n    Args:\n        train_number: Zugnummer (z.B. \"2806\", \"1009\", \"708\").\n                      Nur die Nummer, ohne Zugtyp-Präfix.\n        railway_company: Eisenbahnunternehmen (EVU). Erlaubt:\n                         SBBP (SBB), BLSP (BLS), RhB (Rhätische Bahn),\n                         SOB (Südostbahn), THURBO, TPF, TRN, MBC, OeBB, VDBB, ZB.\n        operation_date: Betriebstag YYYY-MM-DD. Standard: heute.\n                        Wichtig: Stop-based nur für HEUTE verfügbar.\n        show_details: Detailgrad. \"stop_based\" = kompakt (empfohlen),\n                      \"vehicle_based\" = pro Fahrzeug, \"full\" = alles.\n\n    Beispiele:\n        - SBB-Zug: get_train_composition(train_number=\"1009\")\n        - BLS-Zug: get_train_composition(train_number=\"2806\", railway_company=\"BLSP\")\n        - Detailliert: get_train_composition(train_number=\"708\", show_details=\"vehicle_based\")\n\n    Typische Fragen, die damit beantwortet werden können:\n        - \"Hat der IC nach Bern einen Speisewagen?\"\n        - \"Wo kann ich mit dem Rollstuhl einsteigen?\"\n        - \"In welchem Sektor hält die 1. Klasse?\"\n        - \"Gibt es Veloplätze im Zug?\"\n    ",
+      "inputSchema": {
+        "properties": {
+          "train_number": {
+            "title": "Train Number",
+            "type": "string"
+          },
+          "railway_company": {
+            "default": "SBBP",
+            "title": "Railway Company",
+            "type": "string"
+          },
+          "operation_date": {
+            "default": "",
+            "title": "Operation Date",
+            "type": "string"
+          },
+          "show_details": {
+            "default": "stop_based",
+            "title": "Show Details",
+            "type": "string"
+          }
+        },
+        "required": [
+          "train_number"
+        ],
+        "type": "object",
+        "title": "get_train_compositionArguments"
+      },
+      "name": "get_train_composition",
+      "outputSchema": {
+        "properties": {
+          "result": {
+            "title": "Result",
+            "type": "string"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "type": "object",
+        "title": "get_train_compositionOutput"
+      }
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true,
+        "readOnlyHint": true,
+        "title": "API Status Check"
+      },
+      "description": "Prüft den Verbindungsstatus aller konfigurierten Transport-APIs.\n\n    Zeigt an, welche APIs verfügbar sind, ob die API-Keys gültig sind\n    und ob die Dienste erreichbar sind.\n    ",
+      "inputSchema": {
+        "properties": {},
+        "type": "object",
+        "title": "check_transport_api_statusArguments"
+      },
+      "name": "check_transport_api_status",
+      "outputSchema": {
+        "properties": {
+          "result": {
+            "title": "Result",
+            "type": "string"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "type": "object",
+        "title": "check_transport_api_statusOutput"
+      }
+    }
+  ]
+}

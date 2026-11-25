@@ -1,0 +1,302 @@
+[
+  {
+    "file": "locations-zurich-hb.json",
+    "endpoint": "locations",
+    "url": "https://transport.opendata.ch/v1/locations?query=Z%C3%BCrich+HB",
+    "status": 200,
+    "contentType": "application/json",
+    "fetchedAt": "2026-11-25T16:12:21+00:00",
+    "bytes": 1470,
+    "purpose": "Exact name"
+  },
+  {
+    "file": "locations-buchs.json",
+    "endpoint": "locations",
+    "url": "https://transport.opendata.ch/v1/locations?query=Buchs",
+    "status": 200,
+    "contentType": "application/json",
+    "fetchedAt": "2026-11-25T16:12:24+00:00",
+    "bytes": 1446,
+    "purpose": "Ambiguous name, default type=all"
+  },
+  {
+    "file": "locations-buchs-station.json",
+    "endpoint": "locations",
+    "url": "https://transport.opendata.ch/v1/locations?query=Buchs&type=station",
+    "status": 200,
+    "contentType": "application/json",
+    "fetchedAt": "2026-11-25T16:12:27+00:00",
+    "bytes": 1446,
+    "purpose": "Ambiguous name, stations only"
+  },
+  {
+    "file": "locations-geneve.json",
+    "endpoint": "locations",
+    "url": "https://transport.opendata.ch/v1/locations?query=Gen%C3%A8ve",
+    "status": 200,
+    "contentType": "application/json",
+    "fetchedAt": "2026-11-25T16:12:30+00:00",
+    "bytes": 1488,
+    "purpose": "French name with accent"
+  },
+  {
+    "file": "locations-coordinates.json",
+    "endpoint": "locations",
+    "url": "https://transport.opendata.ch/v1/locations?x=47.378177&y=8.540192",
+    "status": 200,
+    "contentType": "application/json",
+    "fetchedAt": "2026-11-25T16:12:33+00:00",
+    "bytes": 1540,
+    "purpose": "Coordinates near Zürich HB, type=all"
+  },
+  {
+    "file": "locations-coordinates-station.json",
+    "endpoint": "locations",
+    "url": "https://transport.opendata.ch/v1/locations?x=47.378177&y=8.540192&type=station",
+    "status": 200,
+    "contentType": "application/json",
+    "fetchedAt": "2026-11-25T16:12:36+00:00",
+    "bytes": 1537,
+    "purpose": "Coordinates, stations only"
+  },
+  {
+    "file": "locations-unknown.json",
+    "endpoint": "locations",
+    "url": "https://transport.opendata.ch/v1/locations?query=Xyzzyplatz",
+    "status": 200,
+    "contentType": "application/json",
+    "fetchedAt": "2026-11-25T16:12:39+00:00",
+    "bytes": 15,
+    "purpose": "Unknown name"
+  },
+  {
+    "file": "locations-empty.json",
+    "endpoint": "locations",
+    "url": "https://transport.opendata.ch/v1/locations",
+    "status": 200,
+    "contentType": "application/json",
+    "fetchedAt": "2026-11-25T16:12:43+00:00",
+    "bytes": 15,
+    "purpose": "No parameters"
+  },
+  {
+    "file": "connections-zurich-bern-now.json",
+    "endpoint": "connections",
+    "url": "https://transport.opendata.ch/v1/connections?from=Z%C3%BCrich+HB&to=Bern&limit=4",
+    "status": 200,
+    "contentType": "application/json",
+    "fetchedAt": "2026-11-25T16:12:46+00:00",
+    "bytes": 24958,
+    "purpose": "Simple trip, now"
+  },
+  {
+    "file": "connections-zurich-bern-tomorrow-0800.json",
+    "endpoint": "connections",
+    "url": "https://transport.opendata.ch/v1/connections?from=Z%C3%BCrich+HB&to=Bern&date=2026-11-26&time=08%3A00&limit=4",
+    "status": 200,
+    "contentType": "application/json",
+    "fetchedAt": "2026-11-25T16:12:49+00:00",
+    "bytes": 20582,
+    "purpose": "Departure time tomorrow 08:00"
+  },
+  {
+    "file": "connections-zurich-bern-arrive-0900.json",
+    "endpoint": "connections",
+    "url": "https://transport.opendata.ch/v1/connections?from=Z%C3%BCrich+HB&to=Bern&date=2026-11-26&time=09%3A00&isArrivalTime=1&limit=4",
+    "status": 200,
+    "contentType": "application/json",
+    "fetchedAt": "2026-11-25T16:12:52+00:00",
+    "bytes": 18952,
+    "purpose": "Arrival time tomorrow 09:00"
+  },
+  {
+    "file": "connections-zurich-bern-page1.json",
+    "endpoint": "connections",
+    "url": "https://transport.opendata.ch/v1/connections?from=Z%C3%BCrich+HB&to=Bern&date=2026-11-26&time=08%3A00&limit=4&page=1",
+    "status": 200,
+    "contentType": "application/json",
+    "fetchedAt": "2026-11-25T16:12:55+00:00",
+    "bytes": 25857,
+    "purpose": "Next page"
+  },
+  {
+    "file": "connections-bern-zurich-via-olten.json",
+    "endpoint": "connections",
+    "url": "https://transport.opendata.ch/v1/connections?from=Bern&to=Z%C3%BCrich+HB&via=Olten&date=2026-11-26&time=08%3A00&limit=3",
+    "status": 200,
+    "contentType": "application/json",
+    "fetchedAt": "2026-11-25T16:12:59+00:00",
+    "bytes": 25090,
+    "purpose": "One via"
+  },
+  {
+    "file": "connections-lausanne-stgallen-via-two.json",
+    "endpoint": "connections",
+    "url": "https://transport.opendata.ch/v1/connections?from=Lausanne&to=St.+Gallen&via%5B%5D=Bern&via%5B%5D=Z%C3%BCrich+HB&date=2026-11-26&time=08%3A00&limit=2",
+    "status": 200,
+    "contentType": "application/json",
+    "fetchedAt": "2026-11-25T16:13:02+00:00",
+    "bytes": 17993,
+    "purpose": "Two vias, array notation"
+  },
+  {
+    "file": "connections-zurich-airport-train.json",
+    "endpoint": "connections",
+    "url": "https://transport.opendata.ch/v1/connections?from=Z%C3%BCrich+HB&to=Z%C3%BCrich+Flughafen&transportations%5B%5D=train&date=2026-11-26&time=08%3A00&limit=3",
+    "status": 200,
+    "contentType": "application/json",
+    "fetchedAt": "2026-11-25T16:13:05+00:00",
+    "bytes": 12198,
+    "purpose": "Trains only"
+  },
+  {
+    "file": "connections-basel-lugano-transfer10.json",
+    "endpoint": "connections",
+    "url": "https://transport.opendata.ch/v1/connections?from=Basel+SBB&to=Lugano&minTransferTime=10&date=2026-11-26&time=08%3A00&limit=3",
+    "status": 200,
+    "contentType": "application/json",
+    "fetchedAt": "2026-11-25T16:13:08+00:00",
+    "bytes": 21657,
+    "purpose": "Minimum transfer time 10 min"
+  },
+  {
+    "file": "connections-geneve-lausanne.json",
+    "endpoint": "connections",
+    "url": "https://transport.opendata.ch/v1/connections?from=Gen%C3%A8ve&to=Lausanne&date=2026-11-26&time=08%3A00&limit=3",
+    "status": 200,
+    "contentType": "application/json",
+    "fetchedAt": "2026-11-25T16:13:11+00:00",
+    "bytes": 17370,
+    "purpose": "French names"
+  },
+  {
+    "file": "connections-buchs-ambiguous.json",
+    "endpoint": "connections",
+    "url": "https://transport.opendata.ch/v1/connections?from=Buchs&to=Z%C3%BCrich+HB&date=2026-11-26&time=08%3A00&limit=3",
+    "status": 200,
+    "contentType": "application/json",
+    "fetchedAt": "2026-11-25T16:13:14+00:00",
+    "bytes": 23798,
+    "purpose": "Ambiguous from: which Buchs is chosen?"
+  },
+  {
+    "file": "connections-unknown-from.json",
+    "endpoint": "connections",
+    "url": "https://transport.opendata.ch/v1/connections?from=Xyzzyplatz&to=Bern",
+    "status": 200,
+    "contentType": "application/json",
+    "fetchedAt": "2026-11-25T16:13:18+00:00",
+    "bytes": 71,
+    "purpose": "Unknown from"
+  },
+  {
+    "file": "connections-missing-to.json",
+    "endpoint": "connections",
+    "url": "https://transport.opendata.ch/v1/connections?from=Bern",
+    "status": 200,
+    "contentType": "application/json",
+    "fetchedAt": "2026-11-25T16:13:21+00:00",
+    "bytes": 71,
+    "purpose": "Missing required parameter to"
+  },
+  {
+    "file": "connections-invalid-date.json",
+    "endpoint": "connections",
+    "url": "https://transport.opendata.ch/v1/connections?from=Z%C3%BCrich+HB&to=Bern&date=2026-13-45",
+    "status": 400,
+    "contentType": "application/json",
+    "fetchedAt": "2026-11-25T16:13:24+00:00",
+    "bytes": 186,
+    "purpose": "Invalid date"
+  },
+  {
+    "file": "connections-past-date.json",
+    "endpoint": "connections",
+    "url": "https://transport.opendata.ch/v1/connections?from=Z%C3%BCrich+HB&to=Bern&date=2020-01-01&time=08%3A00",
+    "status": 400,
+    "contentType": "application/json",
+    "fetchedAt": "2026-11-25T16:13:27+00:00",
+    "bytes": 186,
+    "purpose": "Date outside the loaded timetable years"
+  },
+  {
+    "file": "stationboard-bern-departures.json",
+    "endpoint": "stationboard",
+    "url": "https://transport.opendata.ch/v1/stationboard?station=Bern&limit=10",
+    "status": 200,
+    "contentType": "application/json",
+    "fetchedAt": "2026-11-25T16:13:30+00:00",
+    "bytes": 61728,
+    "purpose": "Departures now"
+  },
+  {
+    "file": "stationboard-bern-arrivals.json",
+    "endpoint": "stationboard",
+    "url": "https://transport.opendata.ch/v1/stationboard?station=Bern&type=arrival&limit=10",
+    "status": 200,
+    "contentType": "application/json",
+    "fetchedAt": "2026-11-25T16:13:33+00:00",
+    "bytes": 47393,
+    "purpose": "Arrivals now"
+  },
+  {
+    "file": "stationboard-zurich-central-tram.json",
+    "endpoint": "stationboard",
+    "url": "https://transport.opendata.ch/v1/stationboard?station=Z%C3%BCrich%2C+Central&transportations%5B%5D=tram&limit=10",
+    "status": 200,
+    "contentType": "application/json",
+    "fetchedAt": "2026-11-25T16:13:37+00:00",
+    "bytes": 109151,
+    "purpose": "Tram only"
+  },
+  {
+    "file": "stationboard-bern-tomorrow-0800.json",
+    "endpoint": "stationboard",
+    "url": "https://transport.opendata.ch/v1/stationboard?station=Bern&datetime=2026-11-26+08%3A00&limit=10",
+    "status": 200,
+    "contentType": "application/json",
+    "fetchedAt": "2026-11-25T16:13:40+00:00",
+    "bytes": 47515,
+    "purpose": "Fixed datetime"
+  },
+  {
+    "file": "stationboard-by-id.json",
+    "endpoint": "stationboard",
+    "url": "https://transport.opendata.ch/v1/stationboard?id=8507000&limit=5",
+    "status": 200,
+    "contentType": "application/json",
+    "fetchedAt": "2026-11-25T16:13:43+00:00",
+    "bytes": 31021,
+    "purpose": "By station id (Bern)"
+  },
+  {
+    "file": "stationboard-buchs-ambiguous.json",
+    "endpoint": "stationboard",
+    "url": "https://transport.opendata.ch/v1/stationboard?station=Buchs&limit=5",
+    "status": 200,
+    "contentType": "application/json",
+    "fetchedAt": "2026-11-25T16:13:46+00:00",
+    "bytes": 30103,
+    "purpose": "Ambiguous station name"
+  },
+  {
+    "file": "stationboard-unknown.json",
+    "endpoint": "stationboard",
+    "url": "https://transport.opendata.ch/v1/stationboard?station=Xyzzyplatz",
+    "status": 200,
+    "contentType": "application/json",
+    "fetchedAt": "2026-11-25T16:13:49+00:00",
+    "bytes": 34,
+    "purpose": "Unknown station"
+  },
+  {
+    "file": "stationboard-invalid-datetime.json",
+    "endpoint": "stationboard",
+    "url": "https://transport.opendata.ch/v1/stationboard?station=Bern&datetime=gestern",
+    "status": 500,
+    "contentType": "application/json",
+    "fetchedAt": "2026-11-25T16:13:52+00:00",
+    "bytes": 89,
+    "purpose": "Invalid datetime"
+  }
+]
