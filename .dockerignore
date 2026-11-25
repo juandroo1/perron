@@ -1,0 +1,14 @@
+.git
+.gitignore
+.gitattributes
+.vs
+.vscode
+.idea
+.claude
+**/bin
+**/obj
+bench/results/
+.env
+tests/
+specs/
+*.md
