@@ -35,7 +35,7 @@ docker compose up -d --build                           # Perron MCP (HTTP) start
 docker compose ps                                      # Status inkl. Healthcheck
 docker compose logs -f mcp
 docker compose --profile bench run --rm bench check    # alle Server erreichbar? Tools auflisten
-docker compose --profile bench run --rm bench run --suite smoke --servers perron
+docker compose --profile bench run --rm bench run --suite smoke --servers perron-rich
 docker compose --profile bench run --rm bench run --suite full --servers all --repeats 3
 docker compose --profile bench run --rm bench report   # Markdown-Report aus den letzten Läufen
 docker compose down
@@ -138,7 +138,7 @@ Bei jedem Push und Pull Request:
 
 1. `dotnet build -warnaserror`, `dotnet format --verify-no-changes`, `dotnet test`.
 2. `docker compose --profile bench build`.
-3. Smoke-Test: `docker compose up -d`, warten bis `mcp` healthy ist, dann `bench check --servers perron`: Verbindungsaufbau (`initialize` oder `server/discover`) und `tools/list` müssen die erwartete Tool-Liste liefern. Danach `docker compose down -v`.
+3. Smoke-Test: `docker compose up -d`, warten bis `mcp` healthy ist, dann `bench check` für `perron-rich` und die Varianten: Verbindungsaufbau (`initialize` oder `server/discover`) und `tools/list` müssen die erwartete Tool-Liste liefern. Danach `docker compose down -v`.
 
 Benchmark-Läufe mit LLM laufen nicht in der CI.
 

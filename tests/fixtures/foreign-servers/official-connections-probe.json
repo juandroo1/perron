@@ -1,0 +1,24 @@
+{
+  "server": "official",
+  "fetchedAt": "2026-11-25",
+  "purpose": "Capability probe for task 3.1: does a connection result include occupancy?",
+  "call": {
+    "tool": "connections",
+    "arguments": {
+      "origin": "Zürich HB",
+      "destination": "Bern",
+      "date": "2026-11-26",
+      "time": "08:00",
+      "limit": 2
+    }
+  },
+  "result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "Connections Zürich HB → Bern (times Swiss local, delays as +min):\n1. Thu 2026-11-26 08:02 Zürich HB, platform 31 → 08:58 Bern, platform 6 · 56 min · direct\n   - IC 8 to Brig (SBB): 08:02 Zürich HB, platform 31 → 08:58 Bern, platform 6\n2. Thu 2026-11-26 08:06 Zürich HB, platform 15 → 09:24 Bern, platform 12 · 1 h 18 min · direct\n   - IR 16 to Bern (SBB): 08:06 Zürich HB, platform 15 → 09:24 Bern, platform 12"
+      }
+    ],
+    "isError": false
+  }
+}

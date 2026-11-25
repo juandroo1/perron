@@ -80,7 +80,7 @@ jobs:
         run: docker compose up -d --wait --wait-timeout 120
 
       - name: Smoke test (bench check)
-        run: docker compose --profile bench run --rm bench check --servers perron --expect-tools find_stops,get_departures,plan_trip
+        run: docker compose --profile bench run --rm bench check --servers perron-rich --expect-tools find_stops,get_departures,plan_trip
 
       - name: Start the variants and wait until healthy
         run: docker compose --profile bench up -d --wait --wait-timeout 120 mcp-minimal mcp-json mcp-many
@@ -90,13 +90,13 @@ jobs:
           standard=find_stops,get_departures,plan_trip
           many=get_arrivals,get_connections_arriving,get_connections_departing,get_connections_via,get_departures,search_stops_by_name,search_stops_near
           check() {
-            out=$(docker compose --profile bench run --rm -e PERRON_MCP_URL="http://$1:8080/mcp" bench check --servers perron --expect-tools "$2")
+            out=$(docker compose --profile bench run --rm bench check --servers "$1" --expect-tools "$2")
             echo "$out"
             grep -q "serverInfo $3 " <<< "$out"
           }
-          check mcp-minimal "$standard" perron-minimal
-          check mcp-json "$standard" perron-json
-          check mcp-many "$many" perron-many
+          check perron-minimal "$standard" perron-minimal
+          check perron-json "$standard" perron-json
+          check perron-many "$many" perron-many
 
       - name: Show logs on failure
         if: failure()

@@ -1,0 +1,27 @@
+{
+  "server": "spt",
+  "fetchedAt": "2026-11-25",
+  "purpose": "Capability probe for task 3.1: does a connection result include occupancy?",
+  "call": {
+    "tool": "plan_journey",
+    "arguments": {
+      "from_station": "Zürich HB",
+      "to_station": "Bern",
+      "date": "2026-11-26",
+      "time": "08:00",
+      "limit": 2
+    }
+  },
+  "result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "2 connection(s) from Zürich HB to Bern:\n\n--- Connection 1 ---\nDepart: 08:02  →  Arrive: 08:58  |  Duration: 56min  |  Transfers: 0\n\n  Leg 1: IC 8 → Brig\n    Zürich HB (plat. 31) 08:02  →  Bern 08:58\n    On time\n    Occupancy: 1st ●●○ | 2nd ●●●\n\n--- Connection 2 ---\nDepart: 08:06  →  Arrive: 09:24  |  Duration: 1h 18min  |  Transfers: 0\n\n  Leg 1: IR 16 → Bern\n    Zürich HB (plat. 15) 08:06  →  Bern 09:24\n    On time\n    Occupancy: 1st ●●○ | 2nd ●●○\n\nBook tickets: https://www.sbb.ch/en?von=Z%C3%BCrich%20HB&nach=Bern&day=2026-11-26&time=08_00&moment=dep"
+      }
+    ],
+    "structuredContent": {
+      "result": "2 connection(s) from Zürich HB to Bern:\n\n--- Connection 1 ---\nDepart: 08:02  →  Arrive: 08:58  |  Duration: 56min  |  Transfers: 0\n\n  Leg 1: IC 8 → Brig\n    Zürich HB (plat. 31) 08:02  →  Bern 08:58\n    On time\n    Occupancy: 1st ●●○ | 2nd ●●●\n\n--- Connection 2 ---\nDepart: 08:06  →  Arrive: 09:24  |  Duration: 1h 18min  |  Transfers: 0\n\n  Leg 1: IR 16 → Bern\n    Zürich HB (plat. 15) 08:06  →  Bern 09:24\n    On time\n    Occupancy: 1st ●●○ | 2nd ●●○\n\nBook tickets: https://www.sbb.ch/en?von=Z%C3%BCrich%20HB&nach=Bern&day=2026-11-26&time=08_00&moment=dep"
+    },
+    "isError": false
+  }
+}
