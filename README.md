@@ -73,6 +73,11 @@ CI (GitHub Actions) runs build, format check and tests, builds both images with 
 
 *Pending.* The report will include methodology, model, server versions, run dates, confidence intervals and known limitations of the benchmark.
 
+Known limitations so far:
+
+- **Task sets written by Claude.** The development set (`bench/tasks/dev.jsonl`) was written by Claude in the working session, the held-out test set by a separate Claude subagent without that session's context; both were spot-checked by a human. The working session never reads the test set. Tasks written by the same model family that solves them may favour it, and the author of the development set knew the planned Perron tool design.
+- **Third-party Python servers** run with their dependencies as of their release date (`uv --exclude-newer`), because one of them no longer starts with today's dependencies.
+
 ## How this project is built
 
 Perron is developed spec-first: [`spec.md`](specs/001-perron/spec.md) defines what and why, [`plan.md`](specs/001-perron/plan.md) defines how (including a decision log), and [`tasks.md`](specs/001-perron/tasks.md) tracks implementation step by step.

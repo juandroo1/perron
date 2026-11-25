@@ -98,7 +98,7 @@ Bestimmt in Task 1.1 (2026-11-25; Snapshots von `initialize` und `tools/list` in
 - Kategorien: `stops`, `trip_simple`, `trip_constraints` (z. B. Ankunft vor einem Termin, Umsteigezeit, `via`), `departures`, `multistep`, `ambiguous` (mehrdeutige Ortsnamen), `bad_input`, `fr`, `extended` (Störungen, Auslastung; nur einzelne Server).
 - Erfolg bei `ambiguous`: Der Agent fragt nach oder nennt die Kandidaten. Rät er still einen Treffer, ist die Aufgabe nicht bestanden.
 - Rund 6 `dev`-Aufgaben sind als `smoke` markiert und bilden die Suite für `bench run --suite smoke`.
-- Die Aufgaben schreibt ein Mensch, bevor die Perron-Tools gebaut werden (Task 1.3). Zeiten werden relativ formuliert (z. B. «morgen um 08:00»), die Referenzzeit gibt der Harness im System-Prompt vor.
+- Die Aufgaben werden geschrieben, bevor die Perron-Tools gebaut werden (Task 1.3): `dev` von Claude, `test` von einem isolierten Claude-Subagenten, beide stichprobenartig von Sandro geprüft (siehe Entscheidungsprotokoll in plan.md). Das ist eine bekannte Schwäche des Benchmarks und wird im README genannt. Zeiten werden relativ formuliert (z. B. «morgen um 08:00»), die Referenzzeit gibt der Harness im System-Prompt vor.
 - Zeiten in Aufgaben bleiben im Fahrplanfenster der API (etwa eine Woche zurück bis gut drei Monate voraus; ausserhalb antwortet die API mit Fehler 400, siehe plan.md, Abschnitt 3).
 - Das Test-Set wird nach dem Schreiben eingefroren; sein SHA-256-Hash steht im Entscheidungsprotokoll von plan.md.
 

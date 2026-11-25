@@ -69,7 +69,7 @@ Der Vergleich mit fremden Servern ist der heikelste Teil des Projekts. Diese Reg
 - Alle Server bekommen dasselbe Modell, denselben System-Prompt, dieselben Aufgaben, dasselbe Limit an Tool-Aufrufen und dasselbe aktuelle Datum.
 - Fremde Server werden mit fixierter Version betrieben, genau so, wie ihre Doku es vorsieht. Kein Patchen, kein Umschreiben ihrer Tools. Gehostete Server (z. B. der offizielle) lassen sich nicht fixieren: Dort wird pro Lauf ein Hash von `tools/list` gespeichert, und Änderungen werden im Report markiert.
 - Aufgaben werden nach Fähigkeiten getaggt. Kann ein Server eine Fähigkeit gar nicht (z. B. Auslastung), zählt die Aufgabe für ihn als «nicht abgedeckt» und nicht als Fehler. Der Report zeigt beides getrennt.
-- Die Aufgaben werden geschrieben, bevor die eigenen Tools gebaut werden (Task 1.3). Danach wird ein zurückgehaltenes Test-Set nur noch für den Schlussvergleich verwendet.
+- Die Aufgaben werden geschrieben, bevor die eigenen Tools gebaut werden (Task 1.3): `dev` von Claude, `test` von einem isolierten Subagenten, von Sandro stichprobenartig geprüft. Danach wird das zurückgehaltene Test-Set nur noch für den Schlussvergleich verwendet.
 - `bench/tasks/test.jsonl` nie lesen, auswerten oder ändern, ausser in Task 1.3 (Einfrieren) und Task 4.3 (Schlussvergleich). `.claude/settings.json` sperrt das Lesen zusätzlich.
 - Im README stehen Methodik, Versionen, Datum der Läufe und bekannte Schwächen des Benchmarks. Keine Aussagen, die die Daten nicht stützen.
 

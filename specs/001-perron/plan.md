@@ -144,6 +144,15 @@ Die Fähigkeiten werden vor dem ersten Lauf festgelegt und begründet. Massstab:
   max_tool_calls }
 ```
 
+- Eine Aufgabe ist bestanden, wenn **alle** ihre Checks bestehen.
+- `language`: `de` oder `fr`. `capabilities_required`: `stops`, `trips`, `departures`, `occupancy`, `disruptions`.
+- `regex`: .NET-Regex gegen die Schlussantwort; `(?i)` für Gross-/Kleinschreibung.
+- `judge` nur für `ambiguous` und `bad_input` (AK-9.2).
+- Relative Zeitangaben in Oracle-Parametern, aufgelöst gegen die Referenzzeit (Europe/Zurich):
+  - `now` – die Referenzzeit selbst
+  - `+<n>d HH:mm` – n Tage nach dem Referenzdatum, um HH:mm (z. B. `+1d 08:00` = morgen 08:00)
+  - `next:<mon|tue|wed|thu|fri|sat|sun> HH:mm` – nächster solcher Wochentag nach dem Referenzdatum
+
 ### Ablauf pro Aufgabe und Server
 1. MCP-Session öffnen, Tools und `instructions` laden, Tool-Definitionen in das Format der Anthropic-API übersetzen.
 2. System-Prompt (für alle gleich): Rolle, Referenzzeit (Datum und Uhrzeit in Europe/Zurich, pro Aufgabenrunde eingefroren), Hinweis, kurz und mit konkreten Zeiten zu antworten, fester Abschnitt für die `instructions` des Servers.
@@ -154,10 +163,11 @@ Die Fähigkeiten werden vor dem ersten Lauf festgelegt und begründet. Massstab:
 Die Reihenfolge der Server wird pro Aufgabe gemischt, damit kein Server systematisch ältere oder neuere Daten bekommt. Das Oracle wird einmal pro Aufgabenrunde abgefragt und für alle Server derselben Runde verwendet; das schont die API.
 
 ### Oracles (erste Version)
-- `next_departure(stop, after, line?)`: nächste passende Abfahrt.
-- `earliest_arrival(from, to, depart_after)`: früheste Ankunft.
-- `latest_departure(from, to, arrive_before)`: späteste Abfahrt, um rechtzeitig anzukommen.
+- `next_departure(stop, after, line?, towards?, transport_type?, type?)`: nächste passende Abfahrt (`type: arrival` für Ankünfte; `towards`: Fahrzeug hält später an dieser Haltestelle).
+- `earliest_arrival(from, to, depart_after, via?, min_transfer_minutes?, transport_types?)`: früheste Ankunft.
+- `latest_departure(from, to, arrive_before, via?, min_transfer_minutes?, transport_types?)`: späteste Abfahrt, um rechtzeitig anzukommen.
 - `stop_candidates(name)`: Liste plausibler Haltestellen (für mehrdeutige Namen).
+- `occupancy(from, to, depart_after, class)`: Auslastungsprognose (`capacity1st`/`capacity2nd`: 1 niedrig, 2 mittel, 3 hoch) der ersten Verbindung ab `depart_after`; bestanden, wenn die Antwort dieselbe Stufe nennt.
 
 `after`, `depart_after` und `arrive_before` werden aus der Referenzzeit berechnet, nicht aus der aktuellen Uhrzeit.
 
@@ -256,3 +266,6 @@ STM_TRANSPORT_API_KEY=     # für swiss-transport-mcp, optional
 | 2026-11-25 | Cache-Ablauf wird über `TimeProvider` geprüft (eigene Hülle um `MemoryCache`), `MemoryCache` begrenzt nur die Grösse | `MemoryCacheOptions` kennt nur die veraltete `ISystemClock`; so sind 30 s/24 h ohne echtes Warten testbar |
 | 2026-11-25 | Client bereinigt Eigenheiten der API: Offset ohne Doppelpunkt, Dauer `00d00:56:00`, Füllzeichen in `operator`, führende Nullen bei Zugnummern (`EC000015` → `EC 15`); bei zwei `via` gilt `connection.to` statt des falschen `to` auf oberster Ebene | Befunde aus Task 1.1; die Tools sollen saubere Werte zeigen |
 | 2026-11-25 | Tool `ping` nur bis Task 2.1; danach entfernt | Sonst zählt es in Bench-Vergleichen zu Tool-Anzahl und Tokens der Tool-Definitionen und verfälscht die Ablation «Anzahl Tools» |
+| 2026-11-25 | Aufgaben-Set von Claude statt von Hand (Entscheid Sandro): `dev` schreibt Claude in der Arbeitssitzung, `test` ein frischer Subagent ohne Kontext dieser Sitzung, direkt in die Datei; die Arbeitssitzung liest `test.jsonl` nie (nur Hash und Anzahl pro Kategorie per Skript). Sandro prüft beide Sets stichprobenartig. Im README als bekannte Schwäche offengelegt | Aufwand für Sandro. Risiken: Ein Claude schreibt Aufgaben für einen Claude-Agenten und kennt das Perron-Design (Bias); Leakage des Test-Sets wird durch den isolierten Subagenten und das Leseverbot begrenzt |
+| 2026-11-25 | Keine Aufgaben zu Störungen (`disruptions`) im Set v1 | Kein Oracle möglich (transport.opendata.ch liefert keine Störungsmeldungen), und Judge ist nur für `ambiguous`/`bad_input` vorgesehen; `extended` prüft Auslastung über das neue Oracle `occupancy` |
+| 2026-11-25 | `test.jsonl` eingefroren: 20 Aufgaben, SHA-256 `429b02dfd6cf698d353a04543ba64dbd419de72d92d1249379d5f6e6379a3fca` | Hash von Sandro berechnet (Lesesperre für Claude); ab jetzt nur Task 4.3 (Schlussvergleich), jede Änderung braucht neuen Eintrag mit neuem Hash |
