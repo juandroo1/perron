@@ -1,0 +1,7 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Perron.Bench\Perron.Bench.csproj" />
+  </ItemGroup>
+
+</Project>

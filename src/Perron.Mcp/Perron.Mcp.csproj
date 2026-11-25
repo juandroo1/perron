@@ -1,0 +1,7 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <ItemGroup>
+    <ProjectReference Include="..\Perron.Transport\Perron.Transport.csproj" />
+  </ItemGroup>
+
+</Project>

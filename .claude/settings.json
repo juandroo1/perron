@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "deny": [
+      "Read(./bench/tasks/test.jsonl)",
+      "Read(**/bench/tasks/test.jsonl)"
+    ]
+  }
+}

@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Perron.Bench/Perron.Bench.csproj" />
+    <Project Path="src/Perron.Mcp/Perron.Mcp.csproj" />
+    <Project Path="src/Perron.Transport/Perron.Transport.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Perron.Bench.Tests/Perron.Bench.Tests.csproj" />
+    <Project Path="tests/Perron.Mcp.Tests/Perron.Mcp.Tests.csproj" />
+    <Project Path="tests/Perron.Transport.Tests/Perron.Transport.Tests.csproj" />
+  </Folder>
+</Solution>
