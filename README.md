@@ -55,6 +55,12 @@ Tools (all read-only):
 
 Tool texts and results are in English. Every result ends with the attribution "Fahrplandaten: opentransportdata.swiss".
 
+Errors are written for the agent, so it knows what to do next:
+
+- **Invalid input** (unreadable date, unknown stop, too many via stops …): a tool error with a concrete hint, e.g. similar stop names.
+- **Nothing found** (no connections, empty board, no stop for a search): a normal result with a hint, e.g. try another time.
+- **API failures** (date outside the loaded timetable, throttling, timeouts, server errors): a tool error that says what happened and what to do, e.g. the timetable window or "wait about 30 seconds". Perron retries server errors and timeouts before giving up.
+
 ### Run with Docker
 
 Docker is the reference environment.
