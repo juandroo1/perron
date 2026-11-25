@@ -79,7 +79,7 @@ jobs:
         run: docker compose up -d --wait --wait-timeout 120
 
       - name: Smoke test (bench check)
-        run: docker compose --profile bench run --rm bench check --servers perron --expect-tools find_stops,plan_trip
+        run: docker compose --profile bench run --rm bench check --servers perron --expect-tools find_stops,get_departures,plan_trip
 
       - name: Show logs on failure
         if: failure()

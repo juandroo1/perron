@@ -1,0 +1,16 @@
+Departures at Zürich, Central (8588078) from now (Wed 25.11.2026):
+17:13 (+1 min) T 3 to Zürich, Klusplatz pl. C
+17:14 T 15 to Zürich Tiefenbrunnen, Bahnhof pl. G
+17:14 T 7 to Zürich, Wollishoferplatz pl. H
+17:15 (+1 min) T 3 to Zürich, Albisrieden pl. B
+17:15 (+1 min) T 4 to Zürich, Bahnhofstrasse/HB pl. F
+17:15 T 4 to Zürich, Rehalp pl. G
+17:17 T 7 to Stettbach, Bahnhof pl. A
+17:17 (+1 min) T 6 to Zürich, Zoo pl. A
+17:19 T 11 to Zürich Tiefenbrunnen, Bahnhof pl. F
+17:19 T 4 to Zürich, Rehalp pl. G
+17:19 T 6 to Zürich, Bahnhofplatz/HB pl. H
+17:19 T 10 to Zürich Flughafen, Fracht pl. A
+17:19 (+1 min) T 4 to Zürich, Bahnhofstrasse/HB pl. F
+17:19 (+4 min) T 10 to Zürich, Bahnhofplatz/HB pl. H
+Fahrplandaten: opentransportdata.swiss

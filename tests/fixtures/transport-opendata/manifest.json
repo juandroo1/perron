@@ -338,5 +338,25 @@
     "fetchedAt": "2026-11-25T19:54:47+00:00",
     "bytes": 1520,
     "purpose": "Town name only, several stations, stations only"
+  },
+  {
+    "file": "locations-bern-station.json",
+    "endpoint": "locations",
+    "url": "https://transport.opendata.ch/v1/locations?query=Bern&type=station",
+    "status": 200,
+    "contentType": "application/json",
+    "fetchedAt": "2026-11-25T20:13:09+00:00",
+    "bytes": 1449,
+    "purpose": "Exact name of a main station, stations only"
+  },
+  {
+    "file": "locations-zurich-central-station.json",
+    "endpoint": "locations",
+    "url": "https://transport.opendata.ch/v1/locations?query=Z%C3%BCrich%2C+Central&type=station",
+    "status": 200,
+    "contentType": "application/json",
+    "fetchedAt": "2026-11-25T20:13:12+00:00",
+    "bytes": 1482,
+    "purpose": "Exact name of a tram stop, stations only"
   }
 ]
