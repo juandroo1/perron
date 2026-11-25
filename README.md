@@ -33,7 +33,17 @@ dotnet build -warnaserror
 dotnet test
 ```
 
-Docker setup, MCP client configuration and benchmark commands will follow.
+### Run the MCP server locally
+
+```bash
+dotnet run --project src/Perron.Mcp                 # Streamable HTTP on http://localhost:8080/mcp, health on /health
+dotnet run --project src/Perron.Mcp -- --stdio      # stdio transport
+npx @modelcontextprotocol/inspector                 # inspect and call tools manually
+```
+
+Perron speaks both MCP protocol paths: the `initialize` handshake (revisions up to 2025-11-25) and per-request metadata with `server/discover` (2026-07-28). Over HTTP it runs stateless.
+
+So far the server only exposes a `ping` tool; the transport tools follow. Docker setup, MCP client configuration and benchmark commands will follow.
 
 ## Results
 
