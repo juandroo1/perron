@@ -1,7 +1,31 @@
+using Perron.Mcp;
+
+if (args.Contains("--stdio"))
+{
+    var hostBuilder = Host.CreateApplicationBuilder(args);
+
+    // stdout carries the MCP protocol; all logs must go to stderr.
+    hostBuilder.Logging.AddConsole(options => options.LogToStandardErrorThreshold = LogLevel.Trace);
+
+    hostBuilder.Services
+        .AddPerronMcpServer()
+        .WithStdioServerTransport();
+
+    await hostBuilder.Build().RunAsync();
+    return;
+}
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services
+    .AddPerronMcpServer()
+    .WithHttpTransport();
+
+builder.Services.AddHealthChecks();
+
 var app = builder.Build();
 
-// MCP endpoint (/mcp), ping tool and /health follow in task 0.2.
-app.MapGet("/", () => "Perron MCP");
+app.MapMcp("/mcp");
+app.MapHealthChecks("/health");
 
-app.Run();
+await app.RunAsync();
