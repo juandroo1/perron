@@ -78,7 +78,7 @@ Der Vergleich mit fremden Servern ist der heikelste Teil des Projekts. Diese Reg
 - Services in `docker-compose.yml`:
   - `mcp`: Perron MCP mit Streamable HTTP auf `/mcp`, Healthcheck auf `GET /health`.
   - `bench` (Profil `bench`): Perron Bench. Das Image enthält zusätzlich `uv` und die fremden Python-Server in fixierten Versionen (bei Build installiert, nicht zur Laufzeit), damit sie per stdio gestartet werden können.
-- Dockerfiles: Multi-Stage-Builds (`mcr.microsoft.com/dotnet/sdk:10.0` zum Bauen, `mcr.microsoft.com/dotnet/aspnet:10.0` bzw. `runtime:10.0` zur Laufzeit), Ausführung als Non-Root-User.
+- Dockerfiles: Multi-Stage-Builds (`mcr.microsoft.com/dotnet/sdk:10.0.404` zum Bauen, gleiche Version wie `global.json`, `mcr.microsoft.com/dotnet/aspnet:10.0` bzw. `runtime:10.0` zur Laufzeit), Ausführung als Non-Root-User.
 - Secrets und Umgebung nur über `.env` (`env_file`). Keine Secrets im Image und keine in `docker-compose.yml`. Die Bench-Methodik (Modell, `effort`, `max_tokens`, Pausen) steht versioniert in `bench/bench.json`.
 - `.dockerignore`: `.git`, `bin/`, `obj/`, `bench/results/`, `.env`.
 - Neue Abhängigkeit, neue Konfiguration oder neuer Service: Dockerfiles, `docker-compose.yml` und `.env.example` im selben Task anpassen.
