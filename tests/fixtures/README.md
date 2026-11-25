@@ -7,7 +7,7 @@ Fahrplandaten: opentransportdata.swiss (via transport.opendata.ch).
 
 Raw responses of `https://transport.opendata.ch/v1/` recorded on 2026-11-25 between about 16:10 and 16:13 UTC
 (17:10 to 17:13 Europe/Zurich), one request every 3 seconds, User-Agent `perron-dev`.
-"Tomorrow" in the requests is 2026-11-26. Bodies are stored unchanged; the API escapes non-ASCII characters (`ü`).
+"Tomorrow" in the requests is 2026-11-26. The four `locations-*-station.json` files for task 2.2 were recorded on 2026-11-25 later the same day, also 3 seconds apart. Bodies are stored unchanged; the API escapes non-ASCII characters (`ü`).
 `manifest.json` lists every file with its exact URL, HTTP status, content type, time and size.
 
 | File | Endpoint | Status | Case |
@@ -20,6 +20,10 @@ Raw responses of `https://transport.opendata.ch/v1/` recorded on 2026-11-25 betw
 | `locations-coordinates-station.json` | `locations` | 200 | Coordinates, stations only |
 | `locations-unknown.json` | `locations` | 200 | Unknown name |
 | `locations-empty.json` | `locations` | 200 | No parameters |
+| `locations-basel-station.json` | `locations` | 200 | Town with several main stations, stations only (task 2.2) |
+| `locations-fribourg-station.json` | `locations` | 200 | Town name differs from station name, stations only (task 2.2) |
+| `locations-genf-station.json` | `locations` | 200 | German name of a French-speaking town, stations only (task 2.2) |
+| `locations-zurich-station.json` | `locations` | 200 | Town name only, several stations, stations only (task 2.2) |
 | `connections-zurich-bern-now.json` | `connections` | 200 | Simple trip, now |
 | `connections-zurich-bern-tomorrow-0800.json` | `connections` | 200 | Departure time tomorrow 08:00 |
 | `connections-zurich-bern-arrive-0900.json` | `connections` | 200 | Arrival time tomorrow 09:00 |

@@ -298,5 +298,45 @@
     "fetchedAt": "2026-11-25T16:13:52+00:00",
     "bytes": 89,
     "purpose": "Invalid datetime"
+  },
+  {
+    "file": "locations-basel-station.json",
+    "endpoint": "locations",
+    "url": "https://transport.opendata.ch/v1/locations?query=Basel&type=station",
+    "status": 200,
+    "contentType": "application/json",
+    "fetchedAt": "2026-11-25T19:54:38+00:00",
+    "bytes": 1471,
+    "purpose": "Town with several main stations, stations only"
+  },
+  {
+    "file": "locations-fribourg-station.json",
+    "endpoint": "locations",
+    "url": "https://transport.opendata.ch/v1/locations?query=Fribourg&type=station",
+    "status": 200,
+    "contentType": "application/json",
+    "fetchedAt": "2026-11-25T19:54:41+00:00",
+    "bytes": 1507,
+    "purpose": "Town name differs from station name, stations only"
+  },
+  {
+    "file": "locations-genf-station.json",
+    "endpoint": "locations",
+    "url": "https://transport.opendata.ch/v1/locations?query=Genf&type=station",
+    "status": 200,
+    "contentType": "application/json",
+    "fetchedAt": "2026-11-25T19:54:44+00:00",
+    "bytes": 1182,
+    "purpose": "German name of a French-speaking town, stations only"
+  },
+  {
+    "file": "locations-zurich-station.json",
+    "endpoint": "locations",
+    "url": "https://transport.opendata.ch/v1/locations?query=Z%C3%BCrich&type=station",
+    "status": 200,
+    "contentType": "application/json",
+    "fetchedAt": "2026-11-25T19:54:47+00:00",
+    "bytes": 1520,
+    "purpose": "Town name only, several stations, stations only"
   }
 ]
