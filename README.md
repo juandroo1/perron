@@ -61,11 +61,27 @@ For the benchmark ablations the same server runs in variants, chosen by environm
 
 | Variable | Values | Default |
 |---|---|---|
-| `PERRON_TOOLS` | `standard` (3 tools) | `standard` |
+| `PERRON_TOOLS` | `standard` (3 tools) or `many` (7 finer tools with the same data and formats) | `standard` |
 | `PERRON_DESCRIPTIONS` | `rich` (when to use a tool, when not, example) or `minimal` (one sentence, parameter meaning, format and range) | `rich` |
 | `PERRON_FORMAT` | `compact` (short text) or `json` (the same fields as JSON) | `compact` |
 
 Each variant reports its own name in `serverInfo`: `perron-rich` for the defaults, otherwise `perron-` plus the values that differ, e.g. `perron-minimal` or `perron-json`. Tool errors are plain text in every variant.
+
+The tool cut `many` offers `search_stops_by_name`, `search_stops_near`, `get_connections_departing`, `get_connections_arriving`, `get_connections_via`, `get_departures` and `get_arrivals`.
+
+Docker Compose runs the variants of the benchmark next to `mcp` (perron-rich) in the profile `bench`, reachable only inside the Compose network:
+
+| Service | Variant | URL inside Compose |
+|---|---|---|
+| `mcp` | `perron-rich` | `http://mcp:8080/mcp` (also `http://127.0.0.1:8080/mcp` on the host) |
+| `mcp-minimal` | `perron-minimal` | `http://mcp-minimal:8080/mcp` |
+| `mcp-json` | `perron-json` | `http://mcp-json:8080/mcp` |
+| `mcp-many` | `perron-many` | `http://mcp-many:8080/mcp` |
+
+```bash
+docker compose --profile bench up -d --wait mcp mcp-minimal mcp-json mcp-many
+docker compose --profile bench run --rm -e PERRON_MCP_URL=http://mcp-many:8080/mcp bench check --servers perron
+```
 
 Errors are written for the agent, so it knows what to do next:
 
