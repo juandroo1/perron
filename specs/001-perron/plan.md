@@ -221,4 +221,8 @@ STM_TRANSPORT_API_KEY=     # für swiss-transport-mcp, optional
 | 2026-11-25 | Docker-Healthcheck über `dotnet Perron.Mcp.dll --healthcheck` mit einfachem `HttpClient` statt curl und ohne `IHttpClientFactory`/Resilience | Die .NET-Laufzeit-Images enthalten kein curl/wget; ein Einmal-Prozess braucht keine Factory, und Wiederholungen übernimmt Docker (`retries`) |
 | 2026-11-25 | `env_file` mit `required: false` | Compose startet auch ohne `.env` (frischer Checkout, CI); Keys werden erst ab Phase 3 gebraucht |
 | 2026-11-25 | `bench`-Image vorerst ohne uv und Python-Server | Gehört laut tasks.md zu Task 3.1 |
+| 2026-11-25 | CI läuft bei jedem Pull Request (inkl. jedes Pushes in einen PR-Branch), bei jedem Push auf `main` und manuell; nicht bei Pushes auf Branches ohne PR | Vermeidet doppelte Läufe pro Push; jeder Task bekommt sofort einen PR |
+| 2026-11-25 | CI baut die Images mit `docker buildx bake` aus `docker-compose.yml` (GHA-Layer-Cache) statt `docker compose --profile bench build` | Gleiche Images und Tags, aber mit Cache; `docker compose up` verwendet sie danach ohne Neubau |
+| 2026-11-25 | `PERRON_MCP_URL` für den `bench`-Container steht in `docker-compose.yml` (`environment`), nicht in `.env` | Beschreibt nur die Verbindung zwischen den Containern, ist kein Secret und muss ohne `.env` (CI) funktionieren |
+| 2026-11-25 | Minimaler `bench check` bis Task 3.1: nur Server `perron`, erwartete Tools per `--expect-tools` | Registry (`servers.json`) und Token-Messung kommen in Task 3.1; die CI braucht vorher schon einen Smoke-Test |
 | 2026-11-25 | Tool `ping` nur bis Task 2.1; danach entfernt | Sonst zählt es in Bench-Vergleichen zu Tool-Anzahl und Tokens der Tool-Definitionen und verfälscht die Ablation «Anzahl Tools» |
