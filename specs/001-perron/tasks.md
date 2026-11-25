@@ -5,7 +5,7 @@ Immer nur einen Task gleichzeitig bearbeiten. Ein Task ist erst erledigt, wenn d
 ## Phase 0 – Setup
 
 - [x] 0.1 Repo-Grundgerüst: `git init -b main`, Solution mit `Perron.Transport`, `Perron.Mcp`, `Perron.Bench` und Testprojekten, `Directory.Build.props` (Nullable, TreatWarningsAsErrors), `Directory.Packages.props`, `.editorconfig`, `.gitattributes` (`* text=auto eol=lf`), `.gitignore`, `.env.example`, `.claude/settings.json` mit `permissions.deny` für `Read(bench/tasks/test.jsonl)`, README-Skelett, MIT-Lizenz. GitHub-Repo anlegen und ersten Stand auf `main` pushen (Ausnahme vom Branch-Prinzip, da `main` noch nicht existiert)
-- [ ] 0.2 Minimaler MCP-Server mit Tool `ping`, beide Transports, `GET /health`. Integrationstest mit MCP-Client: Verbindungsaufbau (`initialize` und `server/discover`) und `tools/list`
+- [x] 0.2 Minimaler MCP-Server mit Tool `ping`, beide Transports, `GET /health`. Integrationstest mit MCP-Client: Verbindungsaufbau (`initialize` und `server/discover`) und `tools/list`
 - [ ] 0.3 Docker: Dockerfiles (Non-Root), `docker-compose.yml` mit `mcp` und `bench` (Profil), `.dockerignore`
 - [ ] 0.4 GitHub Actions: Build, Format, Tests, Compose-Build (mit Layer-Cache), Smoke-Test (vorerst mit einem minimalen `bench check` gegen `ping`)
 
