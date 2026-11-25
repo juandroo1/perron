@@ -48,6 +48,7 @@ public sealed class HttpTransportTests(WebApplicationFactory<Program> factory)
             Assert.True(annotations.IdempotentHint);
             Assert.False(annotations.DestructiveHint);
             Assert.True(annotations.OpenWorldHint);
+            Assert.False(string.IsNullOrWhiteSpace(tool.ProtocolTool.Title ?? annotations.Title), $"{tool.Name} needs a title");
         }
 
         var findStops = tools.Single(tool => tool.Name == "find_stops").ProtocolTool.InputSchema;
