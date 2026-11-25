@@ -15,6 +15,17 @@ public enum TimeIs
     Arrival,
 }
 
+/// <summary>Departures or arrivals of a stop.</summary>
+[JsonConverter(typeof(JsonStringEnumConverter<BoardType>))]
+public enum BoardType
+{
+    [JsonStringEnumMemberName("departure")]
+    Departure,
+
+    [JsonStringEnumMemberName("arrival")]
+    Arrival,
+}
+
 /// <summary>Means of transport as tools accept them (plan.md, section 4: the API's values).</summary>
 [JsonConverter(typeof(JsonStringEnumConverter<TransportMode>))]
 public enum TransportMode

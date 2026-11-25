@@ -1,0 +1,7 @@
+Departures at Bern (8507000) from now (Wed 25.11.2026):
+17:15 S 7 to Worb Dorf pl. 23
+17:15 (+1 min) S 1 to Fribourg/Freiburg pl. 1E-H
+17:16 S 1 to Thun pl. 10
+17:16 S 9 to Unterzollikofen pl. 22
+17:16 S 31 to Biel/Bienne pl. 12A-C
+Fahrplandaten: opentransportdata.swiss

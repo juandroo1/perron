@@ -1,0 +1,12 @@
+Departures at Bern (8507000) from Thu 26.11.2026 08:00:
+08:00 S 3 to Biel/Bienne pl. 12A-C
+08:00 IR 15 to Luzern pl. 10
+08:00 S 7 to Worb Dorf pl. 23
+08:01 S 9 to Unterzollikofen pl. 22
+08:02 S 3 to Belp pl. 1A-D
+08:02 IC 8 to Romanshorn pl. 2
+08:04 IC 61 to Basel SBB pl. 5
+08:04 IC 61 to Interlaken West pl. 8
+08:04 IR 15 to Genève-Aéroport pl. 7
+08:05 RE 5 to Solothurn pl. 21
+Fahrplandaten: opentransportdata.swiss

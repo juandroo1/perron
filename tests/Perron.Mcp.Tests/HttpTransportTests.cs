@@ -39,7 +39,7 @@ public sealed class HttpTransportTests(WebApplicationFactory<Program> factory)
 
         var tools = await client.ListToolsAsync(cancellationToken: TestContext.Current.CancellationToken);
 
-        Assert.Equal(["find_stops", "plan_trip"], tools.Select(tool => tool.Name).Order(StringComparer.Ordinal));
+        Assert.Equal(["find_stops", "get_departures", "plan_trip"], tools.Select(tool => tool.Name).Order(StringComparer.Ordinal));
         foreach (var tool in tools)
         {
             var annotations = tool.ProtocolTool.Annotations;
@@ -71,6 +71,39 @@ public sealed class HttpTransportTests(WebApplicationFactory<Program> factory)
         Assert.Equal(
             ["train", "tram", "bus", "ship", "cableway"],
             EnumValues(properties.GetProperty("transport_types").GetProperty("items")));
+    }
+
+    [Fact]
+    public async Task GetDeparturesSchema_HidesInjectedServices_AndHasStringEnums()
+    {
+        await using var client = await ConnectAsync(factory, null);
+
+        var tools = await client.ListToolsAsync(cancellationToken: TestContext.Current.CancellationToken);
+
+        var schema = tools.Single(tool => tool.Name == "get_departures").ProtocolTool.InputSchema;
+        Assert.Equal(["datetime", "limit", "stop", "transport_types", "type"], PropertyNames(schema));
+        Assert.Equal(["stop"], Required(schema));
+        Assert.Equal(["departure", "arrival"], EnumValues(schema.GetProperty("properties").GetProperty("type")));
+    }
+
+    [Fact]
+    public async Task CallGetDepartures_ReturnsTheBoard()
+    {
+        var handler = new FixtureHandler(uri => uri.AbsolutePath.EndsWith("/locations", StringComparison.Ordinal)
+            ? "locations-bern-station.json"
+            : "stationboard-bern-arrivals.json");
+        await using var app = WithTransportHandler(handler);
+        await using var client = await ConnectAsync(app, null);
+
+        var result = await client.CallToolAsync(
+            "get_departures",
+            new Dictionary<string, object?> { ["stop"] = "Bern", ["type"] = "arrival", ["limit"] = 10 },
+            cancellationToken: TestContext.Current.CancellationToken);
+
+        Assert.NotEqual(true, result.IsError);
+        var text = Assert.IsType<TextContentBlock>(Assert.Single(result.Content)).Text;
+        Assert.StartsWith("Arrivals at Bern (8507000) from now (", text);
+        Assert.Equal("arrival", System.Web.HttpUtility.ParseQueryString(handler.Requests.Last().Query)["type"]);
     }
 
     [Fact]

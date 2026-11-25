@@ -1,0 +1,12 @@
+Departures at Bern (8507000) from now (Wed 25.11.2026):
+17:15 (+1 min) S 1 to Fribourg/Freiburg pl. 1E-H
+17:15 S 7 to Worb Dorf pl. 23
+17:16 S 9 to Unterzollikofen pl. 22
+17:16 S 31 to Biel/Bienne pl. 12A-C
+17:16 S 1 to Thun pl. 10
+17:17 S 31 to Belp pl. 5A-C
+17:20 RE 5 to Solothurn pl. 21
+17:20 S 4 to Langnau i.E. pl. 13
+17:21 S 2 to Laupen BE pl. 1A-D
+17:22 S 7 to Bolligen pl. 23
+Fahrplandaten: opentransportdata.swiss

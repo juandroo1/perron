@@ -25,7 +25,7 @@ public sealed class StdioTransportTests
         Assert.Equal(McpServerSetup.ServerName, client.ServerInfo.Name);
 
         var tools = await client.ListToolsAsync(cancellationToken: TestContext.Current.CancellationToken);
-        Assert.Equal(["find_stops", "plan_trip"], tools.Select(tool => tool.Name).Order(StringComparer.Ordinal));
+        Assert.Equal(["find_stops", "get_departures", "plan_trip"], tools.Select(tool => tool.Name).Order(StringComparer.Ordinal));
 
         // Without arguments the tool answers with a validation error before any API call: no network in tests.
         var result = await client.CallToolAsync("find_stops", cancellationToken: TestContext.Current.CancellationToken);

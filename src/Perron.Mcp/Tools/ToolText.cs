@@ -32,6 +32,37 @@ public static class ToolText
     public static string Time(DateTimeOffset instant) =>
         SwissTime.ToZurich(instant).ToString("HH:mm", CultureInfo.InvariantCulture);
 
+    /// <summary>"08:04", or "Thu 27.11. 00:12" on a later day than <paramref name="day"/>; "?" if unknown.</summary>
+    public static string TimeOnDay(DateTimeOffset? time, DateTimeOffset? day)
+    {
+        if (time is not { } instant)
+        {
+            return "?";
+        }
+
+        var sameDay = day is { } reference
+            && SwissTime.ToZurich(reference).Date == SwissTime.ToZurich(instant).Date;
+        return sameDay ? Time(instant) : $"{ShortDate(instant)} {Time(instant)}";
+    }
+
+    /// <summary>" pl. 7", " pl. 7 (now 8)" when the forecast platform differs, or "" without a platform.</summary>
+    public static string Platform(Checkpoint checkpoint)
+    {
+        var planned = checkpoint.Platform;
+        var forecast = checkpoint.Prognosis?.Platform;
+        if (!string.IsNullOrWhiteSpace(planned))
+        {
+            return !string.IsNullOrWhiteSpace(forecast) && forecast != planned
+                ? $" pl. {planned} (now {forecast})"
+                : $" pl. {planned}";
+        }
+
+        return string.IsNullOrWhiteSpace(forecast) ? "" : $" pl. {forecast}";
+    }
+
+    /// <summary>" (+3 min)" for a delay, "" without delay or real-time data.</summary>
+    public static string Delay(int? minutes) => minutes is > 0 and var delay ? $" (+{delay} min)" : "";
+
     /// <summary>"56 min", "1h 18min", "1h".</summary>
     public static string Duration(TimeSpan duration)
     {

@@ -19,7 +19,7 @@ public static class ConnectionFormat
 
         var duration = connection.Duration ?? (departure is { } d && arrival is { } a ? a - d : null);
         var transfers = connection.Transfers == 1 ? "1 transfer" : $"{connection.Transfers} transfers";
-        yield return $"{number}) {(day is { } date ? ToolText.Date(date) + " " : "")}{At(departure, day)} → {At(arrival, day)}"
+        yield return $"{number}) {(day is { } date ? ToolText.Date(date) + " " : "")}{ToolText.TimeOnDay(departure, day)} → {ToolText.TimeOnDay(arrival, day)}"
             + $" | {(duration is { } span ? ToolText.Duration(span) : "?")} | {transfers}";
 
         DateTimeOffset? lastJourneyArrival = null;
@@ -62,43 +62,6 @@ public static class ConnectionFormat
     }
 
     /// <summary>"Olten 08:30 pl. 7 (+3 min)", with "pl. 7 (now 8)" when the forecast platform differs.</summary>
-    private static string Stop(Checkpoint checkpoint, DateTimeOffset? time, DateTimeOffset? day)
-    {
-        var text = $"{checkpoint.Station?.Name ?? "?"} {At(time, day)}";
-
-        var planned = checkpoint.Platform;
-        var forecast = checkpoint.Prognosis?.Platform;
-        if (!string.IsNullOrWhiteSpace(planned))
-        {
-            text += $" pl. {planned}";
-            if (!string.IsNullOrWhiteSpace(forecast) && forecast != planned)
-            {
-                text += $" (now {forecast})";
-            }
-        }
-        else if (!string.IsNullOrWhiteSpace(forecast))
-        {
-            text += $" pl. {forecast}";
-        }
-
-        if (checkpoint.DelayMinutes is > 0 and var delay)
-        {
-            text += $" (+{delay} min)";
-        }
-
-        return text;
-    }
-
-    /// <summary>"08:04", or "Thu 27.11. 00:12" on a later day than <paramref name="day"/>.</summary>
-    private static string At(DateTimeOffset? time, DateTimeOffset? day)
-    {
-        if (time is not { } instant)
-        {
-            return "?";
-        }
-
-        var sameDay = day is { } reference
-            && SwissTime.ToZurich(reference).Date == SwissTime.ToZurich(instant).Date;
-        return sameDay ? ToolText.Time(instant) : $"{ToolText.ShortDate(instant)} {ToolText.Time(instant)}";
-    }
+    private static string Stop(Checkpoint checkpoint, DateTimeOffset? time, DateTimeOffset? day) =>
+        $"{checkpoint.Station?.Name ?? "?"} {ToolText.TimeOnDay(time, day)}{ToolText.Platform(checkpoint)}{ToolText.Delay(checkpoint.DelayMinutes)}";
 }

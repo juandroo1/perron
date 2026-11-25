@@ -1,0 +1,6 @@
+"Buchs" (stop) matches several stops (ID | name | kind):
+8502123 | Buchs AG | train
+8509404 | Buchs SG | train
+8503527 | Buchs-Dällikon | train
+Ask which one is meant, then call get_departures again with its ID.
+Fahrplandaten: opentransportdata.swiss

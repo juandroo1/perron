@@ -20,7 +20,7 @@ public sealed class McpServerCheckTests(PerronMcpFactory server) : IClassFixture
         Assert.Equal("perron", result.ServerName);
         Assert.False(string.IsNullOrWhiteSpace(result.ServerVersion));
         Assert.Equal("2026-07-28", result.ProtocolVersion);
-        Assert.Equal(["find_stops", "plan_trip"], result.ToolNames);
+        Assert.Equal(["find_stops", "get_departures", "plan_trip"], result.ToolNames);
     }
 
     [Fact]

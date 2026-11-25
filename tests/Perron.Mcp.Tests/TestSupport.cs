@@ -53,3 +53,9 @@ public sealed class TransportFixture : IDisposable
 
     public void Dispose() => provider.Dispose();
 }
+
+/// <summary>A clock that always shows the same instant.</summary>
+public sealed class FixedClock(DateTimeOffset now) : TimeProvider
+{
+    public override DateTimeOffset GetUtcNow() => now.ToUniversalTime();
+}

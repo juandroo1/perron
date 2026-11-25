@@ -1,0 +1,12 @@
+Arrivals at Bern (8507000) from now (Wed 25.11.2026):
+17:13 (+1 min) S 1 continues to Fribourg/Freiburg pl. 1E-H
+17:13 S 9 ends here pl. 22
+17:14 S 1 continues to Thun pl. 10
+17:14 S 31 continues to Biel/Bienne pl. 12A-C
+17:14 S 31 continues to Belp pl. 5A-C
+17:17 S 7 ends here pl. 23
+17:18 IR 65 ends here pl. 49
+17:18 S 4 continues to Langnau i.E. pl. 13
+17:19 S 2 continues to Laupen BE pl. 1A-D
+17:20 S 8 ends here pl. 24
+Fahrplandaten: opentransportdata.swiss
