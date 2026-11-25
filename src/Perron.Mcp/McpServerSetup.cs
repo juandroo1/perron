@@ -3,6 +3,7 @@ using System.Reflection;
 using ModelContextProtocol.Protocol;
 
 using Perron.Mcp.Tools;
+using Perron.Transport;
 
 namespace Perron.Mcp;
 
@@ -11,15 +12,19 @@ public static class McpServerSetup
 {
     public const string ServerName = "perron";
 
-    public static IMcpServerBuilder AddPerronMcpServer(this IServiceCollection services) =>
-        services
+    public static IMcpServerBuilder AddPerronMcpServer(this IServiceCollection services)
+    {
+        services.AddTransportApiClient();
+
+        return services
             .AddMcpServer(options => options.ServerInfo = new Implementation
             {
                 Name = ServerName,
                 Version = GetVersion(),
             })
             // Explicit collection: WithTools(typeof(X)) would bind to WithTools<T>(T target) with T = Type.
-            .WithTools([typeof(PingTool)]);
+            .WithTools([typeof(FindStopsTool)]);
+    }
 
     private static string GetVersion()
     {
