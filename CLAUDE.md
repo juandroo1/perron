@@ -138,7 +138,7 @@ Bei jedem Push und Pull Request:
 
 1. `dotnet build -warnaserror`, `dotnet format --verify-no-changes`, `dotnet test`.
 2. `docker compose --profile bench build`.
-3. Smoke-Test: `docker compose up -d`, warten bis `mcp` healthy ist, dann `bench check --servers perron`: `initialize` und `tools/list` müssen die erwartete Tool-Liste liefern. Danach `docker compose down -v`.
+3. Smoke-Test: `docker compose up -d`, warten bis `mcp` healthy ist, dann `bench check --servers perron`: Verbindungsaufbau (`initialize` oder `server/discover`) und `tools/list` müssen die erwartete Tool-Liste liefern. Danach `docker compose down -v`.
 
 Benchmark-Läufe mit LLM laufen nicht in der CI.
 

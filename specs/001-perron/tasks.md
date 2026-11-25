@@ -5,7 +5,7 @@ Immer nur einen Task gleichzeitig bearbeiten. Ein Task ist erst erledigt, wenn d
 ## Phase 0 – Setup
 
 - [x] 0.1 Repo-Grundgerüst: `git init -b main`, Solution mit `Perron.Transport`, `Perron.Mcp`, `Perron.Bench` und Testprojekten, `Directory.Build.props` (Nullable, TreatWarningsAsErrors), `Directory.Packages.props`, `.editorconfig`, `.gitattributes` (`* text=auto eol=lf`), `.gitignore`, `.env.example`, `.claude/settings.json` mit `permissions.deny` für `Read(bench/tasks/test.jsonl)`, README-Skelett, MIT-Lizenz. GitHub-Repo anlegen und ersten Stand auf `main` pushen (Ausnahme vom Branch-Prinzip, da `main` noch nicht existiert)
-- [ ] 0.2 Minimaler MCP-Server mit Tool `ping`, beide Transports, `GET /health`. Integrationstest mit MCP-Client: `initialize` und `tools/list`
+- [ ] 0.2 Minimaler MCP-Server mit Tool `ping`, beide Transports, `GET /health`. Integrationstest mit MCP-Client: Verbindungsaufbau (`initialize` und `server/discover`) und `tools/list`
 - [ ] 0.3 Docker: Dockerfiles (Non-Root), `docker-compose.yml` mit `mcp` und `bench` (Profil), `.dockerignore`
 - [ ] 0.4 GitHub Actions: Build, Format, Tests, Compose-Build (mit Layer-Cache), Smoke-Test (vorerst mit einem minimalen `bench check` gegen `ping`)
 
@@ -17,7 +17,7 @@ Immer nur einen Task gleichzeitig bearbeiten. Ein Task ist erst erledigt, wenn d
 
 ## Phase 2 – Perron MCP
 
-- [ ] 2.1 `find_stops` inkl. mehrdeutiger Namen (AK-1.1, AK-1.2)
+- [ ] 2.1 `find_stops` inkl. mehrdeutiger Namen; Tool `ping` entfernen, erwartete Tool-Liste im CI-Smoke-Test nachziehen (AK-1.1, AK-1.2)
 - [ ] 2.2 `plan_trip` inkl. Name-oder-ID und Kandidaten bei Mehrdeutigkeit; Format `compact` mit Snapshot-Test, Token-Obergrenze festlegen (AK-2.1 bis AK-2.4)
 - [ ] 2.3 `get_departures` (AK-3.1, AK-2.4)
 - [ ] 2.4 Fehlerbehandlung, leere Ergebnisse mit Hinweis, Tool-Annotations über alle Tools (AK-4.1, AK-4.2)
@@ -27,7 +27,7 @@ Immer nur einen Task gleichzeitig bearbeiten. Ein Task ist erst erledigt, wenn d
 ## Phase 3 – Perron Bench
 
 - [ ] 3.1 Server-Registry und `bench check` für HTTP- und stdio-Server, inkl. Token-Grösse der Tool-Definitionen (ohne Key «n/a») und `tools/list`-Hash. Fähigkeiten mit Begründung, `stm` optional. Fremde Server im `bench`-Image mit fixierten Versionen, transitive Python-Abhängigkeiten gepinnt (AK-7.1, AK-7.2)
-- [ ] 3.2 *(entfällt, vorgezogen als 1.3)*
+- [x] 3.2 *(entfällt, vorgezogen als 1.3)*
 - [ ] 3.3 Agent-Loop, `bench/bench.json`, Übernahme der Server-`instructions`, Traces, Run-Manifest, Metriken, `--dry-run` (AK-8.1 bis AK-8.3)
 - [ ] 3.4 Oracles mit Verifikation ab Referenzzeit, Regex-Prüfungen, Grounding-Check, Infra-Fehler, `bench rescore`; Golden-Traces (bestanden/nicht bestanden) als Tests der Checks (AK-9.1, AK-9.3 bis AK-9.6)
 - [ ] 3.5 Judge-Prüfungen für `ambiguous`/`bad_input` mit Rubrik, blind für Server-ID; mindestens 40 Urteile von Hand prüfen (AK-9.2)
