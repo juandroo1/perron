@@ -1,13 +1,18 @@
 using Microsoft.Extensions.Options;
 
 using Perron.Mcp.Results;
+using Perron.Mcp.Tools;
 
 namespace Perron.Mcp.Variants;
 
 /// <summary>How the tools are cut (plan.md, section 4).</summary>
 public enum ToolCut
 {
+    /// <summary>3 tools: find_stops, plan_trip, get_departures.</summary>
     Standard,
+
+    /// <summary>7 finer tools with the same data and formats.</summary>
+    Many,
 }
 
 /// <summary>How much the tool descriptions explain.</summary>
@@ -62,10 +67,10 @@ public sealed record PerronVariant(ToolCut Tools, DescriptionStyle Descriptions,
         Format == ResultFormat.Json ? JsonRenderer.Render(result) : CompactRenderer.Render(result);
 
     /// <summary>The tool that searches stops by name, for hints.</summary>
-    public string StopSearchTool => "find_stops";
+    public string StopSearchTool => Tools == ToolCut.Many ? ManyTools.SearchStopsByName : FindStopsTool.Name;
 
     /// <summary>The tool (or tools) that plan connections, for hints.</summary>
-    public string TripTools => "plan_trip";
+    public string TripTools => Tools == ToolCut.Many ? "the connection tools" : PlanTripTool.Name;
 }
 
 /// <summary>Variant settings from the environment: <c>PERRON_TOOLS</c>, <c>PERRON_DESCRIPTIONS</c>, <c>PERRON_FORMAT</c>.</summary>

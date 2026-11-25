@@ -21,6 +21,16 @@ public static class ToolCatalog
             new(PlanTripTool.Name, "Plan trip", PlanTripTool.PlanTripAsync, ToolTexts.PlanTrip),
             new(GetDeparturesTool.Name, "Get departures", GetDeparturesTool.GetDeparturesAsync, ToolTexts.GetDepartures),
         ],
+        ToolCut.Many =>
+        [
+            new(ManyTools.SearchStopsByName, "Search stops by name", ManyTools.SearchStopsByNameAsync, ToolTexts.SearchStopsByName),
+            new(ManyTools.SearchStopsNear, "Search stops near a point", ManyTools.SearchStopsNearAsync, ToolTexts.SearchStopsNear),
+            new(ManyTools.GetConnectionsDeparting, "Connections leaving after", ManyTools.GetConnectionsDepartingAsync, ToolTexts.GetConnectionsDeparting),
+            new(ManyTools.GetConnectionsArriving, "Connections arriving by", ManyTools.GetConnectionsArrivingAsync, ToolTexts.GetConnectionsArriving),
+            new(ManyTools.GetConnectionsVia, "Connections via stops", ManyTools.GetConnectionsViaAsync, ToolTexts.GetConnectionsVia),
+            new(ManyTools.GetDepartures, "Get departures", ManyTools.GetDeparturesAsync, ToolTexts.GetDeparturesMany),
+            new(ManyTools.GetArrivals, "Get arrivals", ManyTools.GetArrivalsAsync, ToolTexts.GetArrivals),
+        ],
         _ => throw new ArgumentOutOfRangeException(nameof(variant), variant.Tools, "Unknown tool cut."),
     };
 
