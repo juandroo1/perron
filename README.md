@@ -135,6 +135,8 @@ docker compose down
 
 Images run as a non-root user and the port is bound to `127.0.0.1` only.
 
+The `bench` image also contains uv 0.13.7, CPython 3.12.16 and the third-party stdio servers `spt` and `stm`, each in its own virtual environment under `/opt/mcp/<id>`. Their dependencies are pinned with version and hash in `bench/python/<id>.txt` (resolved as of each server's release day; the command to regenerate a file is in its header) and installed at build time; nothing is downloaded when a server starts.
+
 `bench check` reads the server registry `bench/servers.json` and, for each server (`--servers all` or a list of IDs), connects over HTTP or stdio, lists the tools and prints:
 
 - the status: `OK`, `CHANGED` (a hosted server whose `tools/list` differs from the hash in the registry; not a failure), `SKIPPED` (an optional server without its key) or `FAIL`;
