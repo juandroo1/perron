@@ -1,25 +1,49 @@
 name: perron
 
+# Perron MCP as built for every variant; the variants only differ in PERRON_* (plan.md, section 4).
+x-mcp: &mcp
+  build:
+    context: .
+    dockerfile: src/Perron.Mcp/Dockerfile
+  image: perron-mcp:dev
+  env_file:
+    - path: .env
+      required: false
+  healthcheck:
+    # No curl/wget in the runtime image; the server ships its own probe.
+    test: ["CMD", "dotnet", "Perron.Mcp.dll", "--healthcheck"]
+    interval: 15s
+    timeout: 5s
+    retries: 3
+    start_period: 20s
+    start_interval: 2s
+  restart: unless-stopped
+
 services:
+  # Default variant perron-rich (standard tools, rich descriptions, compact format).
   mcp:
-    build:
-      context: .
-      dockerfile: src/Perron.Mcp/Dockerfile
-    image: perron-mcp:dev
-    env_file:
-      - path: .env
-        required: false
+    <<: *mcp
     ports:
       - "127.0.0.1:8080:8080"
-    healthcheck:
-      # No curl/wget in the runtime image; the server ships its own probe.
-      test: ["CMD", "dotnet", "Perron.Mcp.dll", "--healthcheck"]
-      interval: 15s
-      timeout: 5s
-      retries: 3
-      start_period: 20s
-      start_interval: 2s
-    restart: unless-stopped
+
+  # Ablation variants for Perron Bench; reachable inside the Compose network only (http://mcp-<variant>:8080/mcp).
+  mcp-minimal:
+    <<: *mcp
+    profiles: ["bench"]
+    environment:
+      PERRON_DESCRIPTIONS: minimal
+
+  mcp-json:
+    <<: *mcp
+    profiles: ["bench"]
+    environment:
+      PERRON_FORMAT: json
+
+  mcp-many:
+    <<: *mcp
+    profiles: ["bench"]
+    environment:
+      PERRON_TOOLS: many
 
   bench:
     profiles: ["bench"]
