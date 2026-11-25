@@ -26,7 +26,7 @@ public sealed class HttpTransportTests(WebApplicationFactory<Program> factory)
         Assert.Equal(expected, client.NegotiatedProtocolVersion);
         var serverInfo = client.ServerInfo;
         Assert.NotNull(serverInfo);
-        Assert.Equal(McpServerSetup.ServerName, serverInfo.Name);
+        Assert.Equal("perron-rich", serverInfo.Name);
         Assert.False(string.IsNullOrWhiteSpace(serverInfo.Version));
     }
 

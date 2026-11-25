@@ -1,0 +1,144 @@
+{
+  "from": {
+    "id": "8503000",
+    "name": "Zürich HB"
+  },
+  "to": {
+    "id": "8507000",
+    "name": "Bern"
+  },
+  "time_is": "departure",
+  "datetime": "now",
+  "connections": [
+    {
+      "weekday": "Wed",
+      "departure": "2026-11-25T17:32",
+      "arrival": "2026-11-25T18:28",
+      "duration_min": 56,
+      "transfers": 0,
+      "legs": [
+        {
+          "line": "IC 1",
+          "direction": "Genève-Aéroport",
+          "from": {
+            "stop": "Zürich HB",
+            "time": "2026-11-25T17:32",
+            "platform": "32"
+          },
+          "to": {
+            "stop": "Bern",
+            "time": "2026-11-25T18:28",
+            "platform": "6"
+          }
+        }
+      ]
+    },
+    {
+      "weekday": "Wed",
+      "departure": "2026-11-25T17:38",
+      "arrival": "2026-11-25T18:56",
+      "duration_min": 78,
+      "transfers": 2,
+      "legs": [
+        {
+          "line": "RE 37",
+          "direction": "Aarau",
+          "from": {
+            "stop": "Zürich HB",
+            "time": "2026-11-25T17:38",
+            "platform": "14"
+          },
+          "to": {
+            "stop": "Lenzburg",
+            "time": "2026-11-25T17:57",
+            "platform": "3"
+          }
+        },
+        {
+          "transfer_min": 3,
+          "at": "Lenzburg"
+        },
+        {
+          "line": "S 26",
+          "direction": "Olten",
+          "from": {
+            "stop": "Lenzburg",
+            "time": "2026-11-25T18:00",
+            "platform": "5",
+            "delay_min": 1
+          },
+          "to": {
+            "stop": "Olten",
+            "time": "2026-11-25T18:21",
+            "platform": "3CD"
+          }
+        },
+        {
+          "transfer_min": 8,
+          "at": "Olten"
+        },
+        {
+          "line": "IC 61",
+          "direction": "Interlaken West",
+          "from": {
+            "stop": "Olten",
+            "time": "2026-11-25T18:29",
+            "platform": "11"
+          },
+          "to": {
+            "stop": "Bern",
+            "time": "2026-11-25T18:56",
+            "platform": "8"
+          }
+        }
+      ]
+    },
+    {
+      "weekday": "Wed",
+      "departure": "2026-11-25T18:02",
+      "arrival": "2026-11-25T18:58",
+      "duration_min": 56,
+      "transfers": 0,
+      "legs": [
+        {
+          "line": "IC 8",
+          "direction": "Brig",
+          "from": {
+            "stop": "Zürich HB",
+            "time": "2026-11-25T18:02",
+            "platform": "31"
+          },
+          "to": {
+            "stop": "Bern",
+            "time": "2026-11-25T18:58",
+            "platform": "6"
+          }
+        }
+      ]
+    },
+    {
+      "weekday": "Wed",
+      "departure": "2026-11-25T18:06",
+      "arrival": "2026-11-25T19:24",
+      "duration_min": 78,
+      "transfers": 0,
+      "legs": [
+        {
+          "line": "IR 16",
+          "direction": "Bern",
+          "from": {
+            "stop": "Zürich HB",
+            "time": "2026-11-25T18:06",
+            "platform": "14"
+          },
+          "to": {
+            "stop": "Bern",
+            "time": "2026-11-25T19:24",
+            "platform": "12"
+          }
+        }
+      ]
+    }
+  ],
+  "source": "Fahrplandaten: opentransportdata.swiss"
+}

@@ -1,0 +1,144 @@
+{
+  "from": {
+    "id": "8507000",
+    "name": "Bern"
+  },
+  "to": {
+    "id": "8503000",
+    "name": "Zürich HB"
+  },
+  "via": [
+    {
+      "id": "8500218",
+      "name": "Olten"
+    }
+  ],
+  "time_is": "departure",
+  "datetime": "2026-11-26T08:00",
+  "connections": [
+    {
+      "weekday": "Thu",
+      "departure": "2026-11-26T08:04",
+      "arrival": "2026-11-26T09:22",
+      "duration_min": 78,
+      "transfers": 2,
+      "legs": [
+        {
+          "line": "IC 61",
+          "direction": "Basel SBB",
+          "from": {
+            "stop": "Bern",
+            "time": "2026-11-26T08:04",
+            "platform": "5"
+          },
+          "to": {
+            "stop": "Olten",
+            "time": "2026-11-26T08:30",
+            "platform": "7"
+          }
+        },
+        {
+          "transfer_min": 7,
+          "at": "Olten"
+        },
+        {
+          "line": "S 26",
+          "direction": "Rotkreuz",
+          "from": {
+            "stop": "Olten",
+            "time": "2026-11-26T08:37",
+            "platform": "3CD"
+          },
+          "to": {
+            "stop": "Aarau",
+            "time": "2026-11-26T08:49",
+            "platform": "2"
+          }
+        },
+        {
+          "transfer_min": 4,
+          "at": "Aarau"
+        },
+        {
+          "line": "RE 37",
+          "direction": "Zürich HB",
+          "from": {
+            "stop": "Aarau",
+            "time": "2026-11-26T08:53",
+            "platform": "3"
+          },
+          "to": {
+            "stop": "Zürich HB",
+            "time": "2026-11-26T09:22",
+            "platform": "18"
+          }
+        }
+      ]
+    },
+    {
+      "weekday": "Thu",
+      "departure": "2026-11-26T08:07",
+      "arrival": "2026-11-26T09:30",
+      "duration_min": 83,
+      "transfers": 1,
+      "legs": [
+        {
+          "line": "IR 17",
+          "direction": "Olten",
+          "from": {
+            "stop": "Bern",
+            "time": "2026-11-26T08:07",
+            "platform": "9"
+          },
+          "to": {
+            "stop": "Olten",
+            "time": "2026-11-26T08:54",
+            "platform": "10"
+          }
+        },
+        {
+          "transfer_min": 5,
+          "at": "Olten"
+        },
+        {
+          "line": "IR 55",
+          "direction": "Zürich HB",
+          "from": {
+            "stop": "Olten",
+            "time": "2026-11-26T08:59",
+            "platform": "2"
+          },
+          "to": {
+            "stop": "Zürich HB",
+            "time": "2026-11-26T09:30",
+            "platform": "15"
+          }
+        }
+      ]
+    },
+    {
+      "weekday": "Thu",
+      "departure": "2026-11-26T08:36",
+      "arrival": "2026-11-26T09:54",
+      "duration_min": 78,
+      "transfers": 0,
+      "legs": [
+        {
+          "line": "IR 16",
+          "direction": "Zürich HB",
+          "from": {
+            "stop": "Bern",
+            "time": "2026-11-26T08:36",
+            "platform": "12"
+          },
+          "to": {
+            "stop": "Zürich HB",
+            "time": "2026-11-26T09:54",
+            "platform": "15"
+          }
+        }
+      ]
+    }
+  ],
+  "source": "Fahrplandaten: opentransportdata.swiss"
+}

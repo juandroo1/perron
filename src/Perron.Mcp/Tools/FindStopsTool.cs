@@ -1,46 +1,37 @@
-using System.ComponentModel;
-
 using ModelContextProtocol;
-using ModelContextProtocol.Server;
 
+using Perron.Mcp.Results;
+using Perron.Mcp.Variants;
 using Perron.Transport;
 
 namespace Perron.Mcp.Tools;
 
-/// <summary>Tool <c>find_stops</c> (AK-1.1, AK-1.2).</summary>
-[McpServerToolType]
+/// <summary>Tool <c>find_stops</c> (AK-1.1, AK-1.2). Texts in <see cref="ToolTexts"/>.</summary>
 public static class FindStopsTool
 {
     public const string Name = "find_stops";
     public const int DefaultLimit = 5;
     public const int MaxLimit = 10;
 
-    [McpServerTool(
-        Name = Name,
-        Title = "Find stops",
-        ReadOnly = true,
-        Idempotent = true,
-        Destructive = false,
-        OpenWorld = true)]
-    [Description(
-        "Find public transport stops in Switzerland by name or near a coordinate. "
-        + "Returns stop IDs, names, the kind of stop (train, tram, bus …) and coordinates; "
-        + "a search near a coordinate also returns the straight-line distance. "
-        + "Use it to turn a place name into a stop ID, to see which stops a name could mean "
-        + "(e.g. \"Buchs\" matches Buchs AG, Buchs SG and others), or to find the stop nearest to a point. "
-        + "It returns no connections or departures. "
-        + "Example: query \"Luzern\" → 8505000 Luzern.")]
     public static async Task<string> FindStopsAsync(
         ITransportApiClient transport,
-        [Description("Stop or place name, e.g. \"Zürich HB\", \"Genève\", \"Buchs\". Omit when searching near a coordinate.")]
+        PerronVariant variant,
         string? query = null,
-        [Description("WGS84 latitude (e.g. 47.378177) to find the nearest stops. Give together with longitude, and no query.")]
         double? latitude = null,
-        [Description("WGS84 longitude (e.g. 8.540192) to find the nearest stops. Give together with latitude, and no query.")]
         double? longitude = null,
-        [Description("Maximum number of stops, 1–10. Default 5.")]
         int limit = DefaultLimit,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default) =>
+        variant.Render(await SearchAsync(transport, variant, query, latitude, longitude, limit, cancellationToken));
+
+    /// <summary>Searches stops by name or near a coordinate; shared by the variants' stop tools.</summary>
+    public static async Task<StopsResult> SearchAsync(
+        ITransportApiClient transport,
+        PerronVariant variant,
+        string? query,
+        double? latitude,
+        double? longitude,
+        int limit,
+        CancellationToken cancellationToken)
     {
         var search = Validate(query, latitude, longitude, limit);
 
@@ -48,13 +39,22 @@ public static class FindStopsTool
         var candidates = found.Where(stop => !string.IsNullOrEmpty(stop.Id)).ToList();
         var stops = candidates.Take(limit).ToList();
 
-        var lines = search.Name is { } name
-            ? FormatByName(name, stops, StopNames.IsAmbiguous(name, candidates))
-            : FormatNear(search.Near!, stops);
-        lines.Add(ToolText.SourceLine);
+        if (search.Name is { } name)
+        {
+            var hint = stops.Count == 0
+                ? $"No stop found for \"{name}\". Check the spelling, or try a shorter name or the name of the town."
+                : StopNames.IsAmbiguous(name, candidates)
+                    ? $"Several stops match \"{name}\". Ask which one is meant, or use its ID in {variant.TripTools}."
+                    : null;
+            return new StopsResult(name, null, stops, hint);
+        }
 
-        // Fixed '\n' so the result is the same on every platform.
-        return string.Join('\n', lines);
+        var near = search.Near!;
+        var noStop = stops.Count == 0
+            ? $"No stop found near {ToolText.Degrees(near.Latitude)}, {ToolText.Degrees(near.Longitude)}. "
+                + "Check the coordinates (WGS84, latitude first); stops are only known in and around Switzerland."
+            : null;
+        return new StopsResult(null, near, stops, noStop);
     }
 
     private static LocationQuery Validate(string? query, double? latitude, double? longitude, int limit)
@@ -96,48 +96,5 @@ public static class FindStopsTool
         }
 
         return LocationQuery.ByCoordinate(new Coordinate(lat, lon)) with { Type = LocationType.Station };
-    }
-
-    private static List<string> FormatByName(string query, IReadOnlyList<Location> stops, bool ambiguous)
-    {
-        if (stops.Count == 0)
-        {
-            return [$"No stop found for \"{query}\". Check the spelling, or try a shorter name or the name of the town."];
-        }
-
-        List<string> lines =
-        [
-            $"Stops for \"{query}\" (ID | name | kind | latitude, longitude):",
-            .. stops.Select(stop => Line(stop, withDistance: false)),
-        ];
-
-        if (ambiguous)
-        {
-            lines.Add($"Several stops match \"{query}\". Ask which one is meant, or use its ID in plan_trip.");
-        }
-
-        return lines;
-    }
-
-    private static List<string> FormatNear(Coordinate point, IReadOnlyList<Location> stops)
-    {
-        var where = $"{ToolText.Degrees(point.Latitude)}, {ToolText.Degrees(point.Longitude)}";
-        if (stops.Count == 0)
-        {
-            return [$"No stop found near {where}. Check the coordinates (WGS84, latitude first); stops are only known in and around Switzerland."];
-        }
-
-        return
-        [
-            $"Stops near {where} (ID | name | kind | latitude, longitude | distance):",
-            .. stops.Select(stop => Line(stop, withDistance: true)),
-        ];
-    }
-
-    private static string Line(Location stop, bool withDistance)
-    {
-        var coordinate = stop.Coordinate is { } c ? $"{ToolText.Degrees(c.Latitude)}, {ToolText.Degrees(c.Longitude)}" : "-";
-        var line = $"{stop.Id} | {stop.Name} | {stop.Icon ?? "-"} | {coordinate}";
-        return withDistance ? $"{line} | {(stop.DistanceMeters is { } d ? ToolText.Meters(d) : "-")}" : line;
     }
 }

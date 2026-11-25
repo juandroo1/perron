@@ -1,0 +1,77 @@
+{
+  "stop": {
+    "id": "8507000",
+    "name": "Bern"
+  },
+  "type": "arrivals",
+  "from": "now",
+  "date": "2026-11-25",
+  "entries": [
+    {
+      "time": "2026-11-25T17:13",
+      "platform": "1E-H",
+      "delay_min": 1,
+      "line": "S 1",
+      "destination": "Fribourg/Freiburg"
+    },
+    {
+      "time": "2026-11-25T17:13",
+      "platform": "22",
+      "line": "S 9",
+      "destination": "Bern",
+      "ends_here": true
+    },
+    {
+      "time": "2026-11-25T17:14",
+      "platform": "10",
+      "line": "S 1",
+      "destination": "Thun"
+    },
+    {
+      "time": "2026-11-25T17:14",
+      "platform": "12A-C",
+      "line": "S 31",
+      "destination": "Biel/Bienne"
+    },
+    {
+      "time": "2026-11-25T17:14",
+      "platform": "5A-C",
+      "line": "S 31",
+      "destination": "Belp"
+    },
+    {
+      "time": "2026-11-25T17:17",
+      "platform": "23",
+      "line": "S 7",
+      "destination": "Bern",
+      "ends_here": true
+    },
+    {
+      "time": "2026-11-25T17:18",
+      "platform": "49",
+      "line": "IR 65",
+      "destination": "Bern",
+      "ends_here": true
+    },
+    {
+      "time": "2026-11-25T17:18",
+      "platform": "13",
+      "line": "S 4",
+      "destination": "Langnau i.E."
+    },
+    {
+      "time": "2026-11-25T17:19",
+      "platform": "1A-D",
+      "line": "S 2",
+      "destination": "Laupen BE"
+    },
+    {
+      "time": "2026-11-25T17:20",
+      "platform": "24",
+      "line": "S 8",
+      "destination": "Bern",
+      "ends_here": true
+    }
+  ],
+  "source": "Fahrplandaten: opentransportdata.swiss"
+}

@@ -1,0 +1,42 @@
+{
+  "query": "Buchs",
+  "stops": [
+    {
+      "id": "8502123",
+      "name": "Buchs AG",
+      "kind": "train",
+      "latitude": 47.38974,
+      "longitude": 8.06958
+    },
+    {
+      "id": "8509404",
+      "name": "Buchs SG",
+      "kind": "train",
+      "latitude": 47.16841,
+      "longitude": 9.47864
+    },
+    {
+      "id": "8574041",
+      "name": "Buchs SG, Bahnhof",
+      "kind": "bus",
+      "latitude": 47.16834,
+      "longitude": 9.47812
+    },
+    {
+      "id": "8503527",
+      "name": "Buchs-Dällikon",
+      "kind": "train",
+      "latitude": 47.45341,
+      "longitude": 8.4356
+    },
+    {
+      "id": "8590212",
+      "name": "Buchs AG, Heuweg",
+      "kind": "bus",
+      "latitude": 47.38912,
+      "longitude": 8.08787
+    }
+  ],
+  "hint": "Several stops match \"Buchs\". Ask which one is meant, or use its ID in plan_trip.",
+  "source": "Fahrplandaten: opentransportdata.swiss"
+}

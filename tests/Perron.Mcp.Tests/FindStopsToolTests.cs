@@ -1,6 +1,7 @@
 using ModelContextProtocol;
 
 using Perron.Mcp.Tools;
+using Perron.Mcp.Variants;
 using Perron.Transport;
 
 namespace Perron.Mcp.Tests;
@@ -148,5 +149,5 @@ public sealed class FindStopsToolTests
         double? longitude = null,
         int limit = FindStopsTool.DefaultLimit) =>
         FindStopsTool.FindStopsAsync(
-            fixture.Client, query, latitude, longitude, limit, TestContext.Current.CancellationToken);
+            fixture.Client, PerronVariant.Default, query, latitude, longitude, limit, TestContext.Current.CancellationToken);
 }

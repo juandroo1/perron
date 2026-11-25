@@ -45,21 +45,6 @@ public static class ToolText
         return sameDay ? Time(instant) : $"{ShortDate(instant)} {Time(instant)}";
     }
 
-    /// <summary>" pl. 7", " pl. 7 (now 8)" when the forecast platform differs, or "" without a platform.</summary>
-    public static string Platform(Checkpoint checkpoint)
-    {
-        var planned = checkpoint.Platform;
-        var forecast = checkpoint.Prognosis?.Platform;
-        if (!string.IsNullOrWhiteSpace(planned))
-        {
-            return !string.IsNullOrWhiteSpace(forecast) && forecast != planned
-                ? $" pl. {planned} (now {forecast})"
-                : $" pl. {planned}";
-        }
-
-        return string.IsNullOrWhiteSpace(forecast) ? "" : $" pl. {forecast}";
-    }
-
     /// <summary>" (+3 min)" for a delay, "" without delay or real-time data.</summary>
     public static string Delay(int? minutes) => minutes is > 0 and var delay ? $" (+{delay} min)" : "";
 

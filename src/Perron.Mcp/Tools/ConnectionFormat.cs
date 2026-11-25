@@ -1,3 +1,4 @@
+using Perron.Mcp.Results;
 using Perron.Transport;
 
 namespace Perron.Mcp.Tools;
@@ -11,57 +12,37 @@ public static class ConnectionFormat
 {
     private const string Indent = "   ";
 
-    public static IEnumerable<string> Lines(Connection connection, int number)
+    public static IEnumerable<string> Lines(Connection connection, int number) => Lines(ConnectionView.From(connection), number);
+
+    public static IEnumerable<string> Lines(ConnectionView connection, int number)
     {
-        var departure = connection.From.Departure ?? connection.Sections.FirstOrDefault()?.Departure.Departure;
-        var arrival = connection.To.Arrival ?? connection.Sections.LastOrDefault()?.Arrival.Arrival;
-        var day = departure ?? arrival;
-
-        var duration = connection.Duration ?? (departure is { } d && arrival is { } a ? a - d : null);
+        var day = connection.Day;
         var transfers = connection.Transfers == 1 ? "1 transfer" : $"{connection.Transfers} transfers";
-        yield return $"{number}) {(day is { } date ? ToolText.Date(date) + " " : "")}{ToolText.TimeOnDay(departure, day)} → {ToolText.TimeOnDay(arrival, day)}"
-            + $" | {(duration is { } span ? ToolText.Duration(span) : "?")} | {transfers}";
+        yield return $"{number}) {(day is { } date ? ToolText.Date(date) + " " : "")}"
+            + $"{ToolText.TimeOnDay(connection.Departure, day)} → {ToolText.TimeOnDay(connection.Arrival, day)}"
+            + $" | {(connection.Duration is { } total ? ToolText.Duration(total) : "?")} | {transfers}";
 
-        DateTimeOffset? lastJourneyArrival = null;
-        string? lastJourneyStop = null;
-        var walkedSinceLastJourney = false;
-        foreach (var section in connection.Sections)
+        foreach (var leg in connection.Legs)
         {
-            if (section.Journey is not { } journey)
+            yield return Indent + leg switch
             {
-                walkedSinceLastJourney = true;
-                yield return Indent + Walk(section);
-                continue;
-            }
-
-            if (lastJourneyArrival is { } previous && section.Departure.Departure is { } next)
-            {
-                var minutes = ToolText.Duration(next - previous);
-                yield return Indent + (walkedSinceLastJourney
-                    ? $"transfer {minutes} incl. walk"
-                    : $"transfer at {lastJourneyStop} {minutes}");
-            }
-
-            var line = journey.Line ?? "ride";
-            var direction = journey.Destination is { } destination ? $" to {destination}" : "";
-            yield return $"{Indent}{line}{direction}: {Stop(section.Departure, section.Departure.Departure, day)}"
-                + $" → {Stop(section.Arrival, section.Arrival.Arrival, day)}";
-
-            lastJourneyArrival = section.Arrival.Arrival;
-            lastJourneyStop = section.Arrival.Station?.Name;
-            walkedSinceLastJourney = false;
+                RideLeg ride => $"{ride.Line}{(ride.Direction is { } direction ? $" to {direction}" : "")}: "
+                    + $"{Point(ride.From, day)} → {Point(ride.To, day)}",
+                WalkLeg walk => (walk.Duration is { } span ? $"walk {ToolText.Duration(span)}" : "walk")
+                    + (walk.To is { } to ? $" to {to}" : ""),
+                TransferLeg transfer => transfer.IncludesWalk
+                    ? $"transfer {ToolText.Duration(transfer.Duration)} incl. walk"
+                    : $"transfer at {transfer.At} {ToolText.Duration(transfer.Duration)}",
+                _ => throw new InvalidOperationException("Unknown leg."),
+            };
         }
     }
 
-    private static string Walk(Section section)
-    {
-        var duration = section.Walk?.Duration
-            ?? (section.Departure.Departure is { } from && section.Arrival.Arrival is { } to ? to - from : null);
-        var target = section.Arrival.Station?.Name is { } name ? $" to {name}" : "";
-        return duration is { } span ? $"walk {ToolText.Duration(span)}{target}" : $"walk{target}";
-    }
-
     /// <summary>"Olten 08:30 pl. 7 (+3 min)", with "pl. 7 (now 8)" when the forecast platform differs.</summary>
-    private static string Stop(Checkpoint checkpoint, DateTimeOffset? time, DateTimeOffset? day) =>
-        $"{checkpoint.Station?.Name ?? "?"} {ToolText.TimeOnDay(time, day)}{ToolText.Platform(checkpoint)}{ToolText.Delay(checkpoint.DelayMinutes)}";
+    public static string Point(StopPoint point, DateTimeOffset? day) =>
+        $"{point.Stop ?? "?"} {ToolText.TimeOnDay(point.Time, day)}{Platform(point)}{ToolText.Delay(point.DelayMinutes)}";
+
+    /// <summary>" pl. 7", " pl. 7 (now 8)", or "" without a platform.</summary>
+    public static string Platform(StopPoint point) =>
+        point.Platform is null ? "" : $" pl. {point.Platform}{(point.PlatformNow is { } now ? $" (now {now})" : "")}";
 }
