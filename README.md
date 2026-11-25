@@ -55,6 +55,18 @@ Tools (all read-only):
 
 Tool texts and results are in English. Every result ends with the attribution "Fahrplandaten: opentransportdata.swiss".
 
+### Variants
+
+For the benchmark ablations the same server runs in variants, chosen by environment variables (invalid values stop the start):
+
+| Variable | Values | Default |
+|---|---|---|
+| `PERRON_TOOLS` | `standard` (3 tools) | `standard` |
+| `PERRON_DESCRIPTIONS` | `rich` (when to use a tool, when not, example) or `minimal` (one sentence, parameter meaning, format and range) | `rich` |
+| `PERRON_FORMAT` | `compact` (short text) or `json` (the same fields as JSON) | `compact` |
+
+Each variant reports its own name in `serverInfo`: `perron-rich` for the defaults, otherwise `perron-` plus the values that differ, e.g. `perron-minimal` or `perron-json`. Tool errors are plain text in every variant.
+
 Errors are written for the agent, so it knows what to do next:
 
 - **Invalid input** (unreadable date, unknown stop, too many via stops …): a tool error with a concrete hint, e.g. similar stop names.
