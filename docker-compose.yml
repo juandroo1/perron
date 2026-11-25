@@ -50,7 +50,13 @@ services:
     build:
       context: .
       dockerfile: src/Perron.Bench/Dockerfile
+      args:
+        # Commit recorded in every run manifest: GIT_SHA=$(git rev-parse HEAD) docker compose --profile bench build
+        GIT_SHA: ${GIT_SHA:-unknown}
     image: perron-bench:dev
+    volumes:
+      # Registry, bench.json and tasks in; results (committed) out.
+      - ./bench:/app/bench
     env_file:
       - path: .env
         required: false

@@ -67,6 +67,8 @@ jobs:
       # layer cache, and loads them into the local Docker engine. The variants mcp-* use the same image as mcp.
       - name: Build images (compose via bake)
         uses: docker/bake-action@v7
+        env:
+          GIT_SHA: ${{ github.sha }}
         with:
           source: .
           files: docker-compose.yml
