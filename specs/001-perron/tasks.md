@@ -26,7 +26,7 @@ Immer nur einen Task gleichzeitig bearbeiten. Ein Task ist erst erledigt, wenn d
 
 ## Phase 3 – Perron Bench
 
-- [ ] 3.1 Server-Registry und `bench check` für HTTP- und stdio-Server, inkl. Token-Grösse der Tool-Definitionen (ohne Key «n/a») und `tools/list`-Hash. Fähigkeiten mit Begründung, `stm` optional. Fremde Server im `bench`-Image mit fixierten Versionen, transitive Python-Abhängigkeiten gepinnt (AK-7.1, AK-7.2)
+- [x] 3.1 Server-Registry und `bench check` für HTTP- und stdio-Server, inkl. Token-Grösse der Tool-Definitionen (ohne Key «n/a») und `tools/list`-Hash. Fähigkeiten mit Begründung, `stm` optional. Fremde Server im `bench`-Image mit fixierten Versionen, transitive Python-Abhängigkeiten gepinnt (AK-7.1, AK-7.2)
 - [x] 3.2 *(entfällt, vorgezogen als 1.3)*
 - [ ] 3.3 Agent-Loop, `bench/bench.json`, Übernahme der Server-`instructions`, Traces, Run-Manifest, Metriken, `--dry-run` (AK-8.1 bis AK-8.3)
 - [ ] 3.4 Oracles mit Verifikation ab Referenzzeit, Regex-Prüfungen, Grounding-Check, Infra-Fehler, `bench rescore`; Golden-Traces (bestanden/nicht bestanden) als Tests der Checks (AK-9.1, AK-9.3 bis AK-9.6)

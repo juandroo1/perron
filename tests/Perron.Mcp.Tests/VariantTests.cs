@@ -128,10 +128,22 @@ public sealed class VariantTests(WebApplicationFactory<Program> factory) : IClas
 
         var error = Record.Exception(() => app.CreateClient());
 
-        var validation = error as OptionsValidationException
-            ?? (error as AggregateException)?.InnerExceptions.OfType<OptionsValidationException>().FirstOrDefault();
-        Assert.NotNull(validation);
+        // Depending on which part of the host starts first, the validation error can arrive wrapped
+        // (AggregateException, InvalidOperationException …); look through the whole chain.
+        Assert.NotNull(error);
+        var validation = Flatten(error).OfType<OptionsValidationException>().FirstOrDefault();
+        Assert.True(validation is not null, $"No OptionsValidationException in: {error}");
         Assert.Contains(message, validation.Failures);
+    }
+
+    private static IEnumerable<Exception> Flatten(Exception error)
+    {
+        yield return error;
+        var inner = error is AggregateException aggregate ? aggregate.InnerExceptions : error.InnerException is { } single ? [single] : [];
+        foreach (var nested in inner.SelectMany(Flatten))
+        {
+            yield return nested;
+        }
     }
 
     [Theory]
