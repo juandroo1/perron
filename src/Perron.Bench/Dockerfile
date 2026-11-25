@@ -16,6 +16,8 @@ RUN dotnet publish src/Perron.Bench/Perron.Bench.csproj -c Release -o /app --no-
 FROM mcr.microsoft.com/dotnet/runtime:10.0 AS runtime
 WORKDIR /app
 COPY --from=build /app .
+# Server registry and methodology (BENCH_DIR defaults to ./bench). Task sets and results are not baked in.
+COPY bench/servers.json bench/bench.json bench/
 
 USER $APP_UID
 ENTRYPOINT ["dotnet", "Perron.Bench.dll"]
