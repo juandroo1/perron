@@ -43,7 +43,28 @@ Perron.Mcp ──► Perron.Transport ──► transport.opendata.ch (REST, ohn
 - Seit Oktober 2026 beantwortet die API Anfragen direkt aus den nationalen Fahrplandaten (GTFS, GTFS-RT von opentransportdata.swiss, Routing mit MOTIS). Echtzeitdaten werden etwa alle 30 Sekunden aktualisiert, der Fahrplan etwa zweimal pro Woche.
 - Kein festes Limit pro Client, aber wiederholte gleiche Anfragen in kurzen Abständen werden gedrosselt. Deshalb Caching und Pausen im Bench.
 - Quellenangabe: «Fahrplandaten: opentransportdata.swiss».
-- In Task 1.1 verifizieren: Parameter und Antwortformat der drei Endpunkte, Verhalten bei mehrdeutigen Namen (welche unterscheidenden Felder es gibt), Zeitformate, Fehlerantworten, Drosselungsantwort.
+- Weitere Endpunkte seit November 2026 (für Perron vorerst nicht genutzt): `/trip`, `/fare`, `/formation`, `/ojp20`, `/mcp` (der offizielle MCP-Server).
+
+### Verifiziert in Task 1.1 (2026-11-25, Fixtures in `tests/fixtures/transport-opendata/`)
+
+**Parameter**
+- `/locations`: `query` oder `x`+`y` (x = Breite, y = Länge); `type` = `all` (Standard) | `station` | `poi` | `address`. Mit Koordinaten und `type=all` kommt zuerst die nächste Adresse (ohne `id`), mit `type=station` nur Haltestellen, jeweils mit `distance` in Metern.
+- `/connections`: `from`, `to` (Name, ID, Adresse oder `lat,lon`), `via` (bis 2, ab zwei als `via[]`), `date` (`YYYY-MM-DD`), `time` (`hh:mm`), `isArrivalTime` (0/1), `transportations[]` (`train`, `tram`, `ship`, `bus`, `cableway`), `limit` (1–16), `page` (−10 bis 10, negativ = früher), `minTransferTime` (0–60 min), `walkingSpeed`, `sharedMobility`, `geometry`, `fields`.
+- `/stationboard`: `station` oder `id` (ID hat Vorrang), `limit` (weiche Grenze: gleiche Abfahrtszeit am Ende wird ganz geliefert, z. B. 14 statt 10), `transportations[]`, `datetime` (`YYYY-MM-DD hh:mm`), `type` = `departure` | `arrival`.
+
+**Antworten**
+- Zeiten: `2026-11-25T17:32:00+0100`, Offset **ohne** Doppelpunkt; zusätzlich Unix-Timestamps (`departureTimestamp`). Prognosen teils mit Sekunden (`17:14:31`).
+- Dauer: eigenes Format `00d00:56:00`.
+- Haltestelle: `id`, `name`, `coordinate {x, y}`, `distance`, `icon` (`train`/`tram`/`bus`/null; nicht dokumentiert). **Kein Kantons- oder Ortsfeld**: Mehrdeutige Namen unterscheiden sich nur im Namen («Buchs AG», «Buchs SG», «Buchs-Dällikon») und im `icon`.
+- Verbindung: `from`/`to` (Zeit, Gleis, `delay`, `prognosis`), `duration`, `transfers`, `products` (z. B. `IC 1`), `capacity1st`/`capacity2nd` (Auslastungsprognose 1–3, sonst null/−1), `sections[]` mit `journey` (`category`, `number`, `operator`, `to`, `passList`, `trip`) oder `walk` (`duration` in Sekunden).
+- Gleise mit Sektoren (`3CD`, `12A-C`); `delay` ist Zahl in Minuten oder `null` ohne Echtzeitdaten; Zugnummern teils mit führenden Nullen (`EC000015`, `IC001410`); `operator` teils mit Füllzeichen (`"VBZ    F"`).
+- Abfahrtstafel: `station` + `stationboard[]` mit `stop` (Zeit, Gleis, `delay`, `prognosis`), `category`, `number`, `to`, `operator`, `passList`. Auch bei `type=arrival` ist `to` das Endziel des Zuges; die Herkunft steht nur in `passList`.
+
+**Mehrdeutigkeit und Fehler**
+- Mehrdeutiger Name in `/connections` oder `/stationboard`: Die API **wählt still einen Treffer** (aus «Buchs» wird «Buchs AG») und liefert keine Kandidatenliste (`stations.from` enthält nur den gewählten). Perron muss Mehrdeutigkeit selbst über `/locations` erkennen (AK-2.4).
+- Unbekannter Name: **HTTP 200 mit leeren Listen** (`{"stations":[]}`, `{"connections":[],"from":null,...}`, `{"station":null,"stationboard":[]}`), kein Fehler. Fehlender Pflichtparameter `to`: ebenfalls 200 mit leeren Listen.
+- Fehler sind **JSON**, nicht Klartext wie in der Doku: `{"errors":[{"message":"..."}]}`. Datum ausserhalb des geladenen Fahrplanfensters (am 2026-11-25: `[2026-11-15, 2027-04-15[`) und ungültiges Datum: **400**. Ungültiges `datetime` bei `/stationboard`: **500** mit PHP-Meldung.
+- Drosselung: laut Doku 429 «when the planner is busy»; nicht provoziert, keine echte Antwort vorhanden.
 
 ## 4. Tool-Design Perron MCP
 
@@ -62,7 +83,7 @@ Grundsätze (Hypothesen, die der Bench prüft):
 | `plan_trip` | `from`, `to` (Name oder ID), `via?` (max. 2), `datetime?` (ISO 8601 lokal, Europe/Zurich; Standard: jetzt), `time_is` (`departure` \| `arrival`, Standard `departure`), `transport_types?` (Enum), `limit` (Standard 4, max. 8) |
 | `get_departures` | `stop` (Name oder ID), `datetime?` (wie oben), `type` (`departure` \| `arrival`), `transport_types?` (Enum), `limit` (Standard 10, max. 30) |
 
-`transport_types` ist ein Enum mit den Werten der API (in 1.1 verifiziert, voraussichtlich `train`, `tram`, `bus`, `ship`, `cableway`).
+`transport_types` ist ein Enum mit den Werten der API (in 1.1 verifiziert): `train`, `tram`, `bus`, `ship`, `cableway`.
 
 ### Ergebnisformat `compact`
 Textformat, eine Verbindung bzw. Abfahrt pro Block:
@@ -225,4 +246,7 @@ STM_TRANSPORT_API_KEY=     # für swiss-transport-mcp, optional
 | 2026-11-25 | CI baut die Images mit `docker buildx bake` aus `docker-compose.yml` (GHA-Layer-Cache) statt `docker compose --profile bench build` | Gleiche Images und Tags, aber mit Cache; `docker compose up` verwendet sie danach ohne Neubau |
 | 2026-11-25 | `PERRON_MCP_URL` für den `bench`-Container steht in `docker-compose.yml` (`environment`), nicht in `.env` | Beschreibt nur die Verbindung zwischen den Containern, ist kein Secret und muss ohne `.env` (CI) funktionieren |
 | 2026-11-25 | Minimaler `bench check` bis Task 3.1: nur Server `perron`, erwartete Tools per `--expect-tools` | Registry (`servers.json`) und Token-Messung kommen in Task 3.1; die CI braucht vorher schon einen Smoke-Test |
+| 2026-11-25 | Fremde Python-Server werden mit dem Stand ihrer Abhängigkeiten am Erscheinungstag installiert: `uvx --exclude-newer <Release-Datum + 1 Tag> --from <paket>==<version> <befehl>` (Entscheid Sandro) | `swiss-public-transport-mcp` 0.1.10 verlangt `mcp>=1.23` ohne Obergrenze und stürzt mit `mcp` 2.x ab (FastMCP fehlt). So läuft er unverändert, ohne Patch am Code; dieselbe Regel für alle Python-Server macht die Installation reproduzierbar. Im Report offengelegt |
+| 2026-11-25 | Drosselung nicht provoziert; Tests für AK-4.2 mit synthetischer, als solche markierter 429-Antwort | Leitplanke «API schonen» |
+| 2026-11-25 | Unbekannte Haltestellen erkennt Perron selbst (leere Liste von der API), nicht am HTTP-Status | Die API antwortet bei unbekannten Namen mit 200 und leeren Listen |
 | 2026-11-25 | Tool `ping` nur bis Task 2.1; danach entfernt | Sonst zählt es in Bench-Vergleichen zu Tool-Anzahl und Tokens der Tool-Definitionen und verfälscht die Ablation «Anzahl Tools» |

@@ -80,11 +80,17 @@ Nebenziel: Das Projekt zeigt Agent- und Tool-Design, Eval-Methodik und MCP in .N
 |---|---|---|---|
 | `perron-rich` | Perron MCP, Variante standard/rich/compact | HTTP | Hauptvariante |
 | `perron-minimal`, `perron-json`, `perron-many` | Varianten für Ablationen | HTTP | siehe plan.md, Abschnitt 4 |
-| `official` | transport.opendata.ch/mcp | HTTP | offizieller Server, 4 Tools, gleiche Datenquelle; gehostet, Version nicht fixierbar, Hash von `tools/list` pro Lauf |
-| `spt` | swiss-public-transport-mcp (PyPI) | stdio | 4 Tools, gleiche Datenquelle |
-| `stm` | swiss-transport-mcp (PyPI) | stdio | optional; 11 Tools, OJP, braucht kostenlosen API-Key von opentransportdata.swiss |
+| `official` | transport.opendata.ch/mcp | HTTP | offizieller Server, gleiche Datenquelle; gehostet, Version nicht fixierbar, Hash von `tools/list` pro Lauf |
+| `spt` | swiss-public-transport-mcp (PyPI) | stdio | gleiche Datenquelle |
+| `stm` | swiss-transport-mcp (PyPI) | stdio | optional; OJP, braucht kostenlosen API-Key von opentransportdata.swiss |
 
-Die Versionen werden in Task 1.1 bestimmt und fixiert.
+Bestimmt in Task 1.1 (2026-11-25; Snapshots von `initialize` und `tools/list` in `tests/fixtures/foreign-servers/`):
+
+| ID | Version | Lizenz | Tools | Tool-Definitionen | Start | Bemerkungen |
+|---|---|---|---|---|---|---|
+| `official` | gehostet, `serverInfo.version` `2c28784a` | – (Dienst von Opendata.ch) | 4: `find_stations`, `stations_nearby`, `connections`, `departures` | ca. 3'100 Zeichen | `https://transport.opendata.ch/mcp` (stateless, kein Key) | read-only Annotations; ausführliche `instructions` (Zeitzone, Mehrdeutigkeit, Fahrplanfenster); Ergebnisse als kurzer Text |
+| `spt` | 0.1.10 (2026-05-15) | MIT | 4: `search_locations`, `plan_journey`, `get_stationboard`, `get_booking_link` | ca. 4'700 Zeichen | `uvx --exclude-newer 2026-05-16T00:00:00Z --from swiss-public-transport-mcp==0.1.10 swiss-public-transport-mcp` | keine Tool-Annotations; `serverInfo.version` meldet die SDK-Version (1.27.1); startet nur mit Abhängigkeiten vom Erscheinungstag (siehe Entscheidungsprotokoll) |
+| `stm` | 0.5.0 (2026-09-26) | MIT | 11: u. a. `transport_search_stop`, `transport_trip_plan`, `transport_departures`, `get_train_occupancy`, `get_transport_disruptions`, `get_ticket_price` | ca. 20'500 Zeichen | `uvx --exclude-newer 2026-09-27T00:00:00Z --from swiss-transport-mcp==0.5.0 swiss-transport-mcp` | Key in `TRANSPORT_API_KEY` (aus `STM_TRANSPORT_API_KEY`); Störungen und Auslastung brauchen eigene Keys (`SIRI_SX_API_KEY`, `OCCUPANCY_API_KEY`); sechs Tools nehmen alle Parameter in einem Objekt `params`; `instructions` sprechen von 10 Tools |
 
 ## 6. Aufgaben-Set
 
@@ -93,6 +99,7 @@ Die Versionen werden in Task 1.1 bestimmt und fixiert.
 - Erfolg bei `ambiguous`: Der Agent fragt nach oder nennt die Kandidaten. Rät er still einen Treffer, ist die Aufgabe nicht bestanden.
 - Rund 6 `dev`-Aufgaben sind als `smoke` markiert und bilden die Suite für `bench run --suite smoke`.
 - Die Aufgaben schreibt ein Mensch, bevor die Perron-Tools gebaut werden (Task 1.3). Zeiten werden relativ formuliert (z. B. «morgen um 08:00»), die Referenzzeit gibt der Harness im System-Prompt vor.
+- Zeiten in Aufgaben bleiben im Fahrplanfenster der API (etwa eine Woche zurück bis gut drei Monate voraus; ausserhalb antwortet die API mit Fehler 400, siehe plan.md, Abschnitt 3).
 - Das Test-Set wird nach dem Schreiben eingefroren; sein SHA-256-Hash steht im Entscheidungsprotokoll von plan.md.
 
 ## 7. Qualitätsziele
@@ -118,7 +125,8 @@ Es gibt bewusst kein Ziel «Perron muss gewinnen». Das Ziel ist ein ehrlicher V
 ## 9. Offene Fragen
 
 - Lizenzen der fremden Server prüfen, bevor Ergebnisse mit Namen veröffentlicht werden. Den Autoren die Ergebnisse vorab zeigen?
-- Störungen und Auslastung später im eigenen Server ergänzen?
+- Störungen und Auslastung später im eigenen Server ergänzen? Seit November 2026 liefert transport.opendata.ch eine Auslastungsprognose (`capacity1st`/`capacity2nd`) ohne zusätzlichen Key; Perron könnte die Fähigkeit `occupancy` damit abdecken.
+- `plan_trip` um `minTransferTime` (Mindest-Umsteigezeit, 0–60 min) ergänzen? Die API kann es direkt; heute muss der Agent selbst filtern.
 - Bench als wiederverwendbares Werkzeug für beliebige MCP-Server veröffentlichen (`dotnet tool`)?
 - Tracing über OpenTelemetry (das MCP-SDK bietet eine `ActivitySource`)?
 - Volle 2×2-Ablation (Beschreibungen × Format, also auch `minimal` + `json`), um Wechselwirkungen zu messen?
