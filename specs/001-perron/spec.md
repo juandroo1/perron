@@ -130,4 +130,5 @@ Es gibt bewusst kein Ziel «Perron muss gewinnen». Das Ziel ist ein ehrlicher V
 - `get_departures` um die weiteren Halte ergänzen (z. B. Parameter `stops_at`)? Die API liefert sie (`passList`), mitgeliefert kosten sie aber viele Tokens. Heute beantwortet `plan_trip` Fragen wie «hält der Zug in Thun?» (Task 2.3).
 - Bench als wiederverwendbares Werkzeug für beliebige MCP-Server veröffentlichen (`dotnet tool`)?
 - Tracing über OpenTelemetry (das MCP-SDK bietet eine `ActivitySource`)?
+- Schemas portabler machen? Optionale Parameter stehen als `"type": ["string", "null"]` im Schema; das ist gültiges JSON Schema und für Claude kein Problem, der MCP Inspector warnt aber, dass Clients mit einem Dialekt ohne Typ-Arrays (z. B. Gemini) solche Tools ablehnen könnten. Alternative: `anyOf` oder Parameter ohne `null`. Ändert `tools/list` und braucht deshalb einen Bench-Vergleich (Task 2.6).
 - Volle 2×2-Ablation (Beschreibungen × Format, also auch `minimal` + `json`), um Wechselwirkungen zu messen?

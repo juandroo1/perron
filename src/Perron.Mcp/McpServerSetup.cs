@@ -47,7 +47,9 @@ public static class McpServerSetup
 
         return services
             .AddMcpServer()
-            .WithRequestFilters(filters => filters.AddCallToolFilter(TransportErrorFilter.Wrap));
+            .WithRequestFilters(filters => filters
+                .AddCallToolFilter(ArgumentFilter.Wrap)
+                .AddCallToolFilter(TransportErrorFilter.Wrap));
     }
 
     private static string? Setting(IConfiguration configuration, string variable) =>

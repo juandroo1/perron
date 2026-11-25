@@ -55,6 +55,38 @@ Tools (all read-only):
 
 Tool texts and results are in English. Every result ends with the attribution "Fahrplandaten: opentransportdata.swiss".
 
+### Use with Claude Code and Claude Desktop
+
+**Claude Code** reads `.mcp.json` in this repository, which points to Perron MCP from Docker Compose:
+
+```bash
+docker compose up -d --wait        # Perron MCP on http://127.0.0.1:8080/mcp
+claude                             # in the repository; approve the project server "perron" once
+```
+
+`/mcp` in Claude Code shows the server and its tools. Without this repository, add it once for your user:
+
+```bash
+claude mcp add --transport http perron http://localhost:8080/mcp
+```
+
+**Claude Desktop** starts local servers itself over stdio. Build the image once (`docker compose build mcp`), then add Perron to `claude_desktop_config.json` (Windows: `%APPDATA%\Claude\claude_desktop_config.json`, macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`) and restart Claude Desktop:
+
+```json
+{
+  "mcpServers": {
+    "perron": {
+      "command": "docker",
+      "args": ["run", "-i", "--rm", "perron-mcp:dev", "--stdio"]
+    }
+  }
+}
+```
+
+This needs Docker but no .NET. With the .NET SDK instead, run `dotnet publish src/Perron.Mcp -c Release -o publish/perron` and use `"command": "dotnet", "args": ["<repository>/publish/perron/Perron.Mcp.dll", "--stdio"]`.
+
+To try a variant, pass its settings, e.g. `"args": ["run", "-i", "--rm", "-e", "PERRON_TOOLS=many", "perron-mcp:dev", "--stdio"]`.
+
 ### Variants
 
 For the benchmark ablations the same server runs in variants, chosen by environment variables (invalid values stop the start):

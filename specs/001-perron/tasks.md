@@ -22,7 +22,7 @@ Immer nur einen Task gleichzeitig bearbeiten. Ein Task ist erst erledigt, wenn d
 - [x] 2.3 `get_departures` (AK-3.1, AK-2.4)
 - [x] 2.4 Fehlerbehandlung, leere Ergebnisse mit Hinweis, Tool-Annotations über alle Tools (AK-4.1, AK-4.2)
 - [x] 2.5 Varianten `standard`/`many`, `rich`/`minimal` und `compact`/`json`, eigene `serverInfo`-Namen, Varianten im Compose, Snapshot-Tests von `tools/list` je Variante (AK-4.3, AK-5.1, AK-5.2)
-- [ ] 2.6 `.mcp.json`, README-Anleitung für Claude Code und Claude Desktop; alle Tools von Hand in Claude Code ausprobieren (AK-6.1, AK-6.2)
+- [x] 2.6 `.mcp.json`, README-Anleitung für Claude Code und Claude Desktop; alle Tools von Hand in Claude Code ausprobieren (AK-6.1, AK-6.2)
 
 ## Phase 3 – Perron Bench
 
