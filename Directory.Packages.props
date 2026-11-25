@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup Label="MCP">
+    <PackageVersion Include="Anthropic" Version="13.14.0" />
     <PackageVersion Include="ModelContextProtocol" Version="2.4.0" />
     <PackageVersion Include="ModelContextProtocol.AspNetCore" Version="2.4.0" />
   </ItemGroup>

@@ -1,0 +1,116 @@
+{
+  // Server registry of Perron Bench (spec.md AK-7.1, section 5; plan.md section 6).
+  // Capabilities are fixed before the first run. Rule: a capability counts as covered when its data can be reached
+  // through the server's tools, also by a detour; not whether a convenient tool exists.
+  // env maps the server process's variable to the name in .env; keys come only from .env.
+  "servers": [
+    {
+      "id": "perron-rich",
+      "transport": "http",
+      "url": "http://localhost:8080/mcp",
+      "url_env": "PERRON_MCP_URL",
+      "version": "repository",
+      "hosted": false,
+      "optional": false,
+      "notes": "Perron MCP from this repository, variant standard/rich/compact (compose service mcp).",
+      "capabilities": [
+        { "name": "stops", "reason": "find_stops searches stops by name or near a coordinate." },
+        { "name": "trips", "reason": "plan_trip plans connections with via, departure or arrival time and means of transport." },
+        { "name": "departures", "reason": "get_departures lists departures and arrivals of a stop." }
+      ]
+    },
+    {
+      "id": "perron-minimal",
+      "transport": "http",
+      "url": "http://mcp-minimal:8080/mcp",
+      "version": "repository",
+      "hosted": false,
+      "optional": false,
+      "notes": "Variant standard/minimal/compact (compose service mcp-minimal, profile bench).",
+      "capabilities": [
+        { "name": "stops", "reason": "find_stops searches stops by name or near a coordinate." },
+        { "name": "trips", "reason": "plan_trip plans connections with via, departure or arrival time and means of transport." },
+        { "name": "departures", "reason": "get_departures lists departures and arrivals of a stop." }
+      ]
+    },
+    {
+      "id": "perron-json",
+      "transport": "http",
+      "url": "http://mcp-json:8080/mcp",
+      "version": "repository",
+      "hosted": false,
+      "optional": false,
+      "notes": "Variant standard/rich/json (compose service mcp-json, profile bench).",
+      "capabilities": [
+        { "name": "stops", "reason": "find_stops searches stops by name or near a coordinate." },
+        { "name": "trips", "reason": "plan_trip plans connections with via, departure or arrival time and means of transport." },
+        { "name": "departures", "reason": "get_departures lists departures and arrivals of a stop." }
+      ]
+    },
+    {
+      "id": "perron-many",
+      "transport": "http",
+      "url": "http://mcp-many:8080/mcp",
+      "version": "repository",
+      "hosted": false,
+      "optional": false,
+      "notes": "Variant many/rich/compact with 7 tools (compose service mcp-many, profile bench).",
+      "capabilities": [
+        { "name": "stops", "reason": "search_stops_by_name and search_stops_near find stops." },
+        { "name": "trips", "reason": "get_connections_departing, get_connections_arriving and get_connections_via plan connections." },
+        { "name": "departures", "reason": "get_departures and get_arrivals list a stop's board." }
+      ]
+    },
+    {
+      "id": "official",
+      "transport": "http",
+      "url": "https://transport.opendata.ch/mcp",
+      "hosted": true,
+      "optional": false,
+      "tools_hash": "f899f0f82cbb66f9f67a888d703851b831038486dac19f44609af44e19b36367",
+      "notes": "Official MCP server of transport.opendata.ch; hosted, so tracked by the tools/list hash (snapshot of task 1.1).",
+      "capabilities": [
+        { "name": "stops", "reason": "find_stations and stations_nearby find stops by name or near a point." },
+        { "name": "trips", "reason": "connections plans connections with via and arrival time." },
+        { "name": "departures", "reason": "departures shows the departure or arrival board of a station." }
+      ]
+    },
+    {
+      "id": "spt",
+      "transport": "stdio",
+      "command": "/opt/mcp/spt/bin/swiss-public-transport-mcp",
+      "version": "swiss-public-transport-mcp 0.1.10",
+      "hosted": false,
+      "optional": false,
+      "notes": "PyPI swiss-public-transport-mcp 0.1.10 (MIT), installed in the bench image with dependencies as of its release day.",
+      "capabilities": [
+        { "name": "stops", "reason": "search_locations finds stops by name or near coordinates." },
+        { "name": "trips", "reason": "plan_journey plans connections with via, arrival time and transport types." },
+        { "name": "departures", "reason": "get_stationboard lists departures and arrivals." },
+        { "name": "occupancy", "reason": "plan_journey shows the occupancy forecast per leg (probe: tests/fixtures/foreign-servers/spt-plan_journey-probe.json)." }
+      ]
+    },
+    {
+      "id": "stm",
+      "transport": "stdio",
+      "command": "/opt/mcp/stm/bin/swiss-transport-mcp",
+      "env": {
+        "TRANSPORT_API_KEY": "STM_TRANSPORT_API_KEY",
+        "OCCUPANCY_API_KEY": "STM_OCCUPANCY_API_KEY",
+        "SIRI_SX_API_KEY": "STM_SIRI_SX_API_KEY"
+      },
+      "version": "swiss-transport-mcp 0.5.0",
+      "hosted": false,
+      "optional": true,
+      "env_required": ["STM_TRANSPORT_API_KEY"],
+      "notes": "PyPI swiss-transport-mcp 0.5.0 (MIT), OJP via opentransportdata.swiss; optional, needs a free API key.",
+      "capabilities": [
+        { "name": "stops", "reason": "transport_search_stop and transport_nearby_stops find stops." },
+        { "name": "trips", "reason": "transport_trip_plan plans connections." },
+        { "name": "departures", "reason": "transport_departures lists departures and arrivals." },
+        { "name": "occupancy", "reason": "get_train_occupancy gives the occupancy forecast per train and class.", "requires_env": ["STM_OCCUPANCY_API_KEY"] },
+        { "name": "disruptions", "reason": "get_transport_disruptions lists current disruptions.", "requires_env": ["STM_SIRI_SX_API_KEY"] }
+      ]
+    }
+  ]
+}

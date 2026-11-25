@@ -1,0 +1,4 @@
+{
+  "model": "claude-haiku-5-5",
+  "control_model": "claude-sonnet-5-5"
+}

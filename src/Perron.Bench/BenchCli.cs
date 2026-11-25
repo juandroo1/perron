@@ -1,5 +1,7 @@
 using System.CommandLine;
 
+using Anthropic;
+
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -7,6 +9,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 using Perron.Bench.Checks;
+using Perron.Bench.Registry;
+using Perron.Bench.Settings;
 
 namespace Perron.Bench;
 
@@ -62,34 +66,22 @@ public static class BenchCli
     {
         var serversOption = new Option<string[]>("--servers")
         {
-            Description = $"Servers to check: '{AllServers}' or a list of IDs (until task 3.1 only: {string.Join(", ", CheckCommand.KnownServers)}).",
+            Description = $"Servers to check: '{AllServers}' or a list of IDs from bench/servers.json.",
             AllowMultipleArgumentsPerToken = true,
             DefaultValueFactory = _ => [AllServers],
         };
 
         var expectToolsOption = new Option<string[]>("--expect-tools")
         {
-            Description = "Expected tool names (exact set); the check fails if the server's tools differ.",
+            Description = "Expected tool names (exact set); the check fails if a server's tools differ.",
             AllowMultipleArgumentsPerToken = true,
         };
 
-        var check = new Command("check", "Connect to MCP servers and list their tools.");
+        var check = new Command("check", "Connect to the MCP servers of the registry, list their tools, hash tools/list and count the tokens of the tool definitions.");
         check.Options.Add(serversOption);
         check.Options.Add(expectToolsOption);
         check.SetAction(async (parseResult, cancellationToken) =>
         {
-            var requested = SplitValues(parseResult.GetValue(serversOption));
-            var unknown = requested.Where(id => id != AllServers && !CheckCommand.KnownServers.Contains(id)).ToList();
-            if (unknown.Count > 0)
-            {
-                await error.WriteLineAsync(
-                    $"Unknown server(s): {string.Join(", ", unknown)}. " +
-                    $"Until the server registry exists (task 3.1) only these are available: {string.Join(", ", CheckCommand.KnownServers)}.");
-                return ExitCodes.UsageError;
-            }
-
-            List<string> serverIds = requested.Contains(AllServers) ? [.. CheckCommand.KnownServers] : [.. requested.Distinct()];
-
             using var host = BuildHost(configuration, configureServices);
             try
             {
@@ -103,9 +95,46 @@ public static class BenchCli
 
             try
             {
-                var command = host.Services.GetRequiredService<CheckCommand>();
+                var config = host.Services.GetRequiredService<IConfiguration>();
+                var directory = host.Services.GetRequiredService<IOptions<BenchDirectoryOptions>>().Value;
+                ServerRegistry registry;
+                BenchSettings settings;
+                try
+                {
+                    registry = ServerRegistry.Load(directory.File(ServerRegistry.FileName));
+                    settings = BenchSettings.Load(directory.File(BenchSettings.FileName));
+                }
+                catch (InvalidDataException ex)
+                {
+                    await error.WriteLineAsync($"Invalid configuration: {ex.Message}");
+                    return ExitCodes.UsageError;
+                }
+
+                var requested = SplitValues(parseResult.GetValue(serversOption));
+                var known = registry.Servers.Select(server => server.Id).ToList();
+                var unknown = requested.Where(id => id != AllServers && !known.Contains(id)).ToList();
+                if (unknown.Count > 0)
+                {
+                    await error.WriteLineAsync(
+                        $"Unknown server(s): {string.Join(", ", unknown)}. Servers in bench/servers.json: {string.Join(", ", known)}.");
+                    return ExitCodes.UsageError;
+                }
+
+                List<string> serverIds = requested.Contains(AllServers) ? known : [.. requested.Distinct()];
+                foreach (var server in serverIds.Select(id => registry.Find(id)!))
+                {
+                    if (server.UrlEnv is { } variable && config[variable] is { } url && !string.IsNullOrWhiteSpace(url)
+                        && !(Uri.TryCreate(url.Trim(), UriKind.Absolute, out var uri) && uri.Scheme is "http" or "https"))
+                    {
+                        await error.WriteLineAsync($"Invalid configuration: {variable} must be an absolute http(s) URL, got '{url}'.");
+                        return ExitCodes.UsageError;
+                    }
+                }
+
+                var tokenCounter = host.Services.GetService<IToolTokenCounter>() ?? CreateTokenCounter(config, settings);
+                var command = ActivatorUtilities.CreateInstance<CheckCommand>(host.Services, tokenCounter);
                 return await command.RunAsync(
-                    serverIds, SplitValues(parseResult.GetValue(expectToolsOption)), output, cancellationToken);
+                    registry, serverIds, SplitValues(parseResult.GetValue(expectToolsOption)), output, cancellationToken);
             }
             finally
             {
@@ -134,25 +163,31 @@ public static class BenchCli
         builder.Logging.SetMinimumLevel(LogLevel.Warning);
         builder.Logging.AddConsole(options => options.LogToStandardErrorThreshold = LogLevel.Trace);
 
-        builder.Services.AddOptions<PerronEndpointOptions>()
+        builder.Services.AddOptions<BenchDirectoryOptions>()
             .Configure<IConfiguration>((options, config) =>
             {
-                var url = config[PerronEndpointOptions.EnvironmentVariable];
-                if (!string.IsNullOrWhiteSpace(url))
+                var directory = config[BenchDirectoryOptions.EnvironmentVariable];
+                if (!string.IsNullOrWhiteSpace(directory))
                 {
-                    options.McpUrl = url;
+                    options.Directory = directory.Trim();
                 }
-            })
-            .ValidateOnStart();
-        builder.Services.AddSingleton<IValidateOptions<PerronEndpointOptions>, PerronEndpointOptionsValidator>();
+            });
 
         builder.Services.AddHttpClient(McpServerCheck.HttpClientName).AddStandardResilienceHandler();
         builder.Services.AddTransient<McpServerCheck>();
-        builder.Services.AddTransient<CheckCommand>();
 
         configureServices?.Invoke(builder.Services);
 
         return builder.Build();
+    }
+
+    /// <summary>count_tokens with the benchmark model when ANTHROPIC_API_KEY is set, otherwise "n/a" (AK-7.2).</summary>
+    private static IToolTokenCounter CreateTokenCounter(IConfiguration configuration, BenchSettings settings)
+    {
+        var key = configuration["ANTHROPIC_API_KEY"];
+        return string.IsNullOrWhiteSpace(key)
+            ? new UnavailableToolTokenCounter()
+            : new AnthropicToolTokenCounter(new AnthropicClient { ApiKey = key.Trim() }, settings.Model);
     }
 
     private static List<string> SplitValues(string[]? values) =>
