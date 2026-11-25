@@ -45,9 +45,12 @@ public static class FindStopsTool
         var search = Validate(query, latitude, longitude, limit);
 
         var found = await transport.SearchLocationsAsync(search, cancellationToken);
-        var stops = found.Where(stop => !string.IsNullOrEmpty(stop.Id)).Take(limit).ToList();
+        var candidates = found.Where(stop => !string.IsNullOrEmpty(stop.Id)).ToList();
+        var stops = candidates.Take(limit).ToList();
 
-        var lines = search.Name is { } name ? FormatByName(name, stops) : FormatNear(search.Near!, stops);
+        var lines = search.Name is { } name
+            ? FormatByName(name, stops, StopNames.IsAmbiguous(name, candidates))
+            : FormatNear(search.Near!, stops);
         lines.Add(ToolText.SourceLine);
 
         // Fixed '\n' so the result is the same on every platform.
@@ -95,7 +98,7 @@ public static class FindStopsTool
         return LocationQuery.ByCoordinate(new Coordinate(lat, lon)) with { Type = LocationType.Station };
     }
 
-    private static List<string> FormatByName(string query, IReadOnlyList<Location> stops)
+    private static List<string> FormatByName(string query, IReadOnlyList<Location> stops, bool ambiguous)
     {
         if (stops.Count == 0)
         {
@@ -108,9 +111,9 @@ public static class FindStopsTool
             .. stops.Select(stop => Line(stop, withDistance: false)),
         ];
 
-        if (StopNames.IsAmbiguous(query, stops))
+        if (ambiguous)
         {
-            lines.Add($"Several stops match \"{query}\" and none exactly. Ask which one is meant, or use the ID of the right one.");
+            lines.Add($"Several stops match \"{query}\". Ask which one is meant, or use its ID in plan_trip.");
         }
 
         return lines;

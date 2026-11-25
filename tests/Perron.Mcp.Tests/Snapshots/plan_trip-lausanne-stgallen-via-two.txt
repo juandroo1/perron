@@ -1,0 +1,8 @@
+Connections Lausanne (8501120) → St. Gallen (8506302) via 8507000, Zürich HB (8503000), leaving after Thu 26.11.2026 08:00:
+1) Thu 26.11.2026 08:17 → 11:52 | 3h 35min | 0 transfers
+   IC 1 to St. Gallen: Lausanne 08:17 pl. 1 → St. Gallen 11:52 pl. 1
+2) Thu 26.11.2026 08:17 → 11:32 | 3h 15min | 1 transfer
+   IC 1 to St. Gallen: Lausanne 08:17 pl. 1 → Zürich HB 10:28 pl. 33
+   transfer at Zürich HB 4 min
+   IC 5 to St. Gallen: Zürich HB 10:32 pl. 34 → St. Gallen 11:32 pl. 2
+Fahrplandaten: opentransportdata.swiss

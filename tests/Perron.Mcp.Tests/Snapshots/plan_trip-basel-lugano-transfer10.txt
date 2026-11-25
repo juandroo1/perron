@@ -1,0 +1,12 @@
+Connections Basel SBB (8500010) → Lugano (8505300), leaving after Thu 26.11.2026 08:00:
+1) Thu 26.11.2026 08:07 → 11:28 | 3h 21min | 1 transfer
+   IC 3 to Chur: Basel SBB 08:07 pl. 9 → Zürich HB 09:00 pl. 9
+   transfer at Zürich HB 33 min
+   EC 15 to Como S. Giovanni: Zürich HB 09:33 pl. 8 → Lugano 11:28 pl. 2
+2) Thu 26.11.2026 09:04 → 11:58 | 2h 54min | 0 transfers
+   IC 21 to Lugano: Basel SBB 09:04 pl. 6 → Lugano 11:58 pl. 2
+3) Thu 26.11.2026 09:07 → 12:28 | 3h 21min | 1 transfer
+   ICE 273 to Zürich HB: Basel SBB 09:07 pl. 5 → Zürich HB 10:00 pl. 13
+   transfer at Zürich HB 33 min
+   EC 33 to Como S. Giovanni: Zürich HB 10:33 pl. 7 → Lugano 12:28 pl. 2
+Fahrplandaten: opentransportdata.swiss

@@ -1,0 +1,14 @@
+Connections Bern (8507000) → Zürich HB (8503000) via Olten (8500218), leaving after Thu 26.11.2026 08:00:
+1) Thu 26.11.2026 08:04 → 09:22 | 1h 18min | 2 transfers
+   IC 61 to Basel SBB: Bern 08:04 pl. 5 → Olten 08:30 pl. 7
+   transfer at Olten 7 min
+   S 26 to Rotkreuz: Olten 08:37 pl. 3CD → Aarau 08:49 pl. 2
+   transfer at Aarau 4 min
+   RE 37 to Zürich HB: Aarau 08:53 pl. 3 → Zürich HB 09:22 pl. 18
+2) Thu 26.11.2026 08:07 → 09:30 | 1h 23min | 1 transfer
+   IR 17 to Olten: Bern 08:07 pl. 9 → Olten 08:54 pl. 10
+   transfer at Olten 5 min
+   IR 55 to Zürich HB: Olten 08:59 pl. 2 → Zürich HB 09:30 pl. 15
+3) Thu 26.11.2026 08:36 → 09:54 | 1h 18min | 0 transfers
+   IR 16 to Zürich HB: Bern 08:36 pl. 12 → Zürich HB 09:54 pl. 15
+Fahrplandaten: opentransportdata.swiss

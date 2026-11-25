@@ -45,11 +45,12 @@ npx @modelcontextprotocol/inspector                 # inspect and call tools man
 
 Perron speaks both MCP protocol paths: the `initialize` handshake (revisions up to 2025-11-25) and per-request metadata with `server/discover` (2026-07-28). Over HTTP it runs stateless.
 
-Tools so far (all read-only; `plan_trip` and `get_departures` follow):
+Tools so far (all read-only; `get_departures` follows):
 
 | Tool | What it does |
 |---|---|
 | `find_stops` | Finds stops by name or near a coordinate and returns ID, name, kind of stop (train, tram, bus …) and coordinates, plus the distance for a coordinate search. An ambiguous name such as "Buchs" lists the candidates (Buchs AG, Buchs SG …) with a hint to ask which one is meant. |
+| `plan_trip` | Plans connections from one stop to another, optionally via up to two stops, leaving after or arriving before a time (local Swiss time). Each connection shows date, departure and arrival, duration, transfers, and every leg with line, direction, platforms, delays and transfer time. Stops can be names or IDs; an ambiguous name returns the candidates with IDs instead of connections. |
 
 Tool texts and results are in English. Every result ends with the attribution "Fahrplandaten: opentransportdata.swiss".
 
@@ -61,7 +62,7 @@ Docker is the reference environment.
 cp .env.example .env                                  # once; optional until API keys are needed
 docker compose up -d --build                          # Perron MCP on http://127.0.0.1:8080/mcp
 docker compose ps                                     # mcp should be "healthy"
-docker compose --profile bench run --rm bench check --servers perron --expect-tools find_stops   # connect, list tools
+docker compose --profile bench run --rm bench check --servers perron --expect-tools find_stops,plan_trip   # connect, list tools
 docker compose down
 ```
 
