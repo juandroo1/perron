@@ -1,3 +1,3 @@
-// Commands (check, run, report) follow in phase 3.
-Console.WriteLine("Perron Bench: no commands implemented yet.");
-return 0;
+using Perron.Bench;
+
+return await BenchCli.RunAsync(args, Console.Out, Console.Error);
