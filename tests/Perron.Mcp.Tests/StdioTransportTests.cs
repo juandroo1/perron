@@ -6,7 +6,7 @@ namespace Perron.Mcp.Tests;
 public sealed class StdioTransportTests
 {
     [Fact]
-    public async Task Stdio_ListsPing_AndAnswersPong()
+    public async Task Stdio_ListsFindStops_AndAnswersToolCalls()
     {
         // The referenced Perron.Mcp build output is copied next to the test assembly.
         var serverDll = typeof(McpServerSetup).Assembly.Location;
@@ -25,10 +25,12 @@ public sealed class StdioTransportTests
         Assert.Equal(McpServerSetup.ServerName, client.ServerInfo.Name);
 
         var tools = await client.ListToolsAsync(cancellationToken: TestContext.Current.CancellationToken);
-        Assert.Equal("ping", Assert.Single(tools).Name);
+        Assert.Equal("find_stops", Assert.Single(tools).Name);
 
-        var result = await client.CallToolAsync("ping", cancellationToken: TestContext.Current.CancellationToken);
+        // Without arguments the tool answers with a validation error before any API call: no network in tests.
+        var result = await client.CallToolAsync("find_stops", cancellationToken: TestContext.Current.CancellationToken);
+        Assert.True(result.IsError);
         var text = Assert.IsType<TextContentBlock>(Assert.Single(result.Content));
-        Assert.Equal("pong", text.Text);
+        Assert.Contains("Give a query", text.Text);
     }
 }

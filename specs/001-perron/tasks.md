@@ -17,7 +17,7 @@ Immer nur einen Task gleichzeitig bearbeiten. Ein Task ist erst erledigt, wenn d
 
 ## Phase 2 – Perron MCP
 
-- [ ] 2.1 `find_stops` inkl. mehrdeutiger Namen; Tool `ping` entfernen, erwartete Tool-Liste im CI-Smoke-Test nachziehen (AK-1.1, AK-1.2)
+- [x] 2.1 `find_stops` inkl. mehrdeutiger Namen; Tool `ping` entfernen, erwartete Tool-Liste im CI-Smoke-Test nachziehen (AK-1.1, AK-1.2)
 - [ ] 2.2 `plan_trip` inkl. Name-oder-ID und Kandidaten bei Mehrdeutigkeit; Format `compact` mit Snapshot-Test, Token-Obergrenze festlegen (AK-2.1 bis AK-2.4)
 - [ ] 2.3 `get_departures` (AK-3.1, AK-2.4)
 - [ ] 2.4 Fehlerbehandlung, leere Ergebnisse mit Hinweis, Tool-Annotations über alle Tools (AK-4.1, AK-4.2)
