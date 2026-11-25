@@ -25,7 +25,7 @@ specs/001-perron/     spec, plan and tasks (spec-driven development)
 
 ## Getting started
 
-Requirements: .NET 10 SDK, Docker.
+Requirements: .NET SDK 10.0.404 (pinned in `global.json`), Docker.
 
 ```bash
 cp .env.example .env
@@ -43,7 +43,21 @@ npx @modelcontextprotocol/inspector                 # inspect and call tools man
 
 Perron speaks both MCP protocol paths: the `initialize` handshake (revisions up to 2025-11-25) and per-request metadata with `server/discover` (2026-07-28). Over HTTP it runs stateless.
 
-So far the server only exposes a `ping` tool; the transport tools follow. Docker setup, MCP client configuration and benchmark commands will follow.
+So far the server only exposes a `ping` tool; the transport tools follow.
+
+### Run with Docker
+
+Docker is the reference environment.
+
+```bash
+cp .env.example .env                                  # once; optional until API keys are needed
+docker compose up -d --build                          # Perron MCP on http://127.0.0.1:8080/mcp
+docker compose ps                                     # mcp should be "healthy"
+docker compose --profile bench run --rm bench check   # Perron Bench (commands follow)
+docker compose down
+```
+
+Images run as a non-root user and the port is bound to `127.0.0.1` only. MCP client configuration and benchmark commands will follow.
 
 ## Results
 
