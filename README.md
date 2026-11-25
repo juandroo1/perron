@@ -112,7 +112,7 @@ Docker Compose runs the variants of the benchmark next to `mcp` (perron-rich) in
 
 ```bash
 docker compose --profile bench up -d --wait mcp mcp-minimal mcp-json mcp-many
-docker compose --profile bench run --rm -e PERRON_MCP_URL=http://mcp-many:8080/mcp bench check --servers perron
+docker compose --profile bench run --rm bench check --servers perron-many
 ```
 
 Errors are written for the agent, so it knows what to do next:
@@ -129,16 +129,31 @@ Docker is the reference environment.
 cp .env.example .env                                  # once; optional until API keys are needed
 docker compose up -d --build                          # Perron MCP on http://127.0.0.1:8080/mcp
 docker compose ps                                     # mcp should be "healthy"
-docker compose --profile bench run --rm bench check --servers perron --expect-tools find_stops,get_departures,plan_trip   # connect, list tools
+docker compose --profile bench run --rm bench check --servers perron-rich --expect-tools find_stops,get_departures,plan_trip   # connect, list tools
 docker compose down
 ```
 
 Images run as a non-root user and the port is bound to `127.0.0.1` only.
 
-`bench check` exits with `0` if every server is reachable (and, with `--expect-tools`, offers exactly the expected tools), `1` if a check fails and `2` on usage or configuration errors. Until the server registry exists, it only knows the Perron server. Outside Docker it uses `PERRON_MCP_URL` (default `http://localhost:8080/mcp`):
+`bench check` reads the server registry `bench/servers.json` and, for each server (`--servers all` or a list of IDs), connects over HTTP or stdio, lists the tools and prints:
+
+- the status: `OK`, `CHANGED` (a hosted server whose `tools/list` differs from the hash in the registry; not a failure), `SKIPPED` (an optional server without its key) or `FAIL`;
+- `serverInfo`, protocol version and tool names;
+- the first 12 characters of the SHA-256 of `tools/list` (name, title, description, input schema, annotations);
+- the tokens of the tool definitions, measured with `count_tokens` and the model from `bench/bench.json` (`n/a` without `ANTHROPIC_API_KEY`);
+- the capabilities that count as covered, and those that are not for lack of a key.
+
+| ID | Server | Transport | Capabilities |
+|---|---|---|---|
+| `perron-rich`, `perron-minimal`, `perron-json`, `perron-many` | Perron MCP and its variants | HTTP (compose services) | stops, trips, departures |
+| `official` | transport.opendata.ch/mcp (hosted) | HTTP | stops, trips, departures |
+| `spt` | swiss-public-transport-mcp 0.1.10 | stdio (bench image) | stops, trips, departures, occupancy |
+| `stm` | swiss-transport-mcp 0.5.0, optional (`STM_TRANSPORT_API_KEY`) | stdio (bench image) | stops, trips, departures; occupancy and disruptions only with their own keys |
+
+The reasons for each capability are in `bench/servers.json`. It exits with `0` if no server fails (and, with `--expect-tools`, every server offers exactly the expected tools), `1` if a check fails and `2` on usage or configuration errors. Outside Docker, `perron-rich` uses `PERRON_MCP_URL` (default `http://localhost:8080/mcp`); the variants and the stdio servers are only reachable inside Docker Compose:
 
 ```bash
-dotnet run --project src/Perron.Bench -- check
+dotnet run --project src/Perron.Bench -- check --servers perron-rich,official
 ```
 
 CI (GitHub Actions) runs build, format check and tests, builds both images with layer cache and runs this check against the `mcp` container. MCP client configuration and benchmark commands will follow.
