@@ -28,6 +28,8 @@ public sealed class VariantTests(WebApplicationFactory<Program> factory) : IClas
         { "perron-rich", null, null, null },
         { "perron-minimal", null, "minimal", null },
         { "perron-json", null, null, "json" },
+        { "perron-many", "many", null, null },
+        { "perron-many-minimal", "many", "minimal", null },
     };
 
     [Theory]
@@ -117,7 +119,7 @@ public sealed class VariantTests(WebApplicationFactory<Program> factory) : IClas
     }
 
     [Theory]
-    [InlineData("PERRON_TOOLS", "huge", "PERRON_TOOLS must be one of standard, not \"huge\".")]
+    [InlineData("PERRON_TOOLS", "huge", "PERRON_TOOLS must be one of standard, many, not \"huge\".")]
     [InlineData("PERRON_DESCRIPTIONS", "verbose", "PERRON_DESCRIPTIONS must be one of rich, minimal, not \"verbose\".")]
     [InlineData("PERRON_FORMAT", "1", "PERRON_FORMAT must be one of compact, json, not \"1\".")]
     public void InvalidSetting_StopsTheStart(string variable, string value, string message)
@@ -136,6 +138,7 @@ public sealed class VariantTests(WebApplicationFactory<Program> factory) : IClas
     [InlineData("standard", "rich", "compact", "perron-rich")]
     [InlineData("Standard", "MINIMAL", "compact", "perron-minimal")]
     [InlineData("standard", "minimal", "json", "perron-minimal-json")]
+    [InlineData("many", "rich", "json", "perron-many-json")]
     public void ServerName_ListsTheValuesThatDifferFromTheDefaults(string tools, string descriptions, string format, string name)
     {
         var options = new PerronVariantOptions { Tools = tools, Descriptions = descriptions, Format = format };

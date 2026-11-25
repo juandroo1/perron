@@ -1,0 +1,369 @@
+[
+  {
+    "name": "get_arrivals",
+    "title": "Get arrivals",
+    "description": "Get arrivals at a stop.",
+    "annotations": {
+      "title": "Get arrivals",
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": true,
+      "readOnlyHint": true
+    },
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "stop": {
+          "type": "string",
+          "description": "Stop."
+        },
+        "datetime": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null,
+          "description": "Date and time, YYYY-MM-DDTHH:mm."
+        },
+        "transport_types": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string",
+            "enum": [
+              "train",
+              "tram",
+              "bus",
+              "ship",
+              "cableway"
+            ]
+          },
+          "default": null,
+          "description": "Means of transport."
+        },
+        "limit": {
+          "type": "integer",
+          "default": 10,
+          "description": "Number of arrivals (1–30)."
+        }
+      },
+      "required": [
+        "stop"
+      ]
+    }
+  },
+  {
+    "name": "get_connections_arriving",
+    "title": "Connections arriving by",
+    "description": "Get connections arriving by a time.",
+    "annotations": {
+      "title": "Connections arriving by",
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": true,
+      "readOnlyHint": true
+    },
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "from": {
+          "type": "string",
+          "description": "Departure stop."
+        },
+        "to": {
+          "type": "string",
+          "description": "Arrival stop."
+        },
+        "datetime": {
+          "type": "string",
+          "description": "Date and time, YYYY-MM-DDTHH:mm."
+        },
+        "transport_types": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string",
+            "enum": [
+              "train",
+              "tram",
+              "bus",
+              "ship",
+              "cableway"
+            ]
+          },
+          "default": null,
+          "description": "Means of transport."
+        },
+        "limit": {
+          "type": "integer",
+          "default": 4,
+          "description": "Number of connections (1–8)."
+        }
+      },
+      "required": [
+        "from",
+        "to",
+        "datetime"
+      ]
+    }
+  },
+  {
+    "name": "get_connections_departing",
+    "title": "Connections leaving after",
+    "description": "Get connections leaving after a time.",
+    "annotations": {
+      "title": "Connections leaving after",
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": true,
+      "readOnlyHint": true
+    },
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "from": {
+          "type": "string",
+          "description": "Departure stop."
+        },
+        "to": {
+          "type": "string",
+          "description": "Arrival stop."
+        },
+        "datetime": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null,
+          "description": "Date and time, YYYY-MM-DDTHH:mm."
+        },
+        "transport_types": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string",
+            "enum": [
+              "train",
+              "tram",
+              "bus",
+              "ship",
+              "cableway"
+            ]
+          },
+          "default": null,
+          "description": "Means of transport."
+        },
+        "limit": {
+          "type": "integer",
+          "default": 4,
+          "description": "Number of connections (1–8)."
+        }
+      },
+      "required": [
+        "from",
+        "to"
+      ]
+    }
+  },
+  {
+    "name": "get_connections_via",
+    "title": "Connections via stops",
+    "description": "Get connections via given stops.",
+    "annotations": {
+      "title": "Connections via stops",
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": true,
+      "readOnlyHint": true
+    },
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "from": {
+          "type": "string",
+          "description": "Departure stop."
+        },
+        "to": {
+          "type": "string",
+          "description": "Arrival stop."
+        },
+        "via": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Stops to pass through (1–2)."
+        },
+        "datetime": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null,
+          "description": "Date and time, YYYY-MM-DDTHH:mm."
+        },
+        "time_is": {
+          "type": "string",
+          "enum": [
+            "departure",
+            "arrival"
+          ],
+          "default": "departure",
+          "description": "Whether datetime is the departure or arrival time."
+        },
+        "transport_types": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string",
+            "enum": [
+              "train",
+              "tram",
+              "bus",
+              "ship",
+              "cableway"
+            ]
+          },
+          "default": null,
+          "description": "Means of transport."
+        },
+        "limit": {
+          "type": "integer",
+          "default": 4,
+          "description": "Number of connections (1–8)."
+        }
+      },
+      "required": [
+        "from",
+        "to",
+        "via"
+      ]
+    }
+  },
+  {
+    "name": "get_departures",
+    "title": "Get departures",
+    "description": "Get departures at a stop.",
+    "annotations": {
+      "title": "Get departures",
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": true,
+      "readOnlyHint": true
+    },
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "stop": {
+          "type": "string",
+          "description": "Stop."
+        },
+        "datetime": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null,
+          "description": "Date and time, YYYY-MM-DDTHH:mm."
+        },
+        "transport_types": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string",
+            "enum": [
+              "train",
+              "tram",
+              "bus",
+              "ship",
+              "cableway"
+            ]
+          },
+          "default": null,
+          "description": "Means of transport."
+        },
+        "limit": {
+          "type": "integer",
+          "default": 10,
+          "description": "Number of departures (1–30)."
+        }
+      },
+      "required": [
+        "stop"
+      ]
+    }
+  },
+  {
+    "name": "search_stops_by_name",
+    "title": "Search stops by name",
+    "description": "Find stops by name.",
+    "annotations": {
+      "title": "Search stops by name",
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": true,
+      "readOnlyHint": true
+    },
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Stop name."
+        },
+        "limit": {
+          "type": "integer",
+          "default": 5,
+          "description": "Maximum number of stops (1–10)."
+        }
+      },
+      "required": [
+        "query"
+      ]
+    }
+  },
+  {
+    "name": "search_stops_near",
+    "title": "Search stops near a point",
+    "description": "Find stops near a coordinate.",
+    "annotations": {
+      "title": "Search stops near a point",
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": true,
+      "readOnlyHint": true
+    },
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "latitude": {
+          "type": "number",
+          "description": "Latitude."
+        },
+        "longitude": {
+          "type": "number",
+          "description": "Longitude."
+        },
+        "limit": {
+          "type": "integer",
+          "default": 5,
+          "description": "Maximum number of stops (1–10)."
+        }
+      },
+      "required": [
+        "latitude",
+        "longitude"
+      ]
+    }
+  }
+]
