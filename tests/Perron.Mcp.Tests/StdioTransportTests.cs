@@ -22,7 +22,7 @@ public sealed class StdioTransportTests
             cancellationToken: TestContext.Current.CancellationToken);
 
         Assert.NotNull(client.ServerInfo);
-        Assert.Equal(McpServerSetup.ServerName, client.ServerInfo.Name);
+        Assert.Equal("perron-rich", client.ServerInfo.Name);
 
         var tools = await client.ListToolsAsync(cancellationToken: TestContext.Current.CancellationToken);
         Assert.Equal(["find_stops", "get_departures", "plan_trip"], tools.Select(tool => tool.Name).Order(StringComparer.Ordinal));

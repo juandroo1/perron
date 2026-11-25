@@ -1,0 +1,141 @@
+{
+  "from": {
+    "id": "8502123",
+    "name": "Buchs AG"
+  },
+  "to": {
+    "id": "8503000",
+    "name": "Zürich HB"
+  },
+  "time_is": "departure",
+  "datetime": "2026-11-26T08:00",
+  "connections": [
+    {
+      "weekday": "Thu",
+      "departure": "2026-11-26T08:15",
+      "arrival": "2026-11-26T08:52",
+      "duration_min": 37,
+      "transfers": 1,
+      "legs": [
+        {
+          "line": "S 14",
+          "direction": "Schöftland",
+          "from": {
+            "stop": "Buchs AG",
+            "time": "2026-11-26T08:15",
+            "platform": "2"
+          },
+          "to": {
+            "stop": "Aarau",
+            "time": "2026-11-26T08:19",
+            "platform": "13"
+          }
+        },
+        {
+          "transfer_min": 4,
+          "at": "Aarau"
+        },
+        {
+          "line": "IR 37",
+          "direction": "Zürich HB",
+          "from": {
+            "stop": "Aarau",
+            "time": "2026-11-26T08:23",
+            "platform": "3"
+          },
+          "to": {
+            "stop": "Zürich HB",
+            "time": "2026-11-26T08:52",
+            "platform": "13"
+          }
+        }
+      ]
+    },
+    {
+      "weekday": "Thu",
+      "departure": "2026-11-26T08:18",
+      "arrival": "2026-11-26T08:56",
+      "duration_min": 38,
+      "transfers": 1,
+      "legs": [
+        {
+          "line": "B 1",
+          "direction": "Küttigen, Kreuz",
+          "from": {
+            "stop": "Buchs AG, Brauerei",
+            "time": "2026-11-26T08:18"
+          },
+          "to": {
+            "stop": "Aarau, Bahnhof",
+            "time": "2026-11-26T08:25",
+            "platform": "B"
+          }
+        },
+        {
+          "walk_min": 4,
+          "to": "Aarau"
+        },
+        {
+          "transfer_min": 6,
+          "incl_walk": true
+        },
+        {
+          "line": "IC 5",
+          "direction": "Rorschach",
+          "from": {
+            "stop": "Aarau",
+            "time": "2026-11-26T08:31",
+            "platform": "3"
+          },
+          "to": {
+            "stop": "Zürich HB",
+            "time": "2026-11-26T08:56",
+            "platform": "33"
+          }
+        }
+      ]
+    },
+    {
+      "weekday": "Thu",
+      "departure": "2026-11-26T08:45",
+      "arrival": "2026-11-26T09:22",
+      "duration_min": 37,
+      "transfers": 1,
+      "legs": [
+        {
+          "line": "S 14",
+          "direction": "Schöftland",
+          "from": {
+            "stop": "Buchs AG",
+            "time": "2026-11-26T08:45",
+            "platform": "2"
+          },
+          "to": {
+            "stop": "Aarau",
+            "time": "2026-11-26T08:49",
+            "platform": "13"
+          }
+        },
+        {
+          "transfer_min": 4,
+          "at": "Aarau"
+        },
+        {
+          "line": "RE 37",
+          "direction": "Zürich HB",
+          "from": {
+            "stop": "Aarau",
+            "time": "2026-11-26T08:53",
+            "platform": "3"
+          },
+          "to": {
+            "stop": "Zürich HB",
+            "time": "2026-11-26T09:22",
+            "platform": "18"
+          }
+        }
+      ]
+    }
+  ],
+  "source": "Fahrplandaten: opentransportdata.swiss"
+}

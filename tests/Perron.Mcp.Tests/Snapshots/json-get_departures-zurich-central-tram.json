@@ -1,0 +1,102 @@
+{
+  "stop": {
+    "id": "8588078",
+    "name": "Zürich, Central"
+  },
+  "type": "departures",
+  "from": "now",
+  "date": "2026-11-25",
+  "entries": [
+    {
+      "time": "2026-11-25T17:13",
+      "platform": "C",
+      "delay_min": 1,
+      "line": "T 3",
+      "destination": "Zürich, Klusplatz"
+    },
+    {
+      "time": "2026-11-25T17:14",
+      "platform": "G",
+      "line": "T 15",
+      "destination": "Zürich Tiefenbrunnen, Bahnhof"
+    },
+    {
+      "time": "2026-11-25T17:14",
+      "platform": "H",
+      "line": "T 7",
+      "destination": "Zürich, Wollishoferplatz"
+    },
+    {
+      "time": "2026-11-25T17:15",
+      "platform": "B",
+      "delay_min": 1,
+      "line": "T 3",
+      "destination": "Zürich, Albisrieden"
+    },
+    {
+      "time": "2026-11-25T17:15",
+      "platform": "F",
+      "delay_min": 1,
+      "line": "T 4",
+      "destination": "Zürich, Bahnhofstrasse/HB"
+    },
+    {
+      "time": "2026-11-25T17:15",
+      "platform": "G",
+      "line": "T 4",
+      "destination": "Zürich, Rehalp"
+    },
+    {
+      "time": "2026-11-25T17:17",
+      "platform": "A",
+      "line": "T 7",
+      "destination": "Stettbach, Bahnhof"
+    },
+    {
+      "time": "2026-11-25T17:17",
+      "platform": "A",
+      "delay_min": 1,
+      "line": "T 6",
+      "destination": "Zürich, Zoo"
+    },
+    {
+      "time": "2026-11-25T17:19",
+      "platform": "F",
+      "line": "T 11",
+      "destination": "Zürich Tiefenbrunnen, Bahnhof"
+    },
+    {
+      "time": "2026-11-25T17:19",
+      "platform": "G",
+      "line": "T 4",
+      "destination": "Zürich, Rehalp"
+    },
+    {
+      "time": "2026-11-25T17:19",
+      "platform": "H",
+      "line": "T 6",
+      "destination": "Zürich, Bahnhofplatz/HB"
+    },
+    {
+      "time": "2026-11-25T17:19",
+      "platform": "A",
+      "line": "T 10",
+      "destination": "Zürich Flughafen, Fracht"
+    },
+    {
+      "time": "2026-11-25T17:19",
+      "platform": "F",
+      "delay_min": 1,
+      "line": "T 4",
+      "destination": "Zürich, Bahnhofstrasse/HB"
+    },
+    {
+      "time": "2026-11-25T17:19",
+      "platform": "H",
+      "delay_min": 4,
+      "line": "T 10",
+      "destination": "Zürich, Bahnhofplatz/HB"
+    }
+  ],
+  "source": "Fahrplandaten: opentransportdata.swiss"
+}

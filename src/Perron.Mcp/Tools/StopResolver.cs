@@ -17,9 +17,10 @@ public static partial class StopResolver
     /// (cached for 24 h) and matched with <see cref="StopNames.Match"/>.
     /// </summary>
     /// <param name="role">Parameter the input came from, e.g. <c>from</c>; used in messages.</param>
+    /// <param name="stopSearchTool">The variant's tool for stop searches, named in messages.</param>
     /// <exception cref="McpException">No stop is named like the input.</exception>
     public static async Task<StopResolution> ResolveAsync(
-        ITransportApiClient transport, string input, string role, CancellationToken cancellationToken)
+        ITransportApiClient transport, string input, string role, string stopSearchTool, CancellationToken cancellationToken)
     {
         var trimmed = input.Trim();
         if (StopId().IsMatch(trimmed))
@@ -35,7 +36,7 @@ public static partial class StopResolver
         {
             StopMatch.Found(var stop) => new StopResolution.Resolved(role, stop.Id!, stop.Name),
             StopMatch.Ambiguous(var options) => new StopResolution.Ambiguous(role, trimmed, [.. options.Take(MaxCandidates)]),
-            StopMatch.NotFound(var similar) => throw NotFound(trimmed, role, similar),
+            StopMatch.NotFound(var similar) => throw NotFound(trimmed, role, similar, stopSearchTool),
             _ => throw new InvalidOperationException("Unknown stop match."),
         };
     }
@@ -47,18 +48,18 @@ public static partial class StopResolver
         .. ambiguous.Candidates.Select(stop => $"{stop.Id} | {stop.Name} | {stop.Icon ?? "-"}"),
     ];
 
-    private static McpException NotFound(string input, string role, IReadOnlyList<Location> similar)
+    private static McpException NotFound(string input, string role, IReadOnlyList<Location> similar, string stopSearchTool)
     {
         if (similar.Count == 0)
         {
             return new McpException(
-                $"No stop found for \"{input}\" ({role}). Check the spelling, or search with find_stops and use the stop's ID.");
+                $"No stop found for \"{input}\" ({role}). Check the spelling, or search with {stopSearchTool} and use the stop's ID.");
         }
 
         var names = string.Join("; ", similar.Take(MaxCandidates).Select(stop => $"{stop.Id} {stop.Name}"));
         return new McpException(
             $"No stop is named \"{input}\" ({role}). Similar stops (ID name): {names}. "
-            + "Use one of these IDs if it is the right stop, or search with find_stops.");
+            + $"Use one of these IDs if it is the right stop, or search with {stopSearchTool}.");
     }
 
     /// <summary>Stop IDs are numbers, e.g. 8503000 (Zürich HB) or 1200021 (a stop in Austria).</summary>

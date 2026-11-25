@@ -1,0 +1,27 @@
+{
+  "ambiguous": [
+    {
+      "input": "Buchs",
+      "role": "from",
+      "candidates": [
+        {
+          "id": "8502123",
+          "name": "Buchs AG",
+          "kind": "train"
+        },
+        {
+          "id": "8509404",
+          "name": "Buchs SG",
+          "kind": "train"
+        },
+        {
+          "id": "8503527",
+          "name": "Buchs-Dällikon",
+          "kind": "train"
+        }
+      ]
+    }
+  ],
+  "hint": "Ask which one is meant, then call plan_trip again with its ID.",
+  "source": "Fahrplandaten: opentransportdata.swiss"
+}

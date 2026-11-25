@@ -1,0 +1,13 @@
+{
+  "from": {
+    "id": "8507000"
+  },
+  "to": {
+    "id": "8503000"
+  },
+  "time_is": "departure",
+  "datetime": "2026-11-26T08:00",
+  "connections": [],
+  "hint": "No connections found from 8507000 to 8503000, leaving after Thu 26.11.2026 08:00. Try another time, fewer via stops or other means of transport.",
+  "source": "Fahrplandaten: opentransportdata.swiss"
+}

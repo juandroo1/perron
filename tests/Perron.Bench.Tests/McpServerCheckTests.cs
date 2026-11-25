@@ -17,7 +17,7 @@ public sealed class McpServerCheckTests(PerronMcpFactory server) : IClassFixture
         var result = await check.RunAsync("perron", Endpoint, TestContext.Current.CancellationToken);
 
         Assert.Equal("perron", result.ServerId);
-        Assert.Equal("perron", result.ServerName);
+        Assert.Equal("perron-rich", result.ServerName);
         Assert.False(string.IsNullOrWhiteSpace(result.ServerVersion));
         Assert.Equal("2026-07-28", result.ProtocolVersion);
         Assert.Equal(["find_stops", "get_departures", "plan_trip"], result.ToolNames);

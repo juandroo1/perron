@@ -8,11 +8,11 @@ namespace Perron.Mcp.Tests;
 /// </summary>
 public static class Snapshot
 {
-    public static void Match(string name, string actual, [CallerFilePath] string callerFile = "")
+    public static void Match(string name, string actual, string extension = "txt", [CallerFilePath] string callerFile = "")
     {
         var directory = Path.Combine(Path.GetDirectoryName(callerFile)!, "Snapshots");
-        var expectedPath = Path.Combine(directory, $"{name}.txt");
-        var receivedPath = Path.Combine(directory, $"{name}.received.txt");
+        var expectedPath = Path.Combine(directory, $"{name}.{extension}");
+        var receivedPath = Path.Combine(directory, $"{name}.received.{extension}");
 
         var expected = File.Exists(expectedPath) ? File.ReadAllText(expectedPath).ReplaceLineEndings("\n") : null;
         if (expected == actual)
@@ -24,7 +24,7 @@ public static class Snapshot
         System.IO.Directory.CreateDirectory(directory);
         File.WriteAllText(receivedPath, actual);
         Assert.Fail(expected is null
-            ? $"Snapshot {name}.txt is missing; wrote {name}.received.txt for review."
-            : $"Snapshot {name}.txt differs; wrote {name}.received.txt.{Environment.NewLine}Expected:{Environment.NewLine}{expected}{Environment.NewLine}Actual:{Environment.NewLine}{actual}");
+            ? $"Snapshot {name}.{extension} is missing; wrote {name}.received.{extension} for review."
+            : $"Snapshot {name}.{extension} differs; wrote {name}.received.{extension}.{Environment.NewLine}Expected:{Environment.NewLine}{expected}{Environment.NewLine}Actual:{Environment.NewLine}{actual}");
     }
 }

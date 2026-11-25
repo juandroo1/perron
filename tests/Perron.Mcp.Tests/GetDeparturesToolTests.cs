@@ -3,6 +3,7 @@ using System.Web;
 using ModelContextProtocol;
 
 using Perron.Mcp.Tools;
+using Perron.Mcp.Variants;
 using Perron.Transport;
 
 namespace Perron.Mcp.Tests;
@@ -123,7 +124,7 @@ public sealed class GetDeparturesToolTests
         var transport = new BoardOnlyClient(board);
 
         var arrivals = await GetDeparturesTool.GetDeparturesAsync(
-            transport, RecordedAt, "8507000", "2026-11-26T23:55", BoardType.Arrival, cancellationToken: TestContext.Current.CancellationToken);
+            transport, RecordedAt, PerronVariant.Default, "8507000", "2026-11-26T23:55", BoardType.Arrival, cancellationToken: TestContext.Current.CancellationToken);
 
         Assert.Equal(
             """
@@ -141,7 +142,7 @@ public sealed class GetDeparturesToolTests
         var transport = new BoardOnlyClient(new Stationboard(new Location("8507000", "Bern", null, null, "train"), []));
 
         var result = await GetDeparturesTool.GetDeparturesAsync(
-            transport, RecordedAt, "8507000", "2026-11-26T03:00", transport_types: [TransportMode.Ship], cancellationToken: TestContext.Current.CancellationToken);
+            transport, RecordedAt, PerronVariant.Default, "8507000", "2026-11-26T03:00", transport_types: [TransportMode.Ship], cancellationToken: TestContext.Current.CancellationToken);
 
         Assert.Equal(
             """
@@ -175,7 +176,7 @@ public sealed class GetDeparturesToolTests
         TransportMode[]? types = null,
         int limit = GetDeparturesTool.DefaultLimit) =>
         GetDeparturesTool.GetDeparturesAsync(
-            transport.Client, RecordedAt, stop, datetime, type, types, limit, TestContext.Current.CancellationToken);
+            transport.Client, RecordedAt, PerronVariant.Default, stop, datetime, type, types, limit, TestContext.Current.CancellationToken);
 
     /// <summary>Answers stationboard queries with a fixed board; stops are given as IDs, so no search happens.</summary>
     private sealed class BoardOnlyClient(Stationboard board) : ITransportApiClient

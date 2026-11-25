@@ -1,0 +1,195 @@
+[
+  {
+    "name": "find_stops",
+    "title": "Find stops",
+    "description": "Find public transport stops in Switzerland by name or near a coordinate. Returns stop IDs, names, the kind of stop (train, tram, bus …) and coordinates; a search near a coordinate also returns the straight-line distance. Use it to turn a place name into a stop ID, to see which stops a name could mean (e.g. \"Buchs\" matches Buchs AG, Buchs SG and others), or to find the stop nearest to a point. It returns no connections or departures. Example: query \"Luzern\" → 8505000 Luzern.",
+    "annotations": {
+      "title": "Find stops",
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": true,
+      "readOnlyHint": true
+    },
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null,
+          "description": "Stop or place name, e.g. \"Zürich HB\", \"Genève\", \"Buchs\". Omit when searching near a coordinate."
+        },
+        "latitude": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "default": null,
+          "description": "WGS84 latitude (e.g. 47.378177) to find the nearest stops. Give together with longitude, and no query."
+        },
+        "longitude": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "default": null,
+          "description": "WGS84 longitude (e.g. 8.540192) to find the nearest stops. Give together with latitude, and no query."
+        },
+        "limit": {
+          "type": "integer",
+          "default": 5,
+          "description": "Maximum number of stops, 1–10. Default 5."
+        }
+      }
+    }
+  },
+  {
+    "name": "get_departures",
+    "title": "Get departures",
+    "description": "Show the next departures (or arrivals) at one public transport stop in Switzerland, from now or from a given time. Returns for each the date and time, delay, line, final destination and platform. The stop can be a name or an ID from find_stops. If a name matches several stops (e.g. \"Buchs\"), the result lists the candidates with their IDs instead: ask which one is meant, or call again with the right ID. Arrivals also show the vehicle's final destination, not where it comes from. To check whether a vehicle stops at a certain station, or to get from A to B, use plan_trip. Times are local Swiss time (Europe/Zurich). Example: stop \"Bern\", datetime \"2026-11-26T08:00\", transport_types [\"train\"].",
+    "annotations": {
+      "title": "Get departures",
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": true,
+      "readOnlyHint": true
+    },
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "stop": {
+          "type": "string",
+          "description": "Stop name (e.g. \"Bern\", \"Zürich, Central\") or ID (e.g. \"8507000\")."
+        },
+        "datetime": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null,
+          "description": "Local Swiss time, ISO 8601 without offset, e.g. \"2026-11-26T08:00\". Default: now."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "departure",
+            "arrival"
+          ],
+          "default": "departure",
+          "description": "\"departure\" (default) or \"arrival\"."
+        },
+        "transport_types": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string",
+            "enum": [
+              "train",
+              "tram",
+              "bus",
+              "ship",
+              "cableway"
+            ]
+          },
+          "default": null,
+          "description": "Only use these means of transport, e.g. [\"train\"]. Default: all."
+        },
+        "limit": {
+          "type": "integer",
+          "default": 10,
+          "description": "Number of departures, 1–30. Default 10. A few more may follow if they leave in the same minute as the last one."
+        }
+      },
+      "required": [
+        "stop"
+      ]
+    }
+  },
+  {
+    "name": "plan_trip",
+    "title": "Plan trip",
+    "description": "Plan public transport connections in Switzerland from one stop to another, optionally via up to two stops, leaving after or arriving before a given time. Returns connections with date, departure and arrival times, platforms, delays, duration, number of transfers, and every leg with its line and the transfer time between legs. Stops can be names or IDs from find_stops. If a name matches several stops (e.g. \"Buchs\"), the result lists the candidates with their IDs instead of connections: ask which one is meant, or call again with the right ID. Times are local Swiss time (Europe/Zurich). Example: from \"Zürich HB\", to \"Bern\", datetime \"2026-11-26T08:00\".",
+    "annotations": {
+      "title": "Plan trip",
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": true,
+      "readOnlyHint": true
+    },
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "from": {
+          "type": "string",
+          "description": "Departure stop: name (e.g. \"Zürich HB\") or ID (e.g. \"8503000\")."
+        },
+        "to": {
+          "type": "string",
+          "description": "Arrival stop: name or ID."
+        },
+        "via": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "default": null,
+          "description": "Up to 2 stops the connection must pass through, names or IDs, e.g. [\"Olten\"]."
+        },
+        "datetime": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null,
+          "description": "Local Swiss time, ISO 8601 without offset, e.g. \"2026-11-26T08:00\". Default: now."
+        },
+        "time_is": {
+          "type": "string",
+          "enum": [
+            "departure",
+            "arrival"
+          ],
+          "default": "departure",
+          "description": "\"departure\" (default): leave at or after datetime. \"arrival\": arrive at or before datetime."
+        },
+        "transport_types": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string",
+            "enum": [
+              "train",
+              "tram",
+              "bus",
+              "ship",
+              "cableway"
+            ]
+          },
+          "default": null,
+          "description": "Only use these means of transport, e.g. [\"train\"]. Default: all."
+        },
+        "limit": {
+          "type": "integer",
+          "default": 4,
+          "description": "Number of connections, 1–8. Default 4."
+        }
+      },
+      "required": [
+        "from",
+        "to"
+      ]
+    }
+  }
+]

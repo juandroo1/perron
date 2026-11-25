@@ -3,6 +3,7 @@ using System.Web;
 using ModelContextProtocol;
 
 using Perron.Mcp.Tools;
+using Perron.Mcp.Variants;
 using Perron.Transport;
 
 namespace Perron.Mcp.Tests;
@@ -258,5 +259,5 @@ public sealed class PlanTripToolTests
         TransportMode[]? types = null,
         int limit = PlanTripTool.DefaultLimit) =>
         PlanTripTool.PlanTripAsync(
-            transport.Client, from, to, via, datetime, timeIs, types, limit, TestContext.Current.CancellationToken);
+            transport.Client, PerronVariant.Default, from, to, via, datetime, timeIs, types, limit, TestContext.Current.CancellationToken);
 }

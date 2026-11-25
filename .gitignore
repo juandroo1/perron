@@ -485,4 +485,4 @@ $RECYCLE.BIN/
 .env
 .claude/settings.local.json
 # bench/results/ is committed on purpose (basis for the README report)
-*.received.txt
+*.received.*

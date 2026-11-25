@@ -1,0 +1,48 @@
+{
+  "near": {
+    "latitude": 47.37818,
+    "longitude": 8.54019
+  },
+  "stops": [
+    {
+      "id": "8503000",
+      "name": "Zürich HB",
+      "kind": "train",
+      "latitude": 47.37818,
+      "longitude": 8.54021,
+      "distance_m": 1
+    },
+    {
+      "id": "8587348",
+      "name": "Zürich, Bahnhofplatz/HB",
+      "kind": "tram",
+      "latitude": 47.37724,
+      "longitude": 8.53934,
+      "distance_m": 122
+    },
+    {
+      "id": "8587349",
+      "name": "Zürich, Bahnhofquai/HB",
+      "kind": "tram",
+      "latitude": 47.37756,
+      "longitude": 8.54174,
+      "distance_m": 135
+    },
+    {
+      "id": "8503446",
+      "name": "Zürich Landesmuseum (See)",
+      "latitude": 47.37905,
+      "longitude": 8.54158,
+      "distance_m": 142
+    },
+    {
+      "id": "8591067",
+      "name": "Zürich, Bahnhofstrasse/HB",
+      "kind": "tram",
+      "latitude": 47.37622,
+      "longitude": 8.53946,
+      "distance_m": 224
+    }
+  ],
+  "source": "Fahrplandaten: opentransportdata.swiss"
+}
