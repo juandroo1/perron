@@ -1,7 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\src\Perron.Bench\Perron.Bench.csproj" />
+    <!-- Perron MCP runs in memory as the server under check. Alias: both projects define a global Program class. -->
+    <ProjectReference Include="..\..\src\Perron.Mcp\Perron.Mcp.csproj" Aliases="PerronMcp" />
   </ItemGroup>
 
 </Project>

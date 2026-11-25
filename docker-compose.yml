@@ -30,6 +30,9 @@ services:
     env_file:
       - path: .env
         required: false
+    environment:
+      # Container-to-container address of Perron MCP (topology, not a secret).
+      PERRON_MCP_URL: http://mcp:8080/mcp
     depends_on:
       mcp:
         condition: service_healthy

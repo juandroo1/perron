@@ -1,0 +1,92 @@
+name: CI
+
+# Every pull request (including each push to its branch), every push to main, and manual runs.
+# Pushes to branches without a pull request do not run, to avoid duplicate runs (see plan.md, decision log).
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  DOTNET_NOLOGO: "true"
+  DOTNET_CLI_TELEMETRY_OPTOUT: "true"
+
+jobs:
+  build-test:
+    name: build-test
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up .NET (version from global.json)
+        uses: actions/setup-dotnet@v6
+        with:
+          global-json-file: global.json
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v6
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-${{ hashFiles('global.json', 'Directory.Packages.props', '**/*.csproj') }}
+          restore-keys: nuget-${{ runner.os }}-
+
+      - name: Restore
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build -warnaserror --no-restore
+
+      - name: Format
+        run: dotnet format --verify-no-changes --no-restore
+
+      - name: Test
+        run: dotnet test --no-build
+
+  docker:
+    name: docker
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      # Builds all services of docker-compose.yml (mcp and bench) with the same image tags as compose,
+      # with GitHub Actions layer cache, and loads them into the local Docker engine.
+      - name: Build images (compose via bake)
+        uses: docker/bake-action@v7
+        with:
+          source: .
+          files: docker-compose.yml
+          load: true
+          set: |
+            *.cache-from=type=gha
+            *.cache-to=type=gha,mode=max
+
+      - name: Start mcp and wait until healthy
+        run: docker compose up -d --wait --wait-timeout 120
+
+      - name: Smoke test (bench check)
+        run: docker compose --profile bench run --rm bench check --servers perron --expect-tools ping
+
+      - name: Show logs on failure
+        if: failure()
+        run: |
+          docker compose ps
+          docker compose logs mcp
+
+      - name: Tear down
+        if: always()
+        run: docker compose --profile bench down -v
