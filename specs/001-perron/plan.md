@@ -58,7 +58,7 @@ Perron.Mcp ──► Perron.Transport ──► transport.opendata.ch (REST, ohn
 - Haltestelle: `id`, `name`, `coordinate {x, y}`, `distance`, `icon` (`train`/`tram`/`bus`/null; nicht dokumentiert). **Kein Kantons- oder Ortsfeld**: Mehrdeutige Namen unterscheiden sich nur im Namen («Buchs AG», «Buchs SG», «Buchs-Dällikon») und im `icon`.
 - Verbindung: `from`/`to` (Zeit, Gleis, `delay`, `prognosis`), `duration`, `transfers`, `products` (z. B. `IC 1`), `capacity1st`/`capacity2nd` (Auslastungsprognose 1–3, sonst null/−1), `sections[]` mit `journey` (`category`, `number`, `operator`, `to`, `passList`, `trip`) oder `walk` (`duration` in Sekunden).
 - Gleise mit Sektoren (`3CD`, `12A-C`); `delay` ist Zahl in Minuten oder `null` ohne Echtzeitdaten; Zugnummern teils mit führenden Nullen (`EC000015`, `IC001410`); `operator` teils mit Füllzeichen (`"VBZ    F"`).
-- Abfahrtstafel: `station` + `stationboard[]` mit `stop` (Zeit, Gleis, `delay`, `prognosis`), `category`, `number`, `to`, `operator`, `passList`. Auch bei `type=arrival` ist `to` das Endziel des Zuges; die Herkunft steht nur in `passList`.
+- Abfahrtstafel: `station` + `stationboard[]` mit `stop` (Zeit, Gleis, `delay`, `prognosis`), `category`, `number`, `to`, `operator`, `passList`. Auch bei `type=arrival` ist `to` das Endziel des Zuges. Die Herkunft eines ankommenden Zuges liefert die API nicht: `passList` beginnt immer bei der abgefragten Haltestelle und führt bis zum Endziel (in Task 1.2 korrigiert; in 1.1 fälschlich als Herkunftsquelle notiert).
 
 **Mehrdeutigkeit und Fehler**
 - Mehrdeutiger Name in `/connections` oder `/stationboard`: Die API **wählt still einen Treffer** (aus «Buchs» wird «Buchs AG») und liefert keine Kandidatenliste (`stations.from` enthält nur den gewählten). Perron muss Mehrdeutigkeit selbst über `/locations` erkennen (AK-2.4).
@@ -114,6 +114,10 @@ Im Compose laufen die Varianten als eigene Services derselben Image-Version (Pro
 |---|---|
 | `/locations` | 24 h |
 | `/connections`, `/stationboard` | 30 s |
+
+Gecacht werden nur erfolgreiche Antworten; Schlüssel ist die normalisierte Anfrage-URL. Die Grösse ist begrenzt (eigener `MemoryCache` mit `SizeLimit`).
+
+Resilience des Clients (`Perron.Transport`, über Optionen änderbar): Standard-Handler aus `Microsoft.Extensions.Http.Resilience` mit höchstens 2 Wiederholungen (1 bis 5 einstellbar; exponentiell ab 1 s, `Retry-After` wird beachtet), 10 s Timeout pro Versuch, 25 s gesamt. 400er werden nicht wiederholt. Fehlerarten für Perron: `OutsideTimetable` (400 ausserhalb des Fahrplanfensters), `InvalidRequest` (übrige 400), `Throttled` (429), `Unavailable` (5xx, Timeout, Netzwerk).
 
 ## 6. Bench-Methodik
 
@@ -249,4 +253,6 @@ STM_TRANSPORT_API_KEY=     # für swiss-transport-mcp, optional
 | 2026-11-25 | Fremde Python-Server werden mit dem Stand ihrer Abhängigkeiten am Erscheinungstag installiert: `uvx --exclude-newer <Release-Datum + 1 Tag> --from <paket>==<version> <befehl>` (Entscheid Sandro) | `swiss-public-transport-mcp` 0.1.10 verlangt `mcp>=1.23` ohne Obergrenze und stürzt mit `mcp` 2.x ab (FastMCP fehlt). So läuft er unverändert, ohne Patch am Code; dieselbe Regel für alle Python-Server macht die Installation reproduzierbar. Im Report offengelegt |
 | 2026-11-25 | Drosselung nicht provoziert; Tests für AK-4.2 mit synthetischer, als solche markierter 429-Antwort | Leitplanke «API schonen» |
 | 2026-11-25 | Unbekannte Haltestellen erkennt Perron selbst (leere Liste von der API), nicht am HTTP-Status | Die API antwortet bei unbekannten Namen mit 200 und leeren Listen |
+| 2026-11-25 | Cache-Ablauf wird über `TimeProvider` geprüft (eigene Hülle um `MemoryCache`), `MemoryCache` begrenzt nur die Grösse | `MemoryCacheOptions` kennt nur die veraltete `ISystemClock`; so sind 30 s/24 h ohne echtes Warten testbar |
+| 2026-11-25 | Client bereinigt Eigenheiten der API: Offset ohne Doppelpunkt, Dauer `00d00:56:00`, Füllzeichen in `operator`, führende Nullen bei Zugnummern (`EC000015` → `EC 15`); bei zwei `via` gilt `connection.to` statt des falschen `to` auf oberster Ebene | Befunde aus Task 1.1; die Tools sollen saubere Werte zeigen |
 | 2026-11-25 | Tool `ping` nur bis Task 2.1; danach entfernt | Sonst zählt es in Bench-Vergleichen zu Tool-Anzahl und Tokens der Tool-Definitionen und verfälscht die Ablation «Anzahl Tools» |
