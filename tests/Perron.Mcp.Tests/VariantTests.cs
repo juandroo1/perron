@@ -4,6 +4,7 @@ using System.Text.Json.Nodes;
 
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
@@ -124,26 +125,19 @@ public sealed class VariantTests(WebApplicationFactory<Program> factory) : IClas
     [InlineData("PERRON_FORMAT", "1", "PERRON_FORMAT must be one of compact, json, not \"1\".")]
     public void InvalidSetting_StopsTheStart(string variable, string value, string message)
     {
-        using var app = factory.WithWebHostBuilder(builder => builder.UseSetting(variable, value));
+        // The services as Perron registers them, validated the way Host.StartAsync does (IStartupValidator).
+        // Not through WebApplicationFactory: when the host fails to start, the factory can touch the already
+        // disposed service provider and report an ObjectDisposedException instead (seen in CI, PR #15 and #16).
+        var services = new ServiceCollection();
+        services.AddLogging();
+        services.AddSingleton<IConfiguration>(
+            new ConfigurationBuilder().AddInMemoryCollection(new Dictionary<string, string?> { [variable] = value }).Build());
+        services.AddPerronMcpServer();
+        using var provider = services.BuildServiceProvider();
 
-        var error = Record.Exception(() => app.CreateClient());
+        var error = Assert.Throws<OptionsValidationException>(() => provider.GetRequiredService<IStartupValidator>().Validate());
 
-        // Depending on which part of the host starts first, the validation error can arrive wrapped
-        // (AggregateException, InvalidOperationException …); look through the whole chain.
-        Assert.NotNull(error);
-        var validation = Flatten(error).OfType<OptionsValidationException>().FirstOrDefault();
-        Assert.True(validation is not null, $"No OptionsValidationException in: {error}");
-        Assert.Contains(message, validation.Failures);
-    }
-
-    private static IEnumerable<Exception> Flatten(Exception error)
-    {
-        yield return error;
-        var inner = error is AggregateException aggregate ? aggregate.InnerExceptions : error.InnerException is { } single ? [single] : [];
-        foreach (var nested in inner.SelectMany(Flatten))
-        {
-            yield return nested;
-        }
+        Assert.Contains(message, error.Failures);
     }
 
     [Theory]
