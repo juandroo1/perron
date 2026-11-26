@@ -43,6 +43,7 @@ public sealed class RunCommand(
         var pricing = settings.PricingUsdPerMtok[modelId];
 
         var definitions = new List<ServerDefinition>();
+        var skipped = new List<SkippedServer>();
         foreach (var server in options.ServerIds.Select(id => registry.Find(id)!))
         {
             var missing = ServerEnvironment.MissingKeys(server, configuration);
@@ -52,7 +53,9 @@ public sealed class RunCommand(
             }
             else if (server.Optional)
             {
-                await output.WriteLineAsync($"{server.Id}: skipped, missing {string.Join(", ", missing)} (optional server)");
+                var reason = $"missing {string.Join(", ", missing)} (optional server)";
+                skipped.Add(new SkippedServer(server.Id, reason));
+                await output.WriteLineAsync($"{server.Id}: skipped, {reason}");
             }
             else
             {
@@ -90,7 +93,7 @@ public sealed class RunCommand(
                 return ExitCodes.Success;
             }
 
-            return await RunTasksAsync(settings, suite, options, modelId, pricing, sessions, benchDirectory, model!, output, cancellationToken);
+            return await RunTasksAsync(settings, suite, options, modelId, pricing, sessions, skipped, benchDirectory, model!, output, cancellationToken);
         }
         finally
         {
@@ -108,6 +111,7 @@ public sealed class RunCommand(
         string modelId,
         ModelPricing pricing,
         List<ServerSession> sessions,
+        List<SkippedServer> skipped,
         string benchDirectory,
         IModelClient model,
         TextWriter output,
@@ -144,7 +148,8 @@ public sealed class RunCommand(
             [.. sessions.Select(session => session.Manifest)],
             JudgePromptSha256: Judge.PromptSha256,
             Judge: settings.Judge,
-            Tasks: options.Tasks);
+            Tasks: options.Tasks,
+            SkippedServers: skipped.Count == 0 ? null : skipped);
         await WriteManifestAsync(directory, manifest);
         await output.WriteLineAsync($"Run {runId}: {suite.Tasks.Count} tasks × {sessions.Count} servers × {options.Repeats} repeats, model {modelId}, seed {seed}");
 

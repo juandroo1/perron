@@ -298,6 +298,33 @@ public sealed class RunTests(PerronMcpFactory server) : IClassFixture<PerronMcpF
     }
 
     [Fact]
+    public async Task OptionalServerWithoutKey_IsSkipped_AndRecordedInTheManifest()
+    {
+        const string servers = """
+            { "servers": [
+              { "id": "alpha", "transport": "http", "url": "http://localhost/mcp", "version": "1",
+                "capabilities": [{ "name": "stops", "reason": "r" }, { "name": "trips", "reason": "r" }, { "name": "departures", "reason": "r" }] },
+              { "id": "gamma", "transport": "http", "url": "http://localhost/mcp", "version": "1", "optional": true,
+                "env_required": ["PERRON_TEST_GAMMA_KEY"],
+                "capabilities": [{ "name": "stops", "reason": "r" }] }
+            ] }
+            """;
+        using var bench = new TemporaryBench(servers, Tasks);
+
+        var (exitCode, output, _) = await RunAsync(bench, ScriptedModel.LookUpBern(), "run", "--suite", "smoke");
+
+        Assert.Equal(ExitCodes.Success, exitCode);
+        Assert.Contains("gamma: skipped, missing PERRON_TEST_GAMMA_KEY (optional server)", output);
+        var runDirectory = Assert.Single(Directory.GetDirectories(Path.Combine(bench.Directory, "results")));
+        var manifest = JsonNode.Parse(File.ReadAllText(Path.Combine(runDirectory, "manifest.json")))!;
+        var skipped = Assert.Single(manifest["skipped_servers"]!.AsArray())!;
+        Assert.Equal("gamma", skipped["id"]!.GetValue<string>());
+        Assert.Equal("missing PERRON_TEST_GAMMA_KEY (optional server)", skipped["reason"]!.GetValue<string>());
+        Assert.Equal(["alpha"], manifest["servers"]!.AsArray().Select(item => item!["id"]!.GetValue<string>()));
+        Assert.Equal(["alpha"], Order(bench).Distinct());
+    }
+
+    [Fact]
     public void SystemPrompt_IsTheTemplateWithTimeAndInstructions()
     {
         var prompt = SystemPrompt.Build(Now, "  Use stop IDs.  ");
