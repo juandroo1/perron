@@ -35,7 +35,7 @@ Immer nur einen Task gleichzeitig bearbeiten. Ein Task ist erst erledigt, wenn d
 
 ## Phase 4 – Auswertung
 
-- [ ] 4.1 Baseline auf `dev`: alle Server, 3 Wiederholungen, Haiku 5.5. Kosten vorher mit `--dry-run` schätzen und bestätigen lassen
+- [x] 4.1 Baseline auf `dev`: alle Server, 3 Wiederholungen, Haiku 5.5. Kosten vorher mit `--dry-run` schätzen und bestätigen lassen
 - [ ] 4.2 Ablationen am eigenen Server auf `dev` (`perron-many`, `perron-minimal`, `perron-json`); Fehler anhand der Traces analysieren und Tools gezielt verbessern
 - [ ] 4.3 Schlussvergleich auf `test`, 3 Wiederholungen, Haiku 5.5; zusätzlich Kontrolllauf mit Sonnet 5.5 (Kosten vorher per `--dry-run`, Rückfrage). Danach keine Optimierung mehr auf `test`
 
