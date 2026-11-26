@@ -358,5 +358,25 @@
     "fetchedAt": "2026-11-25T20:13:12+00:00",
     "bytes": 1482,
     "purpose": "Exact name of a tram stop, stations only"
+  },
+  {
+    "file": "locations-oberdorf-station.json",
+    "endpoint": "locations",
+    "url": "https://transport.opendata.ch/v1/locations?query=Oberdorf&type=station",
+    "status": 200,
+    "contentType": "application/json",
+    "fetchedAt": "2026-11-26T17:48:32+00:00",
+    "bytes": 1505,
+    "purpose": "Ambiguous name; one place (Oberdorf BL) has only stops with a comma, stations only"
+  },
+  {
+    "file": "connections-interlaken-zermatt-walk-first.json",
+    "endpoint": "connections",
+    "url": "https://transport.opendata.ch/v1/connections?from=8507492&to=8501689&date=2026-11-27&time=13%3A00&limit=3",
+    "status": 200,
+    "contentType": "application/json",
+    "fetchedAt": "2026-11-26T17:54:27+00:00",
+    "bytes": 58964,
+    "purpose": "Every connection starts with a walk before the first vehicle"
   }
 ]

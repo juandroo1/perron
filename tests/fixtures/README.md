@@ -26,6 +26,8 @@ Raw responses of `https://transport.opendata.ch/v1/` recorded on 2026-11-25 betw
 | `locations-zurich-station.json` | `locations` | 200 | Town name only, several stations, stations only (task 2.2) |
 | `locations-bern-station.json` | `locations` | 200 | Exact name of a main station, stations only (task 2.3) |
 | `locations-zurich-central-station.json` | `locations` | 200 | Exact name of a tram stop, stations only (task 2.3) |
+| `locations-oberdorf-station.json` | `locations` | 200 | Ambiguous name, one place only with stops within it (task 4.2, recorded 2026-11-26 17:48 UTC, User-Agent `perron-bench-check`) |
+| `connections-interlaken-zermatt-walk-first.json` | `connections` | 200 | Connections that start with a walk, "tomorrow" is 2026-11-27 (task 4.2, recorded 2026-11-26 17:54 UTC, User-Agent `perron-bench-check`) |
 | `connections-zurich-bern-now.json` | `connections` | 200 | Simple trip, now |
 | `connections-zurich-bern-tomorrow-0800.json` | `connections` | 200 | Departure time tomorrow 08:00 |
 | `connections-zurich-bern-arrive-0900.json` | `connections` | 200 | Arrival time tomorrow 09:00 |
