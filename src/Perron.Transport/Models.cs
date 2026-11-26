@@ -36,13 +36,17 @@ public sealed record Section(Checkpoint Departure, Checkpoint Arrival, Journey? 
 
 /// <summary>A connection from A to B.</summary>
 /// <param name="Products">Lines used, as given by the API, e.g. <c>IC 1</c>.</param>
+/// <param name="Occupancy1st">Occupancy forecast in 1st class: 1 low, 2 medium, 3 high; <c>null</c> without forecast.</param>
+/// <param name="Occupancy2nd">Occupancy forecast in 2nd class, as <paramref name="Occupancy1st"/>.</param>
 public sealed record Connection(
     Checkpoint From,
     Checkpoint To,
     TimeSpan? Duration,
     int Transfers,
     IReadOnlyList<string> Products,
-    IReadOnlyList<Section> Sections);
+    IReadOnlyList<Section> Sections,
+    int? Occupancy1st = null,
+    int? Occupancy2nd = null);
 
 /// <summary>Result of a connection search.</summary>
 /// <param name="ResolvedFrom">Station the API chose for the given origin (it picks one silently for ambiguous names).</param>

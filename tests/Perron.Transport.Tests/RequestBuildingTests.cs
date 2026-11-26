@@ -82,6 +82,15 @@ public class RequestBuildingTests
         Assert.Throws<ArgumentException>(() => TransportApiClient.BuildConnectionsUrl(new ConnectionQuery(" ", "B")));
         Assert.Throws<ArgumentOutOfRangeException>(() => TransportApiClient.BuildConnectionsUrl(new ConnectionQuery("A", "B") { Limit = 17 }));
         Assert.Throws<ArgumentOutOfRangeException>(() => TransportApiClient.BuildConnectionsUrl(new ConnectionQuery("A", "B") { Page = 11 }));
+        Assert.Throws<ArgumentOutOfRangeException>(() => TransportApiClient.BuildConnectionsUrl(new ConnectionQuery("A", "B") { MinTransferTime = 61 }));
+    }
+
+    [Fact]
+    public void Connections_MinTransferTime_IsSent()
+    {
+        var url = TransportApiClient.BuildConnectionsUrl(new ConnectionQuery("Basel SBB", "Lugano") { MinTransferTime = 10 });
+
+        Assert.EndsWith("&minTransferTime=10", url);
     }
 
     [Fact]

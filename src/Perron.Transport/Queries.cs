@@ -52,6 +52,7 @@ public sealed record ConnectionQuery(string From, string To)
     public const int MaxLimit = 16;
     public const int MinPage = -10;
     public const int MaxPage = 10;
+    public const int MaxMinTransferTime = 60;
 
     public IReadOnlyList<string> Via { get; init; } = [];
 
@@ -66,6 +67,9 @@ public sealed record ConnectionQuery(string From, string To)
 
     /// <summary>Zero-based page; negative pages go back in time.</summary>
     public int? Page { get; init; }
+
+    /// <summary>Minimum time for each transfer, 0 to 60 minutes (API parameter <c>minTransferTime</c>).</summary>
+    public int? MinTransferTime { get; init; }
 }
 
 /// <summary>Departures or arrivals of a station, by name (<see cref="Station"/>) or ID (<see cref="StationId"/>).</summary>

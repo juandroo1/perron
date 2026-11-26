@@ -41,6 +41,30 @@ public class ResponseParsingTests
     }
 
     [Fact]
+    public async Task Connections_MapTheOccupancyForecast_PerClass()
+    {
+        using var fixture = new ClientFixture(FakeHandler.Fixture("connections-zurich-bern-tomorrow-0800.json"));
+
+        var result = await fixture.Client.GetConnectionsAsync(new ConnectionQuery("Zürich HB", "Bern"), Ct);
+
+        // Recorded answer: capacity1st 2, capacity2nd 3 for the first connection.
+        Assert.Equal(2, result.Connections[0].Occupancy1st);
+        Assert.Equal(3, result.Connections[0].Occupancy2nd);
+    }
+
+    [Fact]
+    public async Task Connections_OccupancyOutsideOneToThree_IsNoForecast()
+    {
+        using var fixture = new ClientFixture(FakeHandler.Always(() => Fixtures.Json(
+            """{"connections":[{"from":null,"to":null,"duration":null,"transfers":0,"products":[],"sections":[],"capacity1st":-1,"capacity2nd":0}]}""")));
+
+        var result = await fixture.Client.GetConnectionsAsync(new ConnectionQuery("A", "B"), Ct);
+
+        Assert.Null(result.Connections[0].Occupancy1st);
+        Assert.Null(result.Connections[0].Occupancy2nd);
+    }
+
+    [Fact]
     public async Task Connections_MapTimesPlatformsDelaysAndSections_InZurichTime()
     {
         using var fixture = new ClientFixture(FakeHandler.Fixture("connections-zurich-bern-now.json"));
