@@ -10,6 +10,7 @@ using Microsoft.Extensions.Options;
 
 using Perron.Bench.Checks;
 using Perron.Bench.Registry;
+using Perron.Bench.Reporting;
 using Perron.Bench.Run;
 using Perron.Bench.Scoring;
 using Perron.Bench.Settings;
@@ -266,6 +267,30 @@ public static class BenchCli
             return await JudgeReview.AgreementAsync(directory.Directory, parseResult.GetValue(reviewFile)!, report, output, error, cancellationToken);
         });
 
+        // report
+        var reportRuns = new Argument<string[]>("runs")
+        {
+            Description = "Run IDs under bench/results to combine (default: the latest run).",
+            Arity = ArgumentArity.ZeroOrMore,
+        };
+        var referenceOption = new Option<string>("--reference")
+        {
+            Description = "Server for the paired comparison.",
+            DefaultValueFactory = _ => ReportCommand.DefaultReference,
+        };
+        var reportOut = new Option<string?>("--out") { Description = "Report to write (default report.md in the directory of the latest run)." };
+        var report = new Command("report", "Write a Markdown report of stored runs: success with confidence intervals, pass^k, cost, latency, errors and methodology. No model or API calls.");
+        report.Arguments.Add(reportRuns);
+        report.Options.Add(referenceOption);
+        report.Options.Add(reportOut);
+        report.SetAction(async (parseResult, cancellationToken) =>
+        {
+            using var host = BuildHost(configuration, configureServices);
+            var directory = host.Services.GetRequiredService<IOptions<BenchDirectoryOptions>>().Value;
+            return await ReportCommand.RunAsync(
+                directory.Directory, SplitValues(parseResult.GetValue(reportRuns)), parseResult.GetValue(referenceOption)!, parseResult.GetValue(reportOut), output, error, cancellationToken);
+        });
+
         var root = new RootCommand("Perron Bench: runs agent tasks against MCP servers and compares the results.");
         root.Subcommands.Add(check);
         root.Subcommands.Add(run);
@@ -273,6 +298,7 @@ public static class BenchCli
         root.Subcommands.Add(judgeCommand);
         root.Subcommands.Add(export);
         root.Subcommands.Add(agreement);
+        root.Subcommands.Add(report);
         return root;
     }
 
