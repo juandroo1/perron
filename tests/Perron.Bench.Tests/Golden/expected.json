@@ -1,0 +1,186 @@
+{
+  "regex-passed": {
+    "outcome": "passed",
+    "errors": [],
+    "checks": [
+      "passed"
+    ]
+  },
+  "regex-failed-wrong-stop": {
+    "outcome": "failed",
+    "errors": [
+      "wrong_stop"
+    ],
+    "checks": [
+      "failed"
+    ]
+  },
+  "earliest-passed": {
+    "outcome": "passed",
+    "errors": [],
+    "checks": [
+      "passed"
+    ]
+  },
+  "earliest-arrival-only": {
+    "outcome": "passed",
+    "errors": [],
+    "checks": [
+      "passed"
+    ]
+  },
+  "earliest-forecast": {
+    "outcome": "passed",
+    "errors": [],
+    "checks": [
+      "passed"
+    ]
+  },
+  "earliest-not-optimal": {
+    "outcome": "failed",
+    "errors": [
+      "not_optimal"
+    ],
+    "checks": [
+      "failed"
+    ]
+  },
+  "earliest-wrong-time-hallucinated": {
+    "outcome": "failed",
+    "errors": [
+      "hallucinated",
+      "wrong_time"
+    ],
+    "checks": [
+      "failed"
+    ]
+  },
+  "earliest-no-time": {
+    "outcome": "failed",
+    "errors": [
+      "gave_up"
+    ],
+    "checks": [
+      "failed"
+    ]
+  },
+  "earliest-utc-tool-result": {
+    "outcome": "passed",
+    "errors": [],
+    "checks": [
+      "passed"
+    ]
+  },
+  "latest-passed": {
+    "outcome": "passed",
+    "errors": [],
+    "checks": [
+      "passed"
+    ]
+  },
+  "latest-not-optimal": {
+    "outcome": "failed",
+    "errors": [
+      "not_optimal"
+    ],
+    "checks": [
+      "failed"
+    ]
+  },
+  "departure-passed-forecast": {
+    "outcome": "passed",
+    "errors": [],
+    "checks": [
+      "passed"
+    ]
+  },
+  "departure-not-optimal": {
+    "outcome": "failed",
+    "errors": [
+      "not_optimal"
+    ],
+    "checks": [
+      "failed"
+    ]
+  },
+  "occupancy-passed": {
+    "outcome": "passed",
+    "errors": [],
+    "checks": [
+      "passed"
+    ]
+  },
+  "occupancy-failed": {
+    "outcome": "failed",
+    "errors": [],
+    "checks": [
+      "failed"
+    ]
+  },
+  "candidates-passed": {
+    "outcome": "passed",
+    "errors": [],
+    "checks": [
+      "passed"
+    ]
+  },
+  "candidates-failed": {
+    "outcome": "failed",
+    "errors": [],
+    "checks": [
+      "failed"
+    ]
+  },
+  "judge-pending": {
+    "outcome": "pending",
+    "errors": [],
+    "checks": [
+      "pending"
+    ]
+  },
+  "oracle-missing-unscored": {
+    "outcome": "unscored",
+    "errors": [],
+    "checks": [
+      "unscored"
+    ]
+  },
+  "oracle-error-unscored": {
+    "outcome": "unscored",
+    "errors": [],
+    "checks": [
+      "unscored"
+    ]
+  },
+  "infra-excluded": {
+    "outcome": "excluded",
+    "errors": [
+      "infra"
+    ],
+    "checks": []
+  },
+  "not-covered-excluded": {
+    "outcome": "excluded",
+    "errors": [],
+    "checks": []
+  },
+  "tool-limit-gave-up": {
+    "outcome": "failed",
+    "errors": [
+      "tool_limit",
+      "gave_up"
+    ],
+    "checks": [
+      "failed"
+    ]
+  },
+  "tool-error-loop": {
+    "outcome": "passed",
+    "errors": [
+      "tool_error_loop"
+    ],
+    "checks": [
+      "passed"
+    ]
+  }
+}

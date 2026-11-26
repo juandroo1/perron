@@ -1,0 +1,134 @@
+{
+  "run_id": "golden",
+  "task_id": "earliest-forecast",
+  "server_id": "perron-rich",
+  "repeat": 1,
+  "model": "claude-haiku-5-5",
+  "status": "completed",
+  "reference_time": "2026-11-25T17:12:00+01:00",
+  "max_tool_calls": 8,
+  "system_prompt": "You help people with public transport in Switzerland, using the tools available to you.\n\nCurrent date and time: Wed 25.11.2026 17:12 (Europe/Zurich). Dates such as \"today\" or \"tomorrow\" refer to this time.\n\nAnswer briefly and with concrete times. Answer in the language of the question.\n\n## Server instructions\n(none)",
+  "prompt": "Wann komme ich morgen frühestens in Bern an, wenn ich um 08:00 in Zürich HB losfahre?",
+  "turns": [
+    {
+      "number": 1,
+      "llm_ms": 900.0,
+      "stop_reason": "tool_use",
+      "usage": {
+        "input": 10,
+        "output": 50,
+        "cache_write": 0,
+        "cache_read": 2000
+      },
+      "content": [
+        {
+          "type": "tool_use",
+          "tool_use_id": "toolu_0",
+          "name": "plan_trip",
+          "input": {}
+        }
+      ],
+      "tool_calls": [
+        {
+          "id": "toolu_0",
+          "name": "plan_trip",
+          "arguments": {},
+          "result": "Connections Zürich HB (8503000) → Bern (8507000), leaving after Thu 26.11.2026 08:00:\n1) Thu 26.11.2026 08:02 → 08:58 | 56 min | 0 transfers\n   IC 8 to Brig: Zürich HB 08:02 pl. 31 → Bern 08:58 pl. 6 (+2 min, 09:00)\n2) Thu 26.11.2026 08:06 → 09:24 | 1h 18min | 0 transfers\n   IR 16 to Bern: Zürich HB 08:06 pl. 15 → Bern 09:24 pl. 12\n3) Thu 26.11.2026 08:08 → 09:24 | 1h 16min | 1 transfer\n4) Thu 26.11.2026 08:32 → 09:28 | 56 min | 0 transfers\nFahrplandaten: opentransportdata.swiss",
+          "is_error": false,
+          "duration_ms": 12.5,
+          "over_limit": false
+        }
+      ]
+    },
+    {
+      "number": 2,
+      "llm_ms": 1200.0,
+      "stop_reason": "end_turn",
+      "usage": {
+        "input": 10,
+        "output": 120,
+        "cache_write": 0,
+        "cache_read": 2300
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "IC 8 ab 08:02, wegen Verspätung erst um 09:00 in Bern."
+        }
+      ],
+      "tool_calls": []
+    }
+  ],
+  "totals": {
+    "turns": 2,
+    "tool_calls": 1,
+    "usage": {
+      "input": 20,
+      "output": 170,
+      "cache_write": 0,
+      "cache_read": 4300
+    },
+    "cost_usd": 0.0002,
+    "llm_ms": 2100.0,
+    "tool_ms": 12.5,
+    "tool_result_chars": 400
+  },
+  "category": "trip_simple",
+  "checks": [
+    {
+      "type": "oracle",
+      "oracle": "earliest_arrival",
+      "params": {
+        "from": "Zürich HB",
+        "to": "Bern",
+        "depart_after": "+1d 08:00"
+      },
+      "tolerance_minutes": 1
+    }
+  ],
+  "attempt": 1,
+  "final_answer": "IC 8 ab 08:02, wegen Verspätung erst um 09:00 in Bern.",
+  "oracle": [
+    {
+      "check_index": 0,
+      "oracle": "earliest_arrival",
+      "fetched_at": "2026-11-25T17:12:00+01:00",
+      "connections": [
+        {
+          "departure": "2026-11-26T08:02:00+01:00",
+          "arrival": "2026-11-26T08:58:00+01:00",
+          "transfers": 0,
+          "lines": [
+            "IC 8"
+          ],
+          "arrival_forecast": "2026-11-26T09:00:00+01:00"
+        },
+        {
+          "departure": "2026-11-26T08:06:00+01:00",
+          "arrival": "2026-11-26T09:24:00+01:00",
+          "transfers": 0,
+          "lines": [
+            "IR 16"
+          ]
+        },
+        {
+          "departure": "2026-11-26T08:08:00+01:00",
+          "arrival": "2026-11-26T09:24:00+01:00",
+          "transfers": 1,
+          "lines": [
+            "IR 37",
+            "IR 16"
+          ]
+        },
+        {
+          "departure": "2026-11-26T08:32:00+01:00",
+          "arrival": "2026-11-26T09:28:00+01:00",
+          "transfers": 0,
+          "lines": [
+            "IC 1"
+          ]
+        }
+      ]
+    }
+  ]
+}
