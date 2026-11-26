@@ -26,6 +26,7 @@ public sealed class StopNamesTests
     [Theory]
     [InlineData("Buchs", "locations-buchs-station.json", "8502123,8509404,8503527")]
     [InlineData("Zürich", "locations-zurich-station.json", "8503000,8503006,8503020,8503003,8503016,8503001")]
+    [InlineData("Oberdorf", "locations-oberdorf-station.json", "8530671,8500264,8578241")]
     public void AmbiguousName_ListsThePlaceLevelCandidates(string query, string fixture, string ids)
     {
         var match = StopNames.Match(query, Load(fixture));
@@ -65,6 +66,25 @@ public sealed class StopNamesTests
     [Fact]
     public void OneCandidate_IsFound_EvenIfNamedDifferently() =>
         Assert.IsType<StopMatch.Found>(StopNames.Match("Buchs", [Stop("Buchs AG")]));
+
+    [Fact]
+    public void PlaceWithOnlyStopsWithinIt_IsACandidate_NextToTheOnlyPlaceLevelStop()
+    {
+        var match = StopNames.Match("Oberdorf", [Stop("Oberdorf SO", "1"), Stop("Oberdorf BL, Station", "2"), Stop("Oberdorf SO, Dorfplatz", "3")]);
+
+        var candidates = Assert.IsType<StopMatch.Ambiguous>(match).Candidates;
+        Assert.Equal(["1", "2"], candidates.Select(stop => stop.Id));
+    }
+
+    [Fact]
+    public void StopsWithinTheOnlyPlace_DoNotMakeItAmbiguous()
+    {
+        var match = StopNames.Match("Basel", [Stop("Basel, Aeschenplatz", "1"), Stop("Basel SBB", "2"), Stop("Basel SBB, Bahnhof", "3")]);
+
+        Assert.Equal("2", Assert.IsType<StopMatch.Found>(match).Stop.Id);
+    }
+
+    private static Location Stop(string name, string id) => new(id, name, null, null, null);
 
     private static Location Stop(string name) => new("1", name, null, null, null);
 
