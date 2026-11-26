@@ -242,6 +242,18 @@ public sealed class ReportTests
     }
 
     [Fact]
+    public void Build_ListsSkippedServers()
+    {
+        var manifest = Manifest("r1") with { SkippedServers = [new SkippedServer("stm", "missing STM_TRANSPORT_API_KEY (optional server)")] };
+
+        var (withSkipped, _) = ReportBuilder.Build([manifest], [Trace("t1", "perron-rich", 1, Results.Passed)], "perron-rich");
+        var (without, _) = ReportBuilder.Build([Manifest("r1")], [Trace("t1", "perron-rich", 1, Results.Passed)], "perron-rich");
+
+        Assert.Contains("Skipped servers (not part of the comparison):\n\n- stm: missing STM_TRANSPORT_API_KEY (optional server)\n", withSkipped);
+        Assert.DoesNotContain("Skipped servers", without);
+    }
+
+    [Fact]
     public async Task Cli_WritesTheReportOfTheLatestRunByDefault()
     {
         using var bench = new TempBench();

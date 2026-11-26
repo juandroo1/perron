@@ -236,6 +236,16 @@ On a Linux host, run the bench container with your user (`docker compose ... run
 
 *Pending.* The report will include methodology, model, server versions, run dates, confidence intervals and known limitations of the benchmark.
 
+**Baseline on the development set** (task 4.1, [`bench/results/20261126-105446-full/report.md`](bench/results/20261126-105446-full/report.md)):
+- **Run:** 25 dev tasks × 6 servers × 3 repeats with Claude Haiku 5.5. That made 420 runs plus 30 not covered, with no infrastructure errors.
+- **Cost:** $0.21 with prompt caching, $0.37 without (the dry run estimated $0.42), plus $0.02 for the judge.
+- **Success on covered tasks:** between 87 % and 94 % for all servers. No paired difference to `perron-rich` excludes 0, so these runs support no claim that one server or variant is better.
+- **A finding for tool design:** dev-009 (at least 10 minutes per transfer) fails on every server in every repeat.
+  - The best connection waits 33 minutes at the change in Zürich HB.
+  - No server offers a minimum transfer time, so the agents only see a 5-minute transfer and fall back to a later direct train.
+- **Not the final comparison:** this is the development set, used to improve the tools (task 4.2). The final comparison runs on the held-out test set (task 4.3).
+- **Latency:** the host was under heavy CPU load from other work during this run, so the latency columns are rough.
+
 Known limitations so far:
 
 - **Task sets written by Claude.** The development set (`bench/tasks/dev.jsonl`) was written by Claude in the working session, the held-out test set by a separate Claude subagent without that session's context; both were spot-checked by a human. The working session never reads the test set. Tasks written by the same model family that solves them may favour it, and the author of the development set knew the planned Perron tool design.

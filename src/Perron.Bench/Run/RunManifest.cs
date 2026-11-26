@@ -17,6 +17,9 @@ public sealed record ManifestServer(
     IReadOnlyList<string> CapabilitiesCovered,
     IReadOnlyList<string> CapabilitiesNotCovered);
 
+/// <summary>An optional server left out of a run, and why (e.g. a missing API key).</summary>
+public sealed record SkippedServer(string Id, string Reason);
+
 /// <summary>
 /// Run manifest (AK-8.2): everything needed to say what was measured. Written at the start of a run and again with
 /// <see cref="FinishedAt"/> and the counts at its end.
@@ -46,4 +49,5 @@ public sealed record RunManifest(
     decimal? TotalCostUsd = null,
     string? JudgePromptSha256 = null,
     JudgeSettings? Judge = null,
-    IReadOnlyList<string>? Tasks = null);
+    IReadOnlyList<string>? Tasks = null,
+    IReadOnlyList<SkippedServer>? SkippedServers = null);

@@ -192,6 +192,18 @@ public static class ReportBuilder
         }
 
         text.AppendLine();
+        var skipped = manifests.SelectMany(manifest => manifest.SkippedServers ?? []).DistinctBy(server => server.Id).ToList();
+        if (skipped.Count > 0)
+        {
+            text.AppendLine("Skipped servers (not part of the comparison):").AppendLine();
+            foreach (var server in skipped)
+            {
+                text.AppendLine(Invariant($"- {server.Id}: {server.Reason}"));
+            }
+
+            text.AppendLine();
+        }
+
         text.AppendLine("Known limitations of the benchmark are listed in the README.");
         text.AppendLine();
     }
