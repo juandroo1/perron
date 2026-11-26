@@ -1,0 +1,53 @@
+{
+  "run_id": "20261126-084935-smoke",
+  "started_at": "2026-11-26T08:49:35.3196135+00:00",
+  "finished_at": "2026-11-26T08:50:12.2533827+00:00",
+  "git_sha": "38b127f6e751b907b1bed1e2cbba5f26712b6776",
+  "harness_version": "1.0.0",
+  "suite": "smoke",
+  "task_file": "tasks/dev.jsonl",
+  "task_set_sha256": "dd064694d0d2fb31fe1a9b3826241d064e3c7be96e523d9935f9fe729415380d",
+  "task_count": 6,
+  "repeats": 1,
+  "seed": 581344890,
+  "model": "claude-haiku-5-5",
+  "effort": "medium",
+  "max_tokens": 16000,
+  "pause_seconds": 3,
+  "default_max_tool_calls": 8,
+  "pricing": {
+    "input": 0.10,
+    "output": 0.50,
+    "cache_write": 0.125,
+    "cache_read": 0.01
+  },
+  "system_prompt_template_sha256": "026578e015b73b29972b19ef31d4483e86087422689cf76d7aa56c8805ab692d",
+  "servers": [
+    {
+      "id": "perron-rich",
+      "version": "repository",
+      "hosted": false,
+      "server_name": "perron-rich",
+      "server_version": "1.0.0",
+      "protocol_version": "2026-07-28",
+      "tools": [
+        "find_stops",
+        "get_departures",
+        "plan_trip"
+      ],
+      "tools_hash": "33ae1692d9febed2980bb8cb578d3d666ce128de4b97484cf4c2d55c98801e69",
+      "tool_tokens": 2124,
+      "instructions_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "capabilities_covered": [
+        "stops",
+        "trips",
+        "departures"
+      ],
+      "capabilities_not_covered": []
+    }
+  ],
+  "status_counts": {
+    "completed": 6
+  },
+  "total_cost_usd": 0.00395923
+}
