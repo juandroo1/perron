@@ -53,10 +53,11 @@ public static class ManyTools
         string to,
         string? datetime = null,
         TransportMode[]? transport_types = null,
+        int? min_transfer_minutes = null,
         int limit = PlanTripTool.DefaultLimit,
         CancellationToken cancellationToken = default) =>
         variant.Render(await PlanTripTool.PlanAsync(
-            transport, variant, GetConnectionsDeparting, from, to, null, datetime, TimeIs.Departure, transport_types, limit, cancellationToken));
+            transport, variant, GetConnectionsDeparting, from, to, null, datetime, TimeIs.Departure, transport_types, min_transfer_minutes, limit, cancellationToken));
 
     public static async Task<string> GetConnectionsArrivingAsync(
         ITransportApiClient transport,
@@ -65,6 +66,7 @@ public static class ManyTools
         string to,
         string datetime,
         TransportMode[]? transport_types = null,
+        int? min_transfer_minutes = null,
         int limit = PlanTripTool.DefaultLimit,
         CancellationToken cancellationToken = default)
     {
@@ -74,7 +76,7 @@ public static class ManyTools
         }
 
         return variant.Render(await PlanTripTool.PlanAsync(
-            transport, variant, GetConnectionsArriving, from, to, null, datetime, TimeIs.Arrival, transport_types, limit, cancellationToken));
+            transport, variant, GetConnectionsArriving, from, to, null, datetime, TimeIs.Arrival, transport_types, min_transfer_minutes, limit, cancellationToken));
     }
 
     public static async Task<string> GetConnectionsViaAsync(
@@ -86,6 +88,7 @@ public static class ManyTools
         string? datetime = null,
         TimeIs time_is = TimeIs.Departure,
         TransportMode[]? transport_types = null,
+        int? min_transfer_minutes = null,
         int limit = PlanTripTool.DefaultLimit,
         CancellationToken cancellationToken = default)
     {
@@ -95,7 +98,7 @@ public static class ManyTools
         }
 
         return variant.Render(await PlanTripTool.PlanAsync(
-            transport, variant, GetConnectionsVia, from, to, via, datetime, time_is, transport_types, limit, cancellationToken));
+            transport, variant, GetConnectionsVia, from, to, via, datetime, time_is, transport_types, min_transfer_minutes, limit, cancellationToken));
     }
 
     public static async Task<string> GetDeparturesAsync(

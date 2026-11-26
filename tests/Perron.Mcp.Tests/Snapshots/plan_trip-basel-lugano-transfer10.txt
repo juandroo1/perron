@@ -1,4 +1,4 @@
-Connections Basel SBB (8500010) → Lugano (8505300), leaving after Thu 26.11.2026 08:00:
+Connections Basel SBB (8500010) → Lugano (8505300), leaving after Thu 26.11.2026 08:00, transfers of at least 10 min:
 1) Thu 26.11.2026 08:07 → 11:28 | 3h 21min | 1 transfer
    IC 3 to Chur: Basel SBB 08:07 pl. 9 → Zürich HB 09:00 pl. 9
    transfer at Zürich HB 33 min

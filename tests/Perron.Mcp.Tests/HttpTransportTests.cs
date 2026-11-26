@@ -64,7 +64,7 @@ public sealed class HttpTransportTests(WebApplicationFactory<Program> factory)
         var tools = await client.ListToolsAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var schema = tools.Single(tool => tool.Name == "plan_trip").ProtocolTool.InputSchema;
-        Assert.Equal(["datetime", "from", "limit", "time_is", "to", "transport_types", "via"], PropertyNames(schema));
+        Assert.Equal(["datetime", "from", "limit", "min_transfer_minutes", "time_is", "to", "transport_types", "via"], PropertyNames(schema));
         Assert.Equal(["from", "to"], Required(schema).Order(StringComparer.Ordinal));
 
         var properties = schema.GetProperty("properties");

@@ -57,7 +57,7 @@
   {
     "name": "get_connections_arriving",
     "title": "Connections arriving by",
-    "description": "Plan public transport connections in Switzerland that arrive at or before a given time. Returns connections with date, departure and arrival times, platforms, delays, duration, number of transfers, and every leg with its line and the transfer time between legs. Stops can be names or IDs from search_stops_by_name. If a name matches several stops, the result lists the candidates with their IDs instead: ask which one is meant, or call again with the right ID. To leave after a given time use get_connections_departing; to pass through certain stops use get_connections_via. Times are local Swiss time (Europe/Zurich). Example: from \"Bern\", to \"Lausanne\", datetime \"2026-11-26T10:00\".",
+    "description": "Plan public transport connections in Switzerland that arrive at or before a given time. Returns connections with date, departure and arrival times, platforms, delays, duration, number of transfers, and every leg with its line and the transfer time between legs. Stops can be names or IDs from search_stops_by_name. Pass place names as the user wrote them; do not add a canton or region yourself. If a name matches several stops, the result lists the candidates with their IDs instead: ask which one is meant, or call again with the right ID. To leave after a given time use get_connections_departing; to pass through certain stops use get_connections_via. Times are local Swiss time (Europe/Zurich). Example: from \"Bern\", to \"Lausanne\", datetime \"2026-11-26T10:00\".",
     "annotations": {
       "title": "Connections arriving by",
       "destructiveHint": false,
@@ -98,6 +98,14 @@
           "default": null,
           "description": "Only use these means of transport, e.g. [\"train\"]. Default: all."
         },
+        "min_transfer_minutes": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "default": null,
+          "description": "Minimum time for each transfer in minutes, 0–60, e.g. 10 with heavy luggage. Connections with shorter transfers are left out. Default: the usual transfer times of the timetable."
+        },
         "limit": {
           "type": "integer",
           "default": 4,
@@ -114,7 +122,7 @@
   {
     "name": "get_connections_departing",
     "title": "Connections leaving after",
-    "description": "Plan public transport connections in Switzerland that leave at or after a given time (default: now). Returns connections with date, departure and arrival times, platforms, delays, duration, number of transfers, and every leg with its line and the transfer time between legs. Stops can be names or IDs from search_stops_by_name. If a name matches several stops, the result lists the candidates with their IDs instead: ask which one is meant, or call again with the right ID. To arrive by a given time use get_connections_arriving; to pass through certain stops use get_connections_via. Times are local Swiss time (Europe/Zurich). Example: from \"Zürich HB\", to \"Bern\", datetime \"2026-11-26T08:00\".",
+    "description": "Plan public transport connections in Switzerland that leave at or after a given time (default: now). Returns connections with date, departure and arrival times, platforms, delays, duration, number of transfers, and every leg with its line and the transfer time between legs. Stops can be names or IDs from search_stops_by_name. Pass place names as the user wrote them; do not add a canton or region yourself. If a name matches several stops, the result lists the candidates with their IDs instead: ask which one is meant, or call again with the right ID. To arrive by a given time use get_connections_arriving; to pass through certain stops use get_connections_via. Times are local Swiss time (Europe/Zurich). Example: from \"Zürich HB\", to \"Bern\", datetime \"2026-11-26T08:00\".",
     "annotations": {
       "title": "Connections leaving after",
       "destructiveHint": false,
@@ -159,6 +167,14 @@
           "default": null,
           "description": "Only use these means of transport, e.g. [\"train\"]. Default: all."
         },
+        "min_transfer_minutes": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "default": null,
+          "description": "Minimum time for each transfer in minutes, 0–60, e.g. 10 with heavy luggage. Connections with shorter transfers are left out. Default: the usual transfer times of the timetable."
+        },
         "limit": {
           "type": "integer",
           "default": 4,
@@ -174,7 +190,7 @@
   {
     "name": "get_connections_via",
     "title": "Connections via stops",
-    "description": "Plan public transport connections in Switzerland that pass through one or two given stops, leaving after or arriving before a given time. Returns connections with date, departure and arrival times, platforms, delays, duration, number of transfers, and every leg with its line and the transfer time between legs. Stops can be names or IDs from search_stops_by_name. If a name matches several stops, the result lists the candidates with their IDs instead: ask which one is meant, or call again with the right ID. Without via stops use get_connections_departing or get_connections_arriving. Times are local Swiss time (Europe/Zurich). Example: from \"Zürich HB\", to \"Luzern\", via [\"Zug\"].",
+    "description": "Plan public transport connections in Switzerland that pass through one or two given stops, leaving after or arriving before a given time. Returns connections with date, departure and arrival times, platforms, delays, duration, number of transfers, and every leg with its line and the transfer time between legs. Stops can be names or IDs from search_stops_by_name. Pass place names as the user wrote them; do not add a canton or region yourself. If a name matches several stops, the result lists the candidates with their IDs instead: ask which one is meant, or call again with the right ID. Without via stops use get_connections_departing or get_connections_arriving. Times are local Swiss time (Europe/Zurich). Example: from \"Zürich HB\", to \"Luzern\", via [\"Zug\"].",
     "annotations": {
       "title": "Connections via stops",
       "destructiveHint": false,
@@ -234,6 +250,14 @@
           },
           "default": null,
           "description": "Only use these means of transport, e.g. [\"train\"]. Default: all."
+        },
+        "min_transfer_minutes": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "default": null,
+          "description": "Minimum time for each transfer in minutes, 0–60, e.g. 10 with heavy luggage. Connections with shorter transfers are left out. Default: the usual transfer times of the timetable."
         },
         "limit": {
           "type": "integer",

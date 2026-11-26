@@ -3,13 +3,17 @@ using System.Text.Json;
 namespace Perron.Bench.Scoring;
 
 /// <summary>A connection as the oracle saw it (times in Europe/Zurich).</summary>
+/// <param name="RideDeparture">Planned departure of the first vehicle when the connection starts with a walk; else <c>null</c>.</param>
+/// <param name="RideArrival">Planned arrival of the last vehicle when the connection ends with a walk; else <c>null</c>.</param>
 public sealed record OracleConnection(
     DateTimeOffset Departure,
     DateTimeOffset? DepartureForecast,
     DateTimeOffset Arrival,
     DateTimeOffset? ArrivalForecast,
     int Transfers,
-    IReadOnlyList<string> Lines);
+    IReadOnlyList<string> Lines,
+    DateTimeOffset? RideDeparture = null,
+    DateTimeOffset? RideArrival = null);
 
 /// <summary>A departure (or arrival) as the oracle saw it.</summary>
 public sealed record OracleDeparture(DateTimeOffset Time, DateTimeOffset? Forecast, string? Line, string? Destination);

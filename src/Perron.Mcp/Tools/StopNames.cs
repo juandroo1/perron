@@ -87,22 +87,38 @@ public static class StopNames
         }
 
         var places = starting.Where(IsPlaceLevel).ToList();
-        if (places.Count == 1)
+        if (places.Count == 0)
+        {
+            return starting.Count == 1 ? new StopMatch.Found(starting[0]) : new StopMatch.Ambiguous(starting);
+        }
+
+        // A place with only stops within it ("Oberdorf BL, Station") is a candidate of its own unless a place-level
+        // stop covers it ("Basel SBB" covers "Basel, Aeschenplatz"); its best stop stands for it.
+        var uncovered = starting
+            .Where(stop => !IsPlaceLevel(stop))
+            .GroupBy(Place)
+            .Where(group => !places.Any(place => StartsWithQuery(group.Key, place)))
+            .Select(group => group.First())
+            .ToHashSet();
+        if (places.Count == 1 && uncovered.Count == 0)
         {
             return new StopMatch.Found(places[0]);
         }
 
-        if (starting.Count == 1)
-        {
-            return new StopMatch.Found(starting[0]);
-        }
-
-        return new StopMatch.Ambiguous(places.Count > 0 ? places : starting);
+        return new StopMatch.Ambiguous([.. starting.Where(stop => IsPlaceLevel(stop) || uncovered.Contains(stop))]);
     }
 
     /// <summary>True if a name search does not name one stop and the agent should ask which one is meant.</summary>
     public static bool IsAmbiguous(string query, IReadOnlyList<Location> candidates) =>
         Match(query, candidates) is StopMatch.Ambiguous;
+
+    /// <summary>The place part of a stop name: "Oberdorf BL, Station" → "oberdorf bl".</summary>
+    private static string Place(Location stop)
+    {
+        var normalized = Normalize(stop.Name);
+        var comma = normalized.IndexOf(',', StringComparison.Ordinal);
+        return comma < 0 ? normalized : normalized[..comma].TrimEnd();
+    }
 
     /// <summary>The normalized name, and for a bilingual place ("Fribourg/Freiburg, Pl. Gare") each language on its own.</summary>
     private static IEnumerable<string> Variants(string name)

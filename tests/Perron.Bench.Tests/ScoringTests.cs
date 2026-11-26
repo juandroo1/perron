@@ -92,11 +92,11 @@ public sealed class ScoringTests
 
             Assert.Equal(ExitCodes.Success, exitCode);
             var scores = File.ReadAllLines(Path.Combine(bench, "results", "golden", "scores.jsonl"));
-            Assert.Equal(24, scores.Length);
+            Assert.Equal(25, scores.Length);
             var stored = JsonNode.Parse(File.ReadAllText(Path.Combine(traces, "latest-passed.json")))!;
             Assert.Equal("passed", stored["evaluation"]!["outcome"]!.GetValue<string>());
             Assert.Equal(Evaluator.Version, stored["evaluation"]!["scorer_version"]!.GetValue<string>());
-            Assert.Contains("golden: 24 traces rescored", output.ToString());
+            Assert.Contains("golden: 25 traces rescored", output.ToString());
             Assert.Contains("perron-rich", output.ToString());
         }
         finally

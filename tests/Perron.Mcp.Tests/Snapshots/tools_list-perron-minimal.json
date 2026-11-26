@@ -180,6 +180,14 @@
           "default": null,
           "description": "Means of transport."
         },
+        "min_transfer_minutes": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "default": null,
+          "description": "Minimum transfer time in minutes (0–60)."
+        },
         "limit": {
           "type": "integer",
           "default": 4,

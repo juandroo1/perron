@@ -46,6 +46,31 @@ public sealed class OracleFetcherTests
     }
 
     [Fact]
+    public async Task ConnectionStartingWithAWalk_KeepsTheFirstVehiclesDeparture()
+    {
+        using var api = new Api(connections: "connections-interlaken-zermatt-walk-first.json");
+
+        var data = Assert.Single(await api.FetchAsync("""
+            [{"type":"oracle","oracle":"earliest_arrival","tolerance_minutes":1,"params":{"from":"Interlaken Ost","to":"Zermatt","depart_after":"+1d 13:00"}}]
+            """));
+
+        var best = data.Connections![0];
+        Assert.Equal(new DateTimeOffset(2026, 11, 27, 13, 10, 0, TimeSpan.FromHours(1)), best.Departure);
+        Assert.Equal(new DateTimeOffset(2026, 11, 27, 13, 21, 0, TimeSpan.FromHours(1)), best.RideDeparture);
+        Assert.Null(best.RideArrival);
+    }
+
+    [Fact]
+    public async Task EarliestArrival_WithoutAWalk_HasNoRideTimes()
+    {
+        using var api = new Api();
+
+        var data = Assert.Single(await api.FetchAsync("""[{"type":"oracle","oracle":"earliest_arrival","tolerance_minutes":1,"params":{"from":"Zürich HB","to":"Bern","depart_after":"+1d 08:00"}}]"""));
+
+        Assert.All(data.Connections!, connection => Assert.Null(connection.RideDeparture));
+    }
+
+    [Fact]
     public async Task LatestDeparture_AsksForArrivals()
     {
         using var api = new Api();
@@ -133,9 +158,9 @@ public sealed class OracleFetcherTests
     {
         private readonly ServiceProvider provider;
 
-        public Api(HttpStatusCode status = HttpStatusCode.OK)
+        public Api(HttpStatusCode status = HttpStatusCode.OK, string connections = "connections-zurich-bern-tomorrow-0800.json")
         {
-            var handler = new Handler(this, status);
+            var handler = new Handler(this, status, connections);
             var services = new ServiceCollection();
             services.AddLogging();
             services.AddSingleton<IConfiguration>(new ConfigurationBuilder().Build());
@@ -160,7 +185,7 @@ public sealed class OracleFetcherTests
 
         public void Dispose() => provider.Dispose();
 
-        private sealed class Handler(Api api, HttpStatusCode status) : HttpMessageHandler
+        private sealed class Handler(Api api, HttpStatusCode status, string connections) : HttpMessageHandler
         {
             private static readonly string Directory = Path.Combine(AppContext.BaseDirectory, "fixtures", "transport-opendata");
 
@@ -181,7 +206,7 @@ public sealed class OracleFetcherTests
                 {
                     var path when path.EndsWith("/locations", StringComparison.Ordinal) => "locations-buchs-station.json",
                     var path when path.EndsWith("/stationboard", StringComparison.Ordinal) => "stationboard-bern-tomorrow-0800.json",
-                    _ => "connections-zurich-bern-tomorrow-0800.json",
+                    _ => connections,
                 };
                 return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
                 {

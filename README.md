@@ -50,7 +50,7 @@ Tools (all read-only):
 | Tool | What it does |
 |---|---|
 | `find_stops` | Finds stops by name or near a coordinate and returns ID, name, kind of stop (train, tram, bus …) and coordinates, plus the distance for a coordinate search. An ambiguous name such as "Buchs" lists the candidates (Buchs AG, Buchs SG …) with a hint to ask which one is meant. |
-| `plan_trip` | Plans connections from one stop to another, optionally via up to two stops, leaving after or arriving before a time (local Swiss time). Each connection shows date, departure and arrival, duration, transfers, and every leg with line, direction, platforms, delays and transfer time. Stops can be names or IDs; an ambiguous name returns the candidates with IDs instead of connections. |
+| `plan_trip` | Plans connections from one stop to another, optionally via up to two stops, leaving after or arriving before a time (local Swiss time), optionally with a minimum time per transfer. Each connection shows date, departure and arrival, duration, transfers, and every leg with line, direction, platforms, delays and transfer time. Stops can be names or IDs; an ambiguous name returns the candidates with IDs instead of connections. |
 | `get_departures` | Shows the next departures or arrivals at one stop (name or ID), from now or a given time, optionally only some means of transport. Each entry shows time, delay, line, final destination and platform. Arrivals show the final destination too; the API does not provide where a vehicle comes from. |
 
 Tool texts and results are in English. Every result ends with the attribution "Fahrplandaten: opentransportdata.swiss".
@@ -242,14 +242,27 @@ On a Linux host, run the bench container with your user (`docker compose ... run
 - **Success on covered tasks:** between 87 % and 94 % for all servers. No paired difference to `perron-rich` excludes 0, so these runs support no claim that one server or variant is better.
 - **A finding for tool design:** dev-009 (at least 10 minutes per transfer) fails on every server in every repeat.
   - The best connection waits 33 minutes at the change in Zürich HB.
-  - No server offers a minimum transfer time, so the agents only see a 5-minute transfer and fall back to a later direct train.
+  - No server offered a minimum transfer time, so the agents only saw a 5-minute transfer and fell back to a later direct train.
 - **Not the final comparison:** this is the development set, used to improve the tools (task 4.2). The final comparison runs on the held-out test set (task 4.3).
 - **Latency:** the host was under heavy CPU load from other work during this run, so the latency columns are rough.
+
+**Ablations and tool improvements on the development set** (task 4.2, analysis in [`bench/analysis/dev-baseline.md`](bench/analysis/dev-baseline.md)):
+- **Ablations:** in the baseline, neither the number of tools (`perron-many`), nor the descriptions (`perron-minimal`), nor the format (`perron-json`) changed success measurably; no paired interval excludes 0.
+- **Cost of the variants:** `perron-many` costs about 45 % more per solved task, because of its larger tool definitions. `perron-minimal` costs about 24 % less.
+- **Changes from the traces:**
+  - a minimum transfer time `min_transfer_minutes` (dev-009);
+  - ambiguous names now also list places that only have stops within them, such as Oberdorf BL (dev-018);
+  - the `rich` descriptions ask the agent to pass place names as written (dev-017);
+  - a scorer fix for connections that start with a walk (dev-014).
+- **After the changes** ([`bench/results/20261126-175920-full/report.md`](bench/results/20261126-175920-full/report.md), Perron variants only): success on covered tasks went from 91 % to 100 % for `perron-rich`, 88 % to 93 % for `perron-minimal`, 93 % to 97 % for `perron-json` and 94 % to 97 % for `perron-many`. dev-009 now passes on `perron-rich`, `perron-json` and `perron-many` in every run.
+- **Not a fair comparison with the foreign servers:** they were neither changed nor run again.
 
 Known limitations so far:
 
 - **Task sets written by Claude.** The development set (`bench/tasks/dev.jsonl`) was written by Claude in the working session, the held-out test set by a separate Claude subagent without that session's context; both were spot-checked by a human. The working session never reads the test set. Tasks written by the same model family that solves them may favour it, and the author of the development set knew the planned Perron tool design.
 - **Third-party Python servers** run with their dependencies as of their release date (`uv --exclude-newer`), because one of them no longer starts with today's dependencies.
+- **Perron tuned on the development set.** Perron's tools were improved after reading their failures on the development set; the foreign servers were not. Results on the development set therefore favour Perron. The fair comparison is the held-out test set.
+- **Oracle check and partly named connections.** If an answer names the best arrival with a different departure time (for example the user's time) and an alternative in full, the check counts only the alternative and fails the run (dev-004, one run of `perron-minimal` after task 4.2).
 - **Judge checked by a model, not by a person.** The LLM judge for ambiguous and bad input tasks was compared with a blind review by Claude (Opus 5.5) instead of a human review: 85 % agreement, Cohen's κ 0.38 on 60 verdicts, with two known disagreement patterns (see above).
 
 ## How this project is built

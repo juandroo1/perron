@@ -13,7 +13,7 @@ namespace Perron.Bench.Scoring;
 public static class Evaluator
 {
     /// <summary>Bump when the scoring rules change, so rescored traces show which rules they were scored with.</summary>
-    public const string Version = "2";
+    public const string Version = "3";
 
     private const int ToolErrorLoop = 3;
 

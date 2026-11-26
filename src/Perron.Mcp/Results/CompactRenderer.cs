@@ -58,7 +58,7 @@ public static class CompactRenderer
             yield break;
         }
 
-        yield return $"Connections {result.From.Display} → {result.To.Display}{result.ViaText}, {result.When}:";
+        yield return $"Connections {result.From.Display} → {result.To.Display}{result.ViaText}, {result.When}{result.TransferText}:";
         var number = 0;
         foreach (var line in result.Connections.SelectMany(connection => ConnectionFormat.Lines(connection, ++number)))
         {

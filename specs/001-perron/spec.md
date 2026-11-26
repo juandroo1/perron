@@ -29,7 +29,7 @@ Nebenziel: Das Projekt zeigt Agent- und Tool-Design, Eval-Methodik und MCP in .N
 - AK-1.2: Mehrdeutige Namen (z. B. «Buchs») liefern mehrere Kandidaten mit unterscheidenden Namen bzw. Orten, soweit die API sie liefert (in Task 1.1 verifiziert), damit der Agent nachfragen oder wählen kann.
 
 #### US-2 Verbindungen planen
-- AK-2.1: `plan_trip` plant Verbindungen von A nach B mit optionalem `via`, Datum/Zeit und Abfahrts- oder Ankunftszeit.
+- AK-2.1: `plan_trip` plant Verbindungen von A nach B mit optionalem `via`, Datum/Zeit, Abfahrts- oder Ankunftszeit und optionaler Mindest-Umsteigezeit (0–60 min).
 - AK-2.2: Jede Verbindung zeigt Abfahrt, Ankunft, Dauer, Anzahl Umstiege, Linien, Gleise, Umsteigezeiten und Verspätungen. Das Format folgt der Feldliste in plan.md, Abschnitt 4, ist per Snapshot-Test fixiert und bleibt unter einer Token-Obergrenze pro Verbindung (Wert wird in Task 2.2 festgelegt).
 - AK-2.3: Zeiten sind immer in Europe/Zurich und mit Datum angegeben.
 - AK-2.4: `plan_trip` und `get_departures` akzeptieren für Haltestellen einen Namen oder eine ID. Ist ein Name mehrdeutig, liefern sie die Kandidaten mit IDs, statt still einen Treffer zu wählen.
@@ -126,7 +126,6 @@ Es gibt bewusst kein Ziel «Perron muss gewinnen». Das Ziel ist ein ehrlicher V
 
 - Lizenzen der fremden Server prüfen, bevor Ergebnisse mit Namen veröffentlicht werden. Den Autoren die Ergebnisse vorab zeigen?
 - Störungen und Auslastung später im eigenen Server ergänzen? Seit November 2026 liefert transport.opendata.ch eine Auslastungsprognose (`capacity1st`/`capacity2nd`) ohne zusätzlichen Key; Perron könnte die Fähigkeit `occupancy` damit abdecken.
-- `plan_trip` um `minTransferTime` (Mindest-Umsteigezeit, 0–60 min) ergänzen? Die API kann es direkt; heute muss der Agent selbst filtern.
 - `get_departures` um die weiteren Halte ergänzen (z. B. Parameter `stops_at`)? Die API liefert sie (`passList`), mitgeliefert kosten sie aber viele Tokens. Heute beantwortet `plan_trip` Fragen wie «hält der Zug in Thun?» (Task 2.3).
 - Bench als wiederverwendbares Werkzeug für beliebige MCP-Server veröffentlichen (`dotnet tool`)?
 - Tracing über OpenTelemetry (das MCP-SDK bietet eine `ActivitySource`)?

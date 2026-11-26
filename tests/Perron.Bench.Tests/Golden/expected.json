@@ -182,5 +182,12 @@
     "checks": [
       "passed"
     ]
+  },
+  "earliest-walk-first": {
+    "outcome": "passed",
+    "errors": [],
+    "checks": [
+      "passed"
+    ]
   }
 }
