@@ -95,6 +95,7 @@ public sealed partial class TransportApiClient(
 
         RequireRange(query.Limit, ConnectionQuery.MinLimit, ConnectionQuery.MaxLimit, nameof(query.Limit));
         RequireRange(query.Page, ConnectionQuery.MinPage, ConnectionQuery.MaxPage, nameof(query.Page));
+        RequireRange(query.MinTransferTime, 0, ConnectionQuery.MaxMinTransferTime, nameof(query.MinTransferTime));
 
         var url = new QueryBuilder("connections");
         url.Add("from", query.From.Trim());
@@ -121,6 +122,7 @@ public sealed partial class TransportApiClient(
         AddTransportTypes(url, query.TransportTypes);
         url.AddIfSet("limit", query.Limit);
         url.AddIfSet("page", query.Page);
+        url.AddIfSet("minTransferTime", query.MinTransferTime);
         return url.ToString();
     }
 

@@ -43,7 +43,9 @@ internal sealed record ConnectionDto(
     string? Duration,
     int? Transfers,
     List<string>? Products,
-    List<SectionDto>? Sections);
+    List<SectionDto>? Sections,
+    int? Capacity1st,
+    int? Capacity2nd);
 
 internal sealed record StationboardEntryDto(
     CheckpointDto? Stop,
@@ -92,7 +94,12 @@ internal static partial class ApiMapper
             ApiDuration.Parse(dto.Duration),
             dto.Transfers ?? 0,
             [.. (dto.Products ?? []).Select(product => Clean(product)).OfType<string>()],
-            [.. (dto.Sections ?? []).Select(MapSection)]);
+            [.. (dto.Sections ?? []).Select(MapSection)],
+            Occupancy(dto.Capacity1st),
+            Occupancy(dto.Capacity2nd));
+
+    /// <summary>The API's occupancy forecast: 1 low, 2 medium, 3 high; other values (-1, 0) mean none.</summary>
+    private static int? Occupancy(int? level) => level is >= 1 and <= 3 ? level : null;
 
     private static Section MapSection(SectionDto dto) =>
         new(
