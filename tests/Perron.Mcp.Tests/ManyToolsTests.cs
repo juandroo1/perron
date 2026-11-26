@@ -44,13 +44,14 @@ public sealed class ManyToolsTests
     {
         using var transport = new TransportFixture(FixtureHandler.Always("connections-zurich-bern-tomorrow-0800.json"));
 
-        var result = await ManyTools.GetConnectionsDepartingAsync(transport.Client, Many, "8503000", "8507000", "2026-11-26T08:00", [TransportMode.Train], 4, Token);
+        var result = await ManyTools.GetConnectionsDepartingAsync(transport.Client, Many, "8503000", "8507000", "2026-11-26T08:00", [TransportMode.Train], 10, 4, Token);
 
-        Assert.Contains("leaving after Thu 26.11.2026 08:00", result);
+        Assert.Contains("leaving after Thu 26.11.2026 08:00, transfers of at least 10 min", result);
         var query = Query(transport);
         Assert.Null(query["isArrivalTime"]);
         Assert.Null(query["via"]);
         Assert.Equal("train", query["transportations[]"]);
+        Assert.Equal("10", query["minTransferTime"]);
     }
 
     [Fact]

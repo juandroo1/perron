@@ -25,10 +25,11 @@ public static class PlanTripTool
         string? datetime = null,
         TimeIs time_is = TimeIs.Departure,
         TransportMode[]? transport_types = null,
+        int? min_transfer_minutes = null,
         int limit = DefaultLimit,
         CancellationToken cancellationToken = default) =>
         variant.Render(await PlanAsync(
-            transport, variant, Name, from, to, via, datetime, time_is, transport_types, limit, cancellationToken));
+            transport, variant, Name, from, to, via, datetime, time_is, transport_types, min_transfer_minutes, limit, cancellationToken));
 
     /// <summary>Plans connections; shared by the variants' connection tools.</summary>
     /// <param name="tool">Name of the calling tool, for the hint after ambiguous names.</param>
@@ -42,11 +43,12 @@ public static class PlanTripTool
         string? datetime,
         TimeIs timeIs,
         TransportMode[]? transportTypes,
+        int? minTransferMinutes,
         int limit,
         CancellationToken cancellationToken)
     {
         var vias = (via ?? []).Where(stop => !string.IsNullOrWhiteSpace(stop)).ToList();
-        Validate(from, to, vias, limit);
+        Validate(from, to, vias, minTransferMinutes, limit);
         var at = string.IsNullOrWhiteSpace(datetime) ? (DateTimeOffset?)null : ToolText.ParseDateTime(datetime);
 
         List<StopResolution> stops =
@@ -73,6 +75,7 @@ public static class PlanTripTool
             At = at,
             IsArrivalTime = timeIs == TimeIs.Arrival,
             TransportTypes = [.. (transportTypes ?? []).Distinct().Select(mode => mode.ToTransportType())],
+            MinTransferTime = minTransferMinutes,
             Limit = limit,
         };
 
@@ -83,6 +86,7 @@ public static class PlanTripTool
             [.. resolved.Skip(2).Select(stop => new StopRef(stop.Id, stop.Name ?? StopInResult(stop.Id, answer)?.Name))],
             at,
             timeIs,
+            minTransferMinutes,
             [.. answer.Connections.Select(ConnectionView.From)],
             null);
 
@@ -95,7 +99,7 @@ public static class PlanTripTool
             };
     }
 
-    private static void Validate(string from, string to, List<string> vias, int limit)
+    private static void Validate(string from, string to, List<string> vias, int? minTransferMinutes, int limit)
     {
         if (string.IsNullOrWhiteSpace(from) || string.IsNullOrWhiteSpace(to))
         {
@@ -110,6 +114,11 @@ public static class PlanTripTool
         if (limit is < 1 or > MaxLimit)
         {
             throw new McpException($"limit must be between 1 and {MaxLimit}.");
+        }
+
+        if (minTransferMinutes is < 0 or > ConnectionQuery.MaxMinTransferTime)
+        {
+            throw new McpException($"min_transfer_minutes must be between 0 and {ConnectionQuery.MaxMinTransferTime}.");
         }
     }
 

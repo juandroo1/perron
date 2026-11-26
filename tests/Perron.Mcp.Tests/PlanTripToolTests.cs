@@ -18,28 +18,28 @@ public sealed class PlanTripToolTests
     private const int MaxCharactersPerConnection = 400;
 
     /// <summary>Snapshot cases: recorded /connections response, tool arguments as the fixture's request.</summary>
-    public static TheoryData<string, string, string, string[]?, string?, TimeIs, TransportMode[]?, int> Cases() => new()
+    public static TheoryData<string, string, string, string[]?, string?, TimeIs, TransportMode[]?, int?, int> Cases() => new()
     {
-        { "zurich-bern-tomorrow-0800", "Zürich HB", "8507000", null, "2026-11-26T08:00", TimeIs.Departure, null, 4 },
-        { "zurich-bern-now", "8503000", "8507000", null, null, TimeIs.Departure, null, 4 },
-        { "zurich-bern-arrive-0900", "8503000", "8507000", null, "2026-11-26T09:00", TimeIs.Arrival, null, 4 },
-        { "bern-zurich-via-olten", "8507000", "8503000", ["8500218"], "2026-11-26T08:00", TimeIs.Departure, null, 3 },
-        { "lausanne-stgallen-via-two", "8501120", "8506302", ["8507000", "Zürich HB"], "2026-11-26T08:00", TimeIs.Departure, null, 2 },
-        { "zurich-airport-train", "8503000", "8503016", null, "2026-11-26T08:00", TimeIs.Departure, [TransportMode.Train], 3 },
-        { "basel-lugano-transfer10", "Basel", "8505300", null, "2026-11-26T08:00", TimeIs.Departure, null, 3 },
-        { "geneve-lausanne", "Genève", "8501120", null, "2026-11-26T08:00", TimeIs.Departure, null, 3 },
-        { "buchs-ambiguous", "8502123", "8503000", null, "2026-11-26T08:00", TimeIs.Departure, null, 3 },
-        { "unknown-from", "8507000", "8503000", null, "2026-11-26T08:00", TimeIs.Departure, null, 4 },
+        { "zurich-bern-tomorrow-0800", "Zürich HB", "8507000", null, "2026-11-26T08:00", TimeIs.Departure, null, null, 4 },
+        { "zurich-bern-now", "8503000", "8507000", null, null, TimeIs.Departure, null, null, 4 },
+        { "zurich-bern-arrive-0900", "8503000", "8507000", null, "2026-11-26T09:00", TimeIs.Arrival, null, null, 4 },
+        { "bern-zurich-via-olten", "8507000", "8503000", ["8500218"], "2026-11-26T08:00", TimeIs.Departure, null, null, 3 },
+        { "lausanne-stgallen-via-two", "8501120", "8506302", ["8507000", "Zürich HB"], "2026-11-26T08:00", TimeIs.Departure, null, null, 2 },
+        { "zurich-airport-train", "8503000", "8503016", null, "2026-11-26T08:00", TimeIs.Departure, [TransportMode.Train], null, 3 },
+        { "basel-lugano-transfer10", "Basel", "8505300", null, "2026-11-26T08:00", TimeIs.Departure, null, 10, 3 },
+        { "geneve-lausanne", "Genève", "8501120", null, "2026-11-26T08:00", TimeIs.Departure, null, null, 3 },
+        { "buchs-ambiguous", "8502123", "8503000", null, "2026-11-26T08:00", TimeIs.Departure, null, null, 3 },
+        { "unknown-from", "8507000", "8503000", null, "2026-11-26T08:00", TimeIs.Departure, null, null, 4 },
     };
 
     [Theory]
     [MemberData(nameof(Cases))]
     public async Task Result_MatchesSnapshot_AndStaysUnderTheTokenCap(
-        string fixture, string from, string to, string[]? via, string? datetime, TimeIs timeIs, TransportMode[]? types, int limit)
+        string fixture, string from, string to, string[]? via, string? datetime, TimeIs timeIs, TransportMode[]? types, int? minTransfer, int limit)
     {
         using var transport = new TransportFixture(Router($"connections-{fixture}.json"));
 
-        var result = await PlanAsync(transport, from, to, via, datetime, timeIs, types, limit);
+        var result = await PlanAsync(transport, from, to, via, datetime, timeIs, types, limit, minTransfer);
 
         Snapshot.Match($"plan_trip-{fixture}", result);
         foreach (var block in ConnectionBlocks(result))
@@ -53,7 +53,7 @@ public sealed class PlanTripToolTests
     {
         using var transport = new TransportFixture(Router("connections-lausanne-stgallen-via-two.json"));
 
-        await PlanAsync(transport, "8501120", "8506302", ["8507000", "Zürich HB"], "2026-11-26T08:00", TimeIs.Arrival, [TransportMode.Train, TransportMode.Bus, TransportMode.Train], 2);
+        await PlanAsync(transport, "8501120", "8506302", ["8507000", "Zürich HB"], "2026-11-26T08:00", TimeIs.Arrival, [TransportMode.Train, TransportMode.Bus, TransportMode.Train], 2, 10);
 
         var request = Assert.Single(transport.Handler.Requests, uri => uri.AbsolutePath.EndsWith("/connections", StringComparison.Ordinal));
         var query = HttpUtility.ParseQueryString(request.Query);
@@ -65,6 +65,20 @@ public sealed class PlanTripToolTests
         Assert.Equal("1", query["isArrivalTime"]);
         Assert.Equal("train,bus", query["transportations[]"]);
         Assert.Equal("2", query["limit"]);
+        Assert.Equal("10", query["minTransferTime"]);
+    }
+
+    [Theory]
+    [InlineData(-1)]
+    [InlineData(61)]
+    public async Task MinTransferOutOfRange_IsAToolError(int minutes)
+    {
+        using var transport = new TransportFixture(Router("connections-zurich-bern-now.json"));
+
+        var error = await Assert.ThrowsAsync<McpException>(() => PlanAsync(transport, "8503000", "8507000", minTransfer: minutes));
+
+        Assert.Equal("min_transfer_minutes must be between 0 and 60.", error.Message);
+        Assert.Empty(transport.Handler.Requests);
     }
 
     [Fact]
@@ -257,7 +271,8 @@ public sealed class PlanTripToolTests
         string? datetime = null,
         TimeIs timeIs = TimeIs.Departure,
         TransportMode[]? types = null,
-        int limit = PlanTripTool.DefaultLimit) =>
+        int limit = PlanTripTool.DefaultLimit,
+        int? minTransfer = null) =>
         PlanTripTool.PlanTripAsync(
-            transport.Client, PerronVariant.Default, from, to, via, datetime, timeIs, types, limit, TestContext.Current.CancellationToken);
+            transport.Client, PerronVariant.Default, from, to, via, datetime, timeIs, types, minTransfer, limit, TestContext.Current.CancellationToken);
 }

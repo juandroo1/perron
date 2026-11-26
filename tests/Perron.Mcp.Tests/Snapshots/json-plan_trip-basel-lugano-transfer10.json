@@ -1,0 +1,121 @@
+{
+  "from": {
+    "id": "8500010",
+    "name": "Basel SBB"
+  },
+  "to": {
+    "id": "8505300",
+    "name": "Lugano"
+  },
+  "time_is": "departure",
+  "datetime": "2026-11-26T08:00",
+  "min_transfer_minutes": 10,
+  "connections": [
+    {
+      "weekday": "Thu",
+      "departure": "2026-11-26T08:07",
+      "arrival": "2026-11-26T11:28",
+      "duration_min": 201,
+      "transfers": 1,
+      "legs": [
+        {
+          "line": "IC 3",
+          "direction": "Chur",
+          "from": {
+            "stop": "Basel SBB",
+            "time": "2026-11-26T08:07",
+            "platform": "9"
+          },
+          "to": {
+            "stop": "Zürich HB",
+            "time": "2026-11-26T09:00",
+            "platform": "9"
+          }
+        },
+        {
+          "transfer_min": 33,
+          "at": "Zürich HB"
+        },
+        {
+          "line": "EC 15",
+          "direction": "Como S. Giovanni",
+          "from": {
+            "stop": "Zürich HB",
+            "time": "2026-11-26T09:33",
+            "platform": "8"
+          },
+          "to": {
+            "stop": "Lugano",
+            "time": "2026-11-26T11:28",
+            "platform": "2"
+          }
+        }
+      ]
+    },
+    {
+      "weekday": "Thu",
+      "departure": "2026-11-26T09:04",
+      "arrival": "2026-11-26T11:58",
+      "duration_min": 174,
+      "transfers": 0,
+      "legs": [
+        {
+          "line": "IC 21",
+          "direction": "Lugano",
+          "from": {
+            "stop": "Basel SBB",
+            "time": "2026-11-26T09:04",
+            "platform": "6"
+          },
+          "to": {
+            "stop": "Lugano",
+            "time": "2026-11-26T11:58",
+            "platform": "2"
+          }
+        }
+      ]
+    },
+    {
+      "weekday": "Thu",
+      "departure": "2026-11-26T09:07",
+      "arrival": "2026-11-26T12:28",
+      "duration_min": 201,
+      "transfers": 1,
+      "legs": [
+        {
+          "line": "ICE 273",
+          "direction": "Zürich HB",
+          "from": {
+            "stop": "Basel SBB",
+            "time": "2026-11-26T09:07",
+            "platform": "5"
+          },
+          "to": {
+            "stop": "Zürich HB",
+            "time": "2026-11-26T10:00",
+            "platform": "13"
+          }
+        },
+        {
+          "transfer_min": 33,
+          "at": "Zürich HB"
+        },
+        {
+          "line": "EC 33",
+          "direction": "Como S. Giovanni",
+          "from": {
+            "stop": "Zürich HB",
+            "time": "2026-11-26T10:33",
+            "platform": "7"
+          },
+          "to": {
+            "stop": "Lugano",
+            "time": "2026-11-26T12:28",
+            "platform": "2"
+          }
+        }
+      ]
+    }
+  ],
+  "source": "Fahrplandaten: opentransportdata.swiss"
+}

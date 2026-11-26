@@ -30,6 +30,7 @@ public sealed partial class JsonFormatTests
         "plan_trip-zurich-bern-now",
         "plan_trip-buchs-ambiguous",
         "plan_trip-bern-zurich-via-olten",
+        "plan_trip-basel-lugano-transfer10",
         "plan_trip-ambiguous-from",
         "plan_trip-unknown-from",
         "get_departures-bern-arrivals",
@@ -88,6 +89,7 @@ public sealed partial class JsonFormatTests
             "plan_trip-zurich-bern-now" => Plan(variant, "connections-zurich-bern-now.json", "8503000", "8507000", null, null),
             "plan_trip-buchs-ambiguous" => Plan(variant, "connections-buchs-ambiguous.json", "8502123", "8503000", null, "2026-11-26T08:00"),
             "plan_trip-bern-zurich-via-olten" => Plan(variant, "connections-bern-zurich-via-olten.json", "8507000", "8503000", ["8500218"], "2026-11-26T08:00"),
+            "plan_trip-basel-lugano-transfer10" => Plan(variant, "connections-basel-lugano-transfer10.json", "8500010", "8505300", null, "2026-11-26T08:00", 10),
             "plan_trip-ambiguous-from" => Plan(variant, "connections-zurich-bern-now.json", "Buchs", "8503000", null, null),
             "plan_trip-unknown-from" => Plan(variant, "connections-unknown-from.json", "8507000", "8503000", null, "2026-11-26T08:00"),
             "get_departures-bern-arrivals" => Board(variant, "stationboard-bern-arrivals.json", "Bern", BoardType.Arrival, null),
@@ -101,10 +103,10 @@ public sealed partial class JsonFormatTests
             return await FindStopsTool.FindStopsAsync(transport.Client, v, query, latitude, longitude, 5, token);
         }
 
-        async Task<string> Plan(PerronVariant v, string fixture, string from, string to, string[]? via, string? datetime)
+        async Task<string> Plan(PerronVariant v, string fixture, string from, string to, string[]? via, string? datetime, int? minTransfer = null)
         {
             using var transport = new TransportFixture(Router(fixture));
-            return await PlanTripTool.PlanTripAsync(transport.Client, v, from, to, via, datetime, cancellationToken: token);
+            return await PlanTripTool.PlanTripAsync(transport.Client, v, from, to, via, datetime, min_transfer_minutes: minTransfer, cancellationToken: token);
         }
 
         async Task<string> Board(PerronVariant v, string fixture, string stop, BoardType type, TransportMode[]? types)

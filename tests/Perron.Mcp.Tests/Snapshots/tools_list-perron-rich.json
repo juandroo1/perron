@@ -112,7 +112,7 @@
   {
     "name": "plan_trip",
     "title": "Plan trip",
-    "description": "Plan public transport connections in Switzerland from one stop to another, optionally via up to two stops, leaving after or arriving before a given time. Returns connections with date, departure and arrival times, platforms, delays, duration, number of transfers, and every leg with its line and the transfer time between legs. Stops can be names or IDs from find_stops. If a name matches several stops (e.g. \"Buchs\"), the result lists the candidates with their IDs instead of connections: ask which one is meant, or call again with the right ID. Times are local Swiss time (Europe/Zurich). Example: from \"Zürich HB\", to \"Bern\", datetime \"2026-11-26T08:00\".",
+    "description": "Plan public transport connections in Switzerland from one stop to another, optionally via up to two stops, leaving after or arriving before a given time. Returns connections with date, departure and arrival times, platforms, delays, duration, number of transfers, and every leg with its line and the transfer time between legs. Stops can be names or IDs from find_stops. Pass place names as the user wrote them; do not add a canton or region yourself. If a name matches several stops (e.g. \"Buchs\"), the result lists the candidates with their IDs instead of connections: ask which one is meant, or call again with the right ID. Times are local Swiss time (Europe/Zurich). Example: from \"Zürich HB\", to \"Bern\", datetime \"2026-11-26T08:00\".",
     "annotations": {
       "title": "Plan trip",
       "destructiveHint": false,
@@ -179,6 +179,14 @@
           },
           "default": null,
           "description": "Only use these means of transport, e.g. [\"train\"]. Default: all."
+        },
+        "min_transfer_minutes": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "default": null,
+          "description": "Minimum time for each transfer in minutes, 0–60, e.g. 10 with heavy luggage. Connections with shorter transfers are left out. Default: the usual transfer times of the timetable."
         },
         "limit": {
           "type": "integer",

@@ -96,6 +96,11 @@ public static class JsonRenderer
 
         json["time_is"] = result.TimeIs == TimeIs.Arrival ? "arrival" : "departure";
         json["datetime"] = result.At is { } at ? LocalTime(at) : "now";
+        if (result.MinTransferMinutes is { } minutes)
+        {
+            json["min_transfer_minutes"] = minutes;
+        }
+
         json["connections"] = new JsonArray([.. result.Connections.Select(connection => (JsonNode?)Connection(connection))]);
         Add(json, "hint", result.Hint);
         return json;

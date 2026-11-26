@@ -15,6 +15,11 @@ public static class ToolTexts
     private const string DateTimeMinimal = "Date and time, YYYY-MM-DDTHH:mm.";
     private const string TransportTypesRich = "Only use these means of transport, e.g. [\"train\"]. Default: all.";
     private const string TransportTypesMinimal = "Means of transport.";
+    private const string MinTransferRich =
+        "Minimum time for each transfer in minutes, 0–60, e.g. 10 with heavy luggage. "
+        + "Connections with shorter transfers are left out. Default: the usual transfer times of the timetable.";
+    private const string MinTransferMinimal = "Minimum transfer time in minutes (0–60).";
+    private const string PlaceNamesRich = "Pass place names as the user wrote them; do not add a canton or region yourself. ";
 
     public static ToolDescription FindStops(DescriptionStyle style) => style == DescriptionStyle.Rich
         ? new(
@@ -49,6 +54,7 @@ public static class ToolTexts
             + "Returns connections with date, departure and arrival times, platforms, delays, duration, number of transfers, "
             + "and every leg with its line and the transfer time between legs. "
             + "Stops can be names or IDs from find_stops. "
+            + PlaceNamesRich
             + "If a name matches several stops (e.g. \"Buchs\"), the result lists the candidates with their IDs instead of connections: "
             + "ask which one is meant, or call again with the right ID. "
             + "Times are local Swiss time (Europe/Zurich). "
@@ -61,6 +67,7 @@ public static class ToolTexts
                 ["datetime"] = DateTimeRich,
                 ["time_is"] = "\"departure\" (default): leave at or after datetime. \"arrival\": arrive at or before datetime.",
                 ["transport_types"] = TransportTypesRich,
+                ["min_transfer_minutes"] = MinTransferRich,
                 ["limit"] = "Number of connections, 1–8. Default 4.",
             })
         : new(
@@ -73,6 +80,7 @@ public static class ToolTexts
                 ["datetime"] = DateTimeMinimal,
                 ["time_is"] = "Whether datetime is the departure or arrival time.",
                 ["transport_types"] = TransportTypesMinimal,
+                ["min_transfer_minutes"] = MinTransferMinimal,
                 ["limit"] = "Number of connections (1–8).",
             });
 
@@ -119,6 +127,7 @@ public static class ToolTexts
         "Returns connections with date, departure and arrival times, platforms, delays, duration, number of transfers, "
         + "and every leg with its line and the transfer time between legs. "
         + "Stops can be names or IDs from search_stops_by_name. "
+        + PlaceNamesRich
         + "If a name matches several stops, the result lists the candidates with their IDs instead: "
         + "ask which one is meant, or call again with the right ID. ";
 
@@ -173,6 +182,7 @@ public static class ToolTexts
                 ["to"] = ToRich,
                 ["datetime"] = DateTimeRich,
                 ["transport_types"] = TransportTypesRich,
+                ["min_transfer_minutes"] = MinTransferRich,
                 ["limit"] = ConnectionLimitRich,
             })
         : new(
@@ -183,6 +193,7 @@ public static class ToolTexts
                 ["to"] = "Arrival stop.",
                 ["datetime"] = DateTimeMinimal,
                 ["transport_types"] = TransportTypesMinimal,
+                ["min_transfer_minutes"] = MinTransferMinimal,
                 ["limit"] = ConnectionLimitMinimal,
             });
 
@@ -199,6 +210,7 @@ public static class ToolTexts
                 ["to"] = ToRich,
                 ["datetime"] = "Latest arrival, local Swiss time, ISO 8601 without offset, e.g. \"2026-11-26T10:00\".",
                 ["transport_types"] = TransportTypesRich,
+                ["min_transfer_minutes"] = MinTransferRich,
                 ["limit"] = ConnectionLimitRich,
             })
         : new(
@@ -209,6 +221,7 @@ public static class ToolTexts
                 ["to"] = "Arrival stop.",
                 ["datetime"] = DateTimeMinimal,
                 ["transport_types"] = TransportTypesMinimal,
+                ["min_transfer_minutes"] = MinTransferMinimal,
                 ["limit"] = ConnectionLimitMinimal,
             });
 
@@ -228,6 +241,7 @@ public static class ToolTexts
                 ["datetime"] = DateTimeRich,
                 ["time_is"] = "\"departure\" (default): leave at or after datetime. \"arrival\": arrive at or before datetime.",
                 ["transport_types"] = TransportTypesRich,
+                ["min_transfer_minutes"] = MinTransferRich,
                 ["limit"] = ConnectionLimitRich,
             })
         : new(
@@ -240,6 +254,7 @@ public static class ToolTexts
                 ["datetime"] = DateTimeMinimal,
                 ["time_is"] = "Whether datetime is the departure or arrival time.",
                 ["transport_types"] = TransportTypesMinimal,
+                ["min_transfer_minutes"] = MinTransferMinimal,
                 ["limit"] = ConnectionLimitMinimal,
             });
 

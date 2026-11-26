@@ -25,6 +25,7 @@ public sealed record CandidatesResult(IReadOnlyList<StopResolution.Ambiguous> Am
 
 /// <summary>Result of a connection search.</summary>
 /// <param name="At">Requested time; <c>null</c> means now.</param>
+/// <param name="MinTransferMinutes">Requested minimum transfer time; <c>null</c> means the timetable's.</param>
 /// <param name="Hint">Set when no connections were found.</param>
 public sealed record TripsResult(
     StopRef From,
@@ -32,6 +33,7 @@ public sealed record TripsResult(
     IReadOnlyList<StopRef> Via,
     DateTimeOffset? At,
     TimeIs TimeIs,
+    int? MinTransferMinutes,
     IReadOnlyList<ConnectionView> Connections,
     string? Hint) : ToolResult
 {
@@ -43,6 +45,9 @@ public sealed record TripsResult(
             : $"leaving after {ToolText.Date(instant)} {ToolText.Time(instant)}";
 
     public string ViaText => Via.Count > 0 ? " via " + string.Join(", ", Via.Select(stop => stop.Display)) : "";
+
+    /// <summary>", transfers of at least 10 min" or empty.</summary>
+    public string TransferText => MinTransferMinutes is { } minutes ? $", transfers of at least {minutes} min" : "";
 }
 
 /// <summary>Departures or arrivals of one stop.</summary>
