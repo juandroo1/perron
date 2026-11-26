@@ -2,5 +2,5 @@
 {"run_id":"20261126-084935-smoke","task_id":"dev-004","category":"trip_simple","server_id":"perron-rich","repeat":1,"status":"completed","outcome":"passed","grounded":true,"ungrounded_times":0,"errors":[]}
 {"run_id":"20261126-084935-smoke","task_id":"dev-007","category":"trip_constraints","server_id":"perron-rich","repeat":1,"status":"completed","outcome":"passed","grounded":true,"ungrounded_times":0,"errors":[]}
 {"run_id":"20261126-084935-smoke","task_id":"dev-011","category":"departures","server_id":"perron-rich","repeat":1,"status":"completed","outcome":"passed","grounded":true,"ungrounded_times":0,"errors":[]}
-{"run_id":"20261126-084935-smoke","task_id":"dev-017","category":"ambiguous","server_id":"perron-rich","repeat":1,"status":"completed","outcome":"pending","grounded":true,"ungrounded_times":0,"errors":[]}
-{"run_id":"20261126-084935-smoke","task_id":"dev-020","category":"bad_input","server_id":"perron-rich","repeat":1,"status":"completed","outcome":"pending","grounded":true,"ungrounded_times":0,"errors":[]}
+{"run_id":"20261126-084935-smoke","task_id":"dev-017","category":"ambiguous","server_id":"perron-rich","repeat":1,"status":"completed","outcome":"failed","grounded":true,"ungrounded_times":0,"errors":[]}
+{"run_id":"20261126-084935-smoke","task_id":"dev-020","category":"bad_input","server_id":"perron-rich","repeat":1,"status":"completed","outcome":"passed","grounded":true,"ungrounded_times":0,"errors":[]}

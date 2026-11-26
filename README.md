@@ -193,11 +193,25 @@ docker compose --profile bench run --rm bench rescore            # all runs unde
 docker compose --profile bench run --rm bench rescore <run-id>
 ```
 
-- **Checks** of a task (all must pass): `regex` on the final answer; `oracle` against data from transport.opendata.ch, fetched once per task from the reference time and stored in the trace: the answer must name a connection or departure that exists, meets the task's constraints and is at most `tolerance_minutes` worse than the best one (planned or forecast times both count); `judge` for ambiguous and bad input (follows in task 3.5).
+- **Checks** of a task (all must pass): `regex` on the final answer; `oracle` against data from transport.opendata.ch, fetched once per task from the reference time and stored in the trace: the answer must name a connection or departure that exists, meets the task's constraints and is at most `tolerance_minutes` worse than the best one (planned or forecast times both count); `judge` for ambiguous and bad input: an LLM-as-judge (the model of `bench/bench.json`) grades the final answer against the task's rubric, blind to the server and its tool results; its verdict and reason are stored in the trace.
 - **Grounding**: every clock time in the answer must appear in a tool result of the same run (ISO timestamps converted to Swiss time), in the task or in the system prompt; otherwise the run counts as `hallucinated`, whether it passed or not.
 - **Outcome** per run: `passed`, `failed`, `pending` (judge still missing), `unscored` (no oracle data) or `excluded` (infrastructure error, capability not covered), with failure codes such as `not_optimal`, `wrong_time`, `gave_up`, `tool_limit`, `hallucinated`.
 
-The evaluation is stored in each trace (`evaluation`) and in `scores.jsonl` of the run. On a Linux host, run the bench container with your user (`docker compose ... run --rm --user "$(id -u):$(id -g)" bench ...`) so it can write to `bench/results`.
+The evaluation is stored in each trace (`evaluation`) and in `scores.jsonl` of the run.
+
+`bench run` asks the judge right after each run. `bench judge` asks for verdicts that are missing in stored runs (`--force` judges again); it costs tokens. To check the judge by hand (at least 40 verdicts):
+
+```bash
+docker compose --profile bench run --rm bench judge-export                    # bench/judge-review/review.csv
+# fill in human_verdict (pass or fail) and, where useful, note; the sheet shows neither server nor the judge's verdict
+docker compose --profile bench run --rm bench judge-agreement bench/judge-review/review.csv   # agreement.md
+```
+
+`bench run --tasks <ids>` limits a run to some tasks of the suite, for example the judge tasks.
+
+**Judge check so far** (`bench/judge-review/agreement.md`): 60 verdicts of the judge tasks on six servers, checked blind, agree with the review in 51 cases (85 %, Cohen's κ 0.38). The judge accepts an answer that states its assumption where the rubric asks for a question (dev-017, dev-019), and it mistakes today's times, given for comparison, for times of the requested date (dev-021). The review was done by Claude (Opus 5.5), not by a person; see the known limitations.
+
+On a Linux host, run the bench container with your user (`docker compose ... run --rm --user "$(id -u):$(id -g)" bench ...`) so it can write to `bench/results`.
 
 ## Results
 
@@ -207,6 +221,7 @@ Known limitations so far:
 
 - **Task sets written by Claude.** The development set (`bench/tasks/dev.jsonl`) was written by Claude in the working session, the held-out test set by a separate Claude subagent without that session's context; both were spot-checked by a human. The working session never reads the test set. Tasks written by the same model family that solves them may favour it, and the author of the development set knew the planned Perron tool design.
 - **Third-party Python servers** run with their dependencies as of their release date (`uv --exclude-newer`), because one of them no longer starts with today's dependencies.
+- **Judge checked by a model, not by a person.** The LLM judge for ambiguous and bad input tasks was compared with a blind review by Claude (Opus 5.5) instead of a human review: 85 % agreement, Cohen's κ 0.38 on 60 verdicts, with two known disagreement patterns (see above).
 
 ## How this project is built
 

@@ -295,7 +295,7 @@ public sealed class AgentLoop(IModelClient model)
         response.Usage.CacheCreationInputTokens ?? 0,
         response.Usage.CacheReadInputTokens ?? 0);
 
-    private static Effort EffortOf(string effort) => effort switch
+    internal static Effort EffortOf(string effort) => effort switch
     {
         "low" => Effort.Low,
         "medium" => Effort.Medium,

@@ -90,13 +90,13 @@
     }
   ],
   "evaluation": {
-    "outcome": "pending",
+    "outcome": "passed",
     "checks": [
       {
         "index": 0,
         "type": "judge",
-        "result": "pending",
-        "detail": "judge checks follow in task 3.5"
+        "result": "passed",
+        "detail": "judge: The answer states that no stop named \u0027Xyzzyhausen\u0027 can be found in Switzerland, suggests the name may be misspelled or the place doesn\u0027t exist, and asks for the exact name or a nearby town. It does not give any connection or times to Xyzzyhausen."
       }
     ],
     "grounding": {
@@ -107,8 +107,25 @@
       "grounded": true
     },
     "errors": [],
-    "scorer_version": "1"
+    "scorer_version": "2"
   },
   "attempt": 1,
+  "judgements": [
+    {
+      "check_index": 0,
+      "model": "claude-haiku-5-5",
+      "verdict": "pass",
+      "reason": "The answer states that no stop named \u0027Xyzzyhausen\u0027 can be found in Switzerland, suggests the name may be misspelled or the place doesn\u0027t exist, and asks for the exact name or a nearby town. It does not give any connection or times to Xyzzyhausen.",
+      "usage": {
+        "input": 739,
+        "output": 105,
+        "cache_write": 0,
+        "cache_read": 0
+      },
+      "cost_usd": 0.0001264,
+      "llm_ms": 1342.2957,
+      "judged_at": "2026-11-26T09:02:38.4437956+00:00"
+    }
+  ],
   "file_name": "dev-020__perron-rich__r1.json"
 }

@@ -43,4 +43,7 @@ public sealed record RunManifest(
     string SystemPromptTemplateSha256,
     IReadOnlyList<ManifestServer> Servers,
     IReadOnlyDictionary<string, int>? StatusCounts = null,
-    decimal? TotalCostUsd = null);
+    decimal? TotalCostUsd = null,
+    string? JudgePromptSha256 = null,
+    JudgeSettings? Judge = null,
+    IReadOnlyList<string>? Tasks = null);

@@ -13,7 +13,7 @@ namespace Perron.Bench.Scoring;
 public static class Evaluator
 {
     /// <summary>Bump when the scoring rules change, so rescored traces show which rules they were scored with.</summary>
-    public const string Version = "1";
+    public const string Version = "2";
 
     private const int ToolErrorLoop = 3;
 
@@ -98,7 +98,7 @@ public static class Evaluator
             {
                 "regex" => RegexCheck(index, check, trace),
                 "oracle" => OracleCheck.Evaluate(index, check, trace.Oracle?.FirstOrDefault(data => data.CheckIndex == index), trace.FinalAnswer, trace.ReferenceTime),
-                "judge" => new CheckResult(index, "judge", Results.Pending, "judge checks follow in task 3.5"),
+                "judge" => JudgeCheck(index, trace.Judgements?.FirstOrDefault(judgement => judgement.CheckIndex == index)),
                 _ => new CheckResult(index, type, Results.Unscored, $"unknown check type '{type}'"),
             };
         }
@@ -107,6 +107,15 @@ public static class Evaluator
             return new CheckResult(index, type, Results.Unscored, $"check could not be evaluated: {ex.Message}");
         }
     }
+
+    /// <summary>The stored verdict of the judge (AK-9.2); without one the check waits for <c>bench judge</c>.</summary>
+    private static CheckResult JudgeCheck(int index, Judgement? judgement) => judgement switch
+    {
+        null => new CheckResult(index, "judge", Results.Pending, "no judge verdict yet (bench judge)"),
+        { Error: { } error } => new CheckResult(index, "judge", Results.Unscored, $"judge failed: {error}"),
+        { Verdict: Judge.Pass } => new CheckResult(index, "judge", Results.Passed, $"judge: {judgement.Reason}"),
+        _ => new CheckResult(index, "judge", Results.Failed, $"judge: {judgement.Reason}"),
+    };
 
     private static CheckResult RegexCheck(int index, JsonElement check, RunTrace trace)
     {

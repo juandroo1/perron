@@ -101,7 +101,7 @@
       "grounded": true
     },
     "errors": [],
-    "scorer_version": "1"
+    "scorer_version": "2"
   },
   "attempt": 1,
   "file_name": "dev-001__perron-rich__r1.json"
