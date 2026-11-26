@@ -14,6 +14,7 @@ using Perron.Bench.Run;
 using Perron.Bench.Scoring;
 using Perron.Bench.Settings;
 using Perron.Bench.Tasks;
+using Perron.Transport;
 
 namespace Perron.Bench;
 
@@ -278,6 +279,10 @@ public static class BenchCli
         builder.Services.AddTransient<McpServerConnector>();
         builder.Services.AddTransient<McpServerCheck>();
         builder.Services.AddSingleton(TimeProvider.System);
+
+        // transport.opendata.ch for the oracle checks (TRANSPORT_API_BASE), with the same resilience and cache as Perron.
+        builder.Services.AddTransportApiClient();
+        builder.Services.AddTransient<OracleFetcher>();
 
         configureServices?.Invoke(builder.Services);
 

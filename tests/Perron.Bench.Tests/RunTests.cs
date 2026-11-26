@@ -167,6 +167,46 @@ public sealed class RunTests(PerronMcpFactory server) : IClassFixture<PerronMcpF
         Assert.Equal(status, ReadTrace(bench, "dev-001__alpha__r1.json")["status"]!.GetValue<string>());
     }
 
+    [Theory]
+    [InlineData("Mit dem IC 8 ab 08:02 sind Sie um 08:58 in Bern.", "passed")]
+    [InlineData("Nehmen Sie den IR 16 um 08:06, Ankunft 09:24.", "failed")]
+    public async Task Oracle_IsAskedOncePerTask_StoredInTheTrace_AndScoresTheAnswer(string answer, string outcome)
+    {
+        const string OracleTask = """
+            {"id":"dev-004","prompt":"Wann komme ich morgen frühestens in Bern an, wenn ich um 08:00 in Zürich HB losfahre?","language":"de","category":"trip_simple","capabilities_required":["stops","trips"],"smoke":true,"checks":[{"type":"oracle","oracle":"earliest_arrival","params":{"from":"Zürich HB","to":"Bern","depart_after":"+1d 08:00"},"tolerance_minutes":1}],"max_tool_calls":6}
+            """;
+        using var bench = new TemporaryBench(Servers, OracleTask);
+
+        var (exitCode, output, _) = await RunAsync(bench, ScriptedModel.PlanTripThenAnswer(answer), "run", "--suite", "smoke", "--repeats", "2");
+
+        Assert.Equal(ExitCodes.Success, exitCode);
+        var trace = ReadTrace(bench, "dev-004__alpha__r1.json");
+        Assert.Equal(4, trace["oracle"]![0]!["connections"]!.AsArray().Count);
+        Assert.Equal(outcome, trace["evaluation"]!["outcome"]!.GetValue<string>());
+        Assert.True(trace["evaluation"]!["grounding"]!["ungrounded"]!.AsArray().Count == 0);
+
+        // Both repeats share the oracle data of the task round; beta cannot plan trips and gets none.
+        Assert.Equal(trace["oracle"]!.ToJsonString(), ReadTrace(bench, "dev-004__alpha__r2.json")["oracle"]!.ToJsonString());
+        Assert.Null(ReadTrace(bench, "dev-004__beta__r1.json")["oracle"]);
+        var scores = File.ReadAllLines(Path.Combine(Assert.Single(Directory.GetDirectories(Path.Combine(bench.Directory, "results"))), "scores.jsonl"));
+        Assert.Equal(4, scores.Length);
+        Assert.Contains($"dev-004 alpha r1: completed, {outcome}", output);
+    }
+
+    [Fact]
+    public async Task InfraError_IsRetriedOnce()
+    {
+        using var bench = new TemporaryBench(Servers, Tasks);
+
+        var (exitCode, output, _) = await RunAsync(bench, ScriptedModel.FailingOnce(), "run", "--suite", "smoke", "--servers", "alpha");
+
+        Assert.Equal(ExitCodes.Success, exitCode);
+        var trace = ReadTrace(bench, "dev-001__alpha__r1.json");
+        Assert.Equal(RunStatus.Completed, trace["status"]!.GetValue<string>());
+        Assert.Equal(2, trace["attempt"]!.GetValue<int>());
+        Assert.Contains("retrying once", output);
+    }
+
     [Fact]
     public async Task ModelFailure_IsAnInfrastructureError_AndTheRunExitsWithOne()
     {
@@ -321,6 +361,9 @@ public sealed class RunTests(PerronMcpFactory server) : IClassFixture<PerronMcpF
             {
                 server.RouteBenchClientToServer(services);
                 services.AddSingleton<TimeProvider>(new FixedClock(Now));
+
+                // The oracle's transport client answers from fixtures: no test reaches transport.opendata.ch.
+                services.AddHttpClient("ITransportApiClient").ConfigurePrimaryHttpMessageHandler(() => new TransportFixtureHandler());
                 if (model is not null)
                 {
                     services.AddSingleton<IModelClient>(model);
@@ -388,6 +431,21 @@ public sealed class ScriptedModel(Func<MessageCreateParams, Message> respond) : 
     public static ScriptedModel AnswerAtOnce(string stopReason) => new(_ => Answer(stopReason, Text("Partial")));
 
     public static ScriptedModel Failing() => new(_ => throw new HttpRequestException("connection refused"));
+
+    /// <summary>Fails the first request, then behaves like <see cref="LookUpBern"/>.</summary>
+    public static ScriptedModel FailingOnce()
+    {
+        var failed = 0;
+        var lookUp = LookUpBern();
+        return new(request => Interlocked.Exchange(ref failed, 1) == 0
+            ? throw new HttpRequestException("connection reset")
+            : lookUp.CreateAsync(request, CancellationToken.None).Result);
+    }
+
+    /// <summary>Plans Zürich HB → Bern tomorrow at 08:00 with plan_trip, then gives <paramref name="answer"/>.</summary>
+    public static ScriptedModel PlanTripThenAnswer(string answer) => new(request => request.Messages.Count == 1
+        ? Answer("tool_use", ToolUse("toolu_1", "plan_trip", """{"from":"Zürich HB","to":"Bern","datetime":"2026-11-26T08:00"}"""))
+        : Answer("end_turn", Text(answer)));
 
     private static string Thinking(string signature) => $$"""{"type":"thinking","thinking":"","signature":"{{signature}}"}""";
 

@@ -25,7 +25,8 @@ public sealed record RunOptions(string Suite, IReadOnlyList<string> ServerIds, i
 /// task and repeat (seed in the manifest). Tasks a server cannot cover are recorded without a model call. Writes
 /// manifest, traces and runs.jsonl to bench/results/&lt;run-id&gt;/.
 /// </summary>
-public sealed class RunCommand(McpServerConnector connector, IToolTokenCounter tokenCounter, IConfiguration configuration, TimeProvider clock)
+public sealed class RunCommand(
+    McpServerConnector connector, IToolTokenCounter tokenCounter, OracleFetcher oracles, IConfiguration configuration, TimeProvider clock)
 {
     public async Task<int> RunAsync(
         BenchSettings settings,
@@ -149,6 +150,11 @@ public sealed class RunCommand(McpServerConnector connector, IToolTokenCounter t
         foreach (var task in suite.Tasks)
         {
             var reference = SystemPrompt.ReferenceTime(clock);
+
+            // The oracle is asked once per task round, from its reference time, and shared by all servers (AK-9.1).
+            var anyCovered = sessions.Any(session => ServerCoverage.Missing(task.CapabilitiesRequired, session.Manifest.CapabilitiesCovered).Count == 0);
+            IReadOnlyList<OracleData> oracle = anyCovered ? await oracles.FetchAsync(task, reference, cancellationToken) : [];
+
             for (var repeat = 1; repeat <= options.Repeats; repeat++)
             {
                 foreach (var session in Shuffle(sessions, random))
@@ -168,9 +174,25 @@ public sealed class RunCommand(McpServerConnector connector, IToolTokenCounter t
                         pricing);
 
                     var missing = ServerCoverage.Missing(task.CapabilitiesRequired, session.Manifest.CapabilitiesCovered);
-                    var trace = missing.Count > 0
-                        ? AgentLoop.NotCovered(request, missing)
-                        : await loop.RunAsync(request, new McpToolInvoker(session.Client), cancellationToken);
+                    RunTrace trace;
+                    if (missing.Count > 0)
+                    {
+                        trace = AgentLoop.NotCovered(request, missing);
+                    }
+                    else
+                    {
+                        trace = await loop.RunAsync(request, new McpToolInvoker(session.Client), cancellationToken);
+                        if (trace.Status == RunStatus.InfraError)
+                        {
+                            // AK-9.5: one more attempt after the pause; if it fails again, the run is excluded from scoring.
+                            await output.WriteLineAsync($"{task.Id} {session.Definition.Id} r{repeat}: {trace.StatusDetail}; retrying once");
+                            await PauseAsync(settings, cancellationToken);
+                            trace = await loop.RunAsync(request, new McpToolInvoker(session.Client), cancellationToken) with { Attempt = 2 };
+                        }
+
+                        trace = trace with { Oracle = oracle.Count > 0 ? oracle : null };
+                    }
+
                     var evaluation = Evaluator.Evaluate(trace);
                     trace = trace with { Evaluation = evaluation };
 
@@ -193,10 +215,10 @@ public sealed class RunCommand(McpServerConnector connector, IToolTokenCounter t
                         $"{task.Id} {session.Definition.Id} r{repeat}: {trace.Status}, {evaluation.Outcome}{Codes(evaluation)} ({trace.Totals.Turns} turns, {trace.Totals.ToolCalls} tool calls, ${trace.Totals.CostUsd:0.0000})"));
 
                     pending--;
-                    if (trace.Totals.Turns > 0 && pending > 0 && settings.PauseSeconds > 0)
+                    if (trace.Totals.Turns > 0 && pending > 0)
                     {
                         // Spare the transport API between runs (CLAUDE.md, plan.md section 6).
-                        await Task.Delay(TimeSpan.FromSeconds(settings.PauseSeconds), clock, cancellationToken);
+                        await PauseAsync(settings, cancellationToken);
                     }
                 }
             }
@@ -292,6 +314,9 @@ public sealed class RunCommand(McpServerConnector connector, IToolTokenCounter t
             throw;
         }
     }
+
+    private Task PauseAsync(BenchSettings settings, CancellationToken cancellationToken) =>
+        settings.PauseSeconds > 0 ? Task.Delay(TimeSpan.FromSeconds(settings.PauseSeconds), clock, cancellationToken) : Task.CompletedTask;
 
     private static string Codes(Evaluation evaluation) =>
         evaluation.Errors.Count == 0 ? "" : $" [{string.Join(", ", evaluation.Errors)}]";

@@ -39,8 +39,12 @@ public sealed class TransportFixtureHandler : HttpMessageHandler
         var uri = request.RequestUri!;
         var file = uri.AbsolutePath switch
         {
-            var path when path.EndsWith("/locations", StringComparison.Ordinal) =>
-                HttpUtility.ParseQueryString(uri.Query)["query"] == "Bern" ? "locations-bern-station.json" : "locations-unknown.json",
+            var path when path.EndsWith("/locations", StringComparison.Ordinal) => HttpUtility.ParseQueryString(uri.Query)["query"] switch
+            {
+                "Bern" => "locations-bern-station.json",
+                "Zürich HB" => "locations-zurich-hb.json",
+                _ => "locations-unknown.json",
+            },
             var path when path.EndsWith("/connections", StringComparison.Ordinal) => "connections-zurich-bern-tomorrow-0800.json",
             _ => "stationboard-bern-departures.json",
         };
