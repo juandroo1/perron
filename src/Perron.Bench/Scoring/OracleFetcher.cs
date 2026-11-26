@@ -159,13 +159,18 @@ public sealed class OracleFetcher(ITransportApiClient transport, TimeProvider cl
             return null;
         }
 
+        var rides = connection.Sections.Where(section => section.Journey is not null).ToList();
+        var rideDeparture = rides.FirstOrDefault()?.Departure.Departure;
+        var rideArrival = rides.LastOrDefault()?.Arrival.Arrival;
         return new OracleConnection(
             SwissTime.ToZurich(departure.Value),
             Zurich(connection.From.Prognosis?.Departure),
             SwissTime.ToZurich(arrival.Value),
             Zurich(connection.To.Prognosis?.Arrival),
             connection.Transfers,
-            [.. connection.Sections.Select(section => section.Journey?.Line).OfType<string>()]);
+            [.. connection.Sections.Select(section => section.Journey?.Line).OfType<string>()],
+            rideDeparture is { } rd && rd != departure ? SwissTime.ToZurich(rd) : null,
+            rideArrival is { } ra && ra != arrival ? SwissTime.ToZurich(ra) : null);
     }
 
     /// <summary>"4" matches line "T 4", "IC 8" matches "IC 8"; no filter matches every line.</summary>

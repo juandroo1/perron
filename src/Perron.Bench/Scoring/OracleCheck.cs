@@ -8,7 +8,8 @@ namespace Perron.Bench.Scoring;
 /// <summary>
 /// Oracle checks, "verify, don't recompute" (AK-9.1; plan.md, decision log): the answer must name a connection or
 /// departure that exists in the oracle's data, meets the task's constraints (the oracle query already carried them)
-/// and is at most <c>tolerance_minutes</c> worse than the best one. Planned and forecast times both count.
+/// and is at most <c>tolerance_minutes</c> worse than the best one. Planned and forecast times both count. A connection
+/// that starts or ends with a walk is also named by the first vehicle's departure or the last vehicle's arrival.
 /// </summary>
 public static partial class OracleCheck
 {
@@ -50,8 +51,8 @@ public static partial class OracleCheck
 
         var best = valid.Min(connection => connection.Arrival);
         return Judge(index, "earliest_arrival", times, valid,
-            named: connection => Named(times, connection.Departure, connection.DepartureForecast) && Named(times, connection.Arrival, connection.ArrivalForecast),
-            weakly: connection => Named(times, connection.Arrival, connection.ArrivalForecast),
+            named: connection => DepartureNamed(times, connection) && ArrivalNamed(times, connection),
+            weakly: connection => ArrivalNamed(times, connection),
             goodEnough: connection => connection.Arrival <= best + tolerance,
             best: $"best arrival {ClockTimes.Of(best)}");
     }
@@ -66,8 +67,8 @@ public static partial class OracleCheck
 
         var best = valid.Max(connection => connection.Departure);
         return Judge(index, "latest_departure", times, valid,
-            named: connection => Named(times, connection.Departure, connection.DepartureForecast) && Named(times, connection.Arrival, connection.ArrivalForecast),
-            weakly: connection => Named(times, connection.Departure, connection.DepartureForecast),
+            named: connection => DepartureNamed(times, connection) && ArrivalNamed(times, connection),
+            weakly: connection => DepartureNamed(times, connection),
             goodEnough: connection => connection.Departure >= best - tolerance,
             best: $"latest departure {ClockTimes.Of(best)}");
     }
@@ -118,6 +119,15 @@ public static partial class OracleCheck
             ? new(index, "oracle", Results.Passed, $"{oracle}: valid entry {how}, within tolerance ({best})")
             : new(index, "oracle", Results.Failed, $"{oracle}: valid entry {how}, but outside the tolerance ({best})", ErrorCodes.NotOptimal);
     }
+
+    private static bool DepartureNamed(HashSet<string> times, OracleConnection connection) =>
+        Named(times, connection.Departure, connection.DepartureForecast) || Named(times, connection.RideDeparture);
+
+    private static bool ArrivalNamed(HashSet<string> times, OracleConnection connection) =>
+        Named(times, connection.Arrival, connection.ArrivalForecast) || Named(times, connection.RideArrival);
+
+    private static bool Named(HashSet<string> times, DateTimeOffset? time) =>
+        time is { } t && times.Contains(ClockTimes.Of(t));
 
     private static bool Named(HashSet<string> times, DateTimeOffset planned, DateTimeOffset? forecast) =>
         times.Contains(ClockTimes.Of(planned)) || (forecast is { } f && times.Contains(ClockTimes.Of(f)));
