@@ -39,7 +39,7 @@ public static class ReportBuilder
         Paired(text, paired, reference);
         Efficiency(text, metrics);
         Errors(text, metrics);
-        Methodology(text, manifests, metrics);
+        Methodology(text, manifests, traces, metrics);
 
         text.AppendLine("Fahrplandaten: opentransportdata.swiss (via transport.opendata.ch).");
         return (text.ToString().ReplaceLineEndings("\n"), metrics);
@@ -159,7 +159,7 @@ public static class ReportBuilder
         text.AppendLine();
     }
 
-    private static void Methodology(StringBuilder text, IReadOnlyList<RunManifest> manifests, IReadOnlyList<ServerMetrics> metrics)
+    private static void Methodology(StringBuilder text, IReadOnlyList<RunManifest> manifests, IReadOnlyList<RunTrace> traces, IReadOnlyList<ServerMetrics> metrics)
     {
         var first = manifests[0];
         text.AppendLine("## Methodology").AppendLine();
@@ -175,7 +175,10 @@ public static class ReportBuilder
         text.AppendLine(Invariant($"- Task set `{first.TaskFile}` (SHA-256 `{Short(first.TaskSetSha256)}`){(first.Tasks is { Count: > 0 } only ? $", only {string.Join(", ", only)}" : "")}; system prompt template SHA-256 `{Short(first.SystemPromptTemplateSha256)}`, the same for every server, with the server's instructions in a fixed section."));
         if (first.JudgePromptSha256 is { } judge)
         {
-            text.AppendLine(Invariant($"- Judge for ambiguous and bad input tasks: `{first.Model}`, effort `{first.Judge?.Effort}`, prompt SHA-256 `{Short(judge)}`, blind to the server; its check by review is in `bench/judge-review/agreement.md`."));
+            // The judge model is the one recorded with each verdict: it is the main model also in runs with the control model.
+            var judgeModels = traces.SelectMany(trace => trace.Judgements ?? []).Select(judgement => judgement.Model).Distinct().Order(StringComparer.Ordinal).ToList();
+            var judgeModel = judgeModels.Count == 0 ? "no verdicts" : string.Join(", ", judgeModels.Select(model => $"`{model}`"));
+            text.AppendLine(Invariant($"- Judge for ambiguous and bad input tasks: {judgeModel}, effort `{first.Judge?.Effort}`, prompt SHA-256 `{Short(judge)}`, blind to the server; its check by review is in `bench/judge-review/agreement.md`."));
         }
 
         text.AppendLine(Invariant($"- Prices (USD per million tokens): input {first.Pricing.Input}, output {first.Pricing.Output}, cache write {first.Pricing.CacheWrite}, cache read {first.Pricing.CacheRead}."));
