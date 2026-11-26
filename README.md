@@ -211,6 +211,25 @@ docker compose --profile bench run --rm bench judge-agreement bench/judge-review
 
 **Judge check so far** (`bench/judge-review/agreement.md`): 60 verdicts of the judge tasks on six servers, checked blind, agree with the review in 51 cases (85 %, Cohen's κ 0.38). The judge accepts an answer that states its assumption where the rubric asks for a question (dev-017, dev-019), and it mistakes today's times, given for comparison, for times of the requested date (dev-021). The review was done by Claude (Opus 5.5), not by a person; see the known limitations.
 
+### Report
+
+`bench report` writes a Markdown report of stored runs, without model or API calls:
+
+```bash
+docker compose --profile bench run --rm bench report                        # latest run: bench/results/<run-id>/report.md
+docker compose --profile bench run --rm bench report <run-id> <run-id> ...  # combine runs: report-<n>-runs.md in the latest one
+docker compose --profile bench run --rm bench report --reference perron-minimal   # reference of the paired comparison
+```
+
+Runs are combined only if model, `effort`, `max_tokens` and task set are the same. The report has a table per server with:
+
+- **Success:** coverage; success on covered tasks and on all tasks (not covered counts as 0), as the mean over tasks of the share of passed runs with a 95 % bootstrap interval over tasks (2000 resamples, fixed seed); pass^k (all k runs of a task passed). Pending and unscored runs are counted separately.
+- **Paired comparison** with a reference server (default `perron-rich`) on the tasks both cover, with a bootstrap interval of the difference. Only differences whose interval excludes 0 support a statement.
+- **Cost and efficiency:** tool definition tokens, tool calls and failed tool calls per run, tokens per run, cost per task and per solved task without prompt caching (the basis of comparison), actual cost with caching, judge cost, and LLM and tool time per run.
+- **Errors:** hallucination rate and counts of the failure taxonomy.
+- **Two Mermaid `xychart`s:** success and cost per solved task.
+- **Methodology:** runs with commit and seed, model, `effort`, `max_tokens`, task set and prompt hashes, prices, and per server its version, `tools/list` hash (marked if it changed between runs), tool tokens and capabilities.
+
 On a Linux host, run the bench container with your user (`docker compose ... run --rm --user "$(id -u):$(id -g)" bench ...`) so it can write to `bench/results`.
 
 ## Results

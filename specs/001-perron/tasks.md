@@ -31,7 +31,7 @@ Immer nur einen Task gleichzeitig bearbeiten. Ein Task ist erst erledigt, wenn d
 - [x] 3.3 Agent-Loop, `bench/bench.json`, Übernahme der Server-`instructions`, Traces, Run-Manifest, Metriken, `--dry-run` (AK-8.1 bis AK-8.3)
 - [x] 3.4 Oracles mit Verifikation ab Referenzzeit, Regex-Prüfungen, Grounding-Check, Infra-Fehler, `bench rescore`; Golden-Traces (bestanden/nicht bestanden) als Tests der Checks (AK-9.1, AK-9.3 bis AK-9.6)
 - [x] 3.5 Judge-Prüfungen für `ambiguous`/`bad_input` mit Rubrik, blind für Server-ID; mindestens 40 Urteile von Hand prüfen (AK-9.2)
-- [ ] 3.6 `bench report` mit Tabelle, Konfidenzintervallen, pass^3, Fehlertaxonomie, Methodik und Mermaid-Diagramm (AK-10.1 bis AK-10.3)
+- [x] 3.6 `bench report` mit Tabelle, Konfidenzintervallen, pass^3, Fehlertaxonomie, Methodik und Mermaid-Diagramm (AK-10.1 bis AK-10.3)
 
 ## Phase 4 – Auswertung
 
