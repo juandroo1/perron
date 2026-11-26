@@ -1,4 +1,16 @@
 {
+  // Benchmark methodology (plan.md, section 6). Versioned: every run records these values in its manifest.
   "model": "claude-haiku-5-5",
-  "control_model": "claude-sonnet-5-5"
+  "control_model": "claude-sonnet-5-5",
+  "effort": "medium",
+  "max_tokens": 16000,
+  "pause_seconds": 3,
+  "default_max_tool_calls": 8,
+  // USD per million tokens (Anthropic first-party prices, prompts up to 100K tokens); cache writes with 5-minute TTL.
+  "pricing_usd_per_mtok": {
+    "claude-haiku-5-5": { "input": 0.10, "output": 0.50, "cache_write": 0.125, "cache_read": 0.01 },
+    "claude-sonnet-5-5": { "input": 2.00, "output": 10.00, "cache_write": 2.50, "cache_read": 0.10 }
+  },
+  // Used by --dry-run until earlier runs of a server exist to calibrate from.
+  "dry_run_assumptions": { "turns": 4, "tool_result_tokens": 500, "output_tokens_per_turn": 300 }
 }

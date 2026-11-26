@@ -10,7 +10,7 @@ public sealed class McpServerCheckTests(PerronMcpFactory server) : IClassFixture
     [Fact]
     public async Task Run_AgainstPerronOverHttp_ReturnsServerInfoProtocolAndTools()
     {
-        var check = new McpServerCheck(new DelegateHttpClientFactory(server.CreateClient), NullLoggerFactory.Instance);
+        var check = new McpServerCheck(new McpServerConnector(new DelegateHttpClientFactory(server.CreateClient), NullLoggerFactory.Instance));
         var definition = new ServerDefinition(
             "perron-rich", ServerDefinition.Http, "http://localhost/mcp", null, null, null, null, "repository",
             false, false, null, null, [new CapabilityDefinition("stops", "find_stops")]);

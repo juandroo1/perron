@@ -31,9 +31,14 @@ RUN for server in spt stm; do \
         || exit 1; \
     done
 
+# Commit of this build for the run manifest (AK-8.2); docker-compose.yml passes GIT_SHA.
+ARG GIT_SHA=unknown
+ENV GIT_SHA=$GIT_SHA
+
 WORKDIR /app
 COPY --from=build /app .
-# Server registry and methodology (BENCH_DIR defaults to ./bench). Task sets and results are not baked in.
+# Server registry and methodology (BENCH_DIR defaults to ./bench). Task sets and results are not baked in:
+# docker-compose.yml mounts ./bench over /app/bench for bench run.
 COPY bench/servers.json bench/bench.json bench/
 
 USER $APP_UID
