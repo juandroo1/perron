@@ -6,6 +6,8 @@
   "max_tokens": 16000,
   "pause_seconds": 3,
   "default_max_tool_calls": 8,
+  // LLM-as-judge for ambiguous and bad_input tasks; uses "model" (AK-9.2).
+  "judge": { "effort": "medium", "max_tokens": 2000 },
   // USD per million tokens (Anthropic first-party prices, prompts up to 100K tokens); cache writes with 5-minute TTL.
   "pricing_usd_per_mtok": {
     "claude-haiku-5-5": { "input": 0.10, "output": 0.50, "cache_write": 0.125, "cache_read": 0.01 },

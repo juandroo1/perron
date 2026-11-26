@@ -20,6 +20,9 @@ public sealed record ModelPricing(decimal Input, decimal Output, decimal CacheWr
 /// <summary>Fixed assumptions of <c>--dry-run</c> before earlier runs exist (AK-8.3).</summary>
 public sealed record DryRunAssumptions(double Turns, double ToolResultTokens, double OutputTokensPerTurn);
 
+/// <summary>Settings of the LLM-as-judge (AK-9.2); the judge uses the main model of bench.json.</summary>
+public sealed record JudgeSettings(string Effort, int MaxTokens);
+
 /// <summary>The versioned benchmark methodology in <c>bench/bench.json</c> (plan.md, section 6; AK-8.1).</summary>
 public sealed record BenchSettings(
     string Model,
@@ -29,7 +32,8 @@ public sealed record BenchSettings(
     double PauseSeconds,
     int DefaultMaxToolCalls,
     IReadOnlyDictionary<string, ModelPricing> PricingUsdPerMtok,
-    DryRunAssumptions DryRunAssumptions)
+    DryRunAssumptions DryRunAssumptions,
+    JudgeSettings Judge)
 {
     public const string FileName = "bench.json";
 
@@ -95,6 +99,11 @@ public sealed record BenchSettings(
             {
                 yield return $"pricing_usd_per_mtok needs prices for {model}.";
             }
+        }
+
+        if (settings.Judge is null || !EffortLevels.Contains(settings.Judge.Effort) || settings.Judge.MaxTokens < 1)
+        {
+            yield return $"judge needs effort ({string.Join(", ", EffortLevels)}) and a positive max_tokens.";
         }
 
         if (settings.DryRunAssumptions is not { Turns: > 0, ToolResultTokens: >= 0, OutputTokensPerTurn: > 0 })

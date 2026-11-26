@@ -75,7 +75,8 @@ public sealed record RunTrace(
     JsonElement? Checks = null,
     IReadOnlyList<OracleData>? Oracle = null,
     Evaluation? Evaluation = null,
-    int Attempt = 1)
+    int Attempt = 1,
+    IReadOnlyList<Judgement>? Judgements = null)
 {
     public string FileName => $"{TaskId}__{ServerId}__r{Repeat}.json";
 }
@@ -97,7 +98,8 @@ public sealed record RunSummary(
     decimal CostUsd,
     double LlmMs,
     double ToolMs,
-    long ToolResultChars)
+    long ToolResultChars,
+    decimal JudgeCostUsd = 0)
 {
     public static RunSummary Of(RunTrace trace) => new(
         trace.RunId,
@@ -115,7 +117,8 @@ public sealed record RunSummary(
         trace.Totals.CostUsd,
         trace.Totals.LlmMs,
         trace.Totals.ToolMs,
-        trace.Totals.ToolResultChars);
+        trace.Totals.ToolResultChars,
+        trace.Judgements?.Sum(judgement => judgement.CostUsd) ?? 0);
 }
 
 [JsonSourceGenerationOptions(

@@ -17,7 +17,8 @@ namespace Perron.Bench.Run;
 
 /// <summary>Options of <c>bench run</c>.</summary>
 /// <param name="Control">Use the control model of bench.json instead of the main model.</param>
-public sealed record RunOptions(string Suite, IReadOnlyList<string> ServerIds, int Repeats, bool Control, bool DryRun, int? Seed);
+public sealed record RunOptions(
+    string Suite, IReadOnlyList<string> ServerIds, int Repeats, bool Control, bool DryRun, int? Seed, IReadOnlyList<string>? Tasks = null);
 
 /// <summary>
 /// <c>bench run</c> (AK-8.1 to AK-8.3): connects to the servers, then runs every task on every server and repeat in the
@@ -140,11 +141,18 @@ public sealed class RunCommand(
             settings.DefaultMaxToolCalls,
             pricing,
             SystemPrompt.TemplateSha256,
-            [.. sessions.Select(session => session.Manifest)]);
+            [.. sessions.Select(session => session.Manifest)],
+            JudgePromptSha256: Judge.PromptSha256,
+            Judge: settings.Judge,
+            Tasks: options.Tasks);
         await WriteManifestAsync(directory, manifest);
         await output.WriteLineAsync($"Run {runId}: {suite.Tasks.Count} tasks × {sessions.Count} servers × {options.Repeats} repeats, model {modelId}, seed {seed}");
 
         var loop = new AgentLoop(model);
+
+        // The judge uses the main model of bench.json, also when the agent runs with the control model (AK-9.2).
+        var judge = new Judge(model, clock);
+        var judgePricing = settings.PricingUsdPerMtok[settings.Model];
         var summaries = new List<RunSummary>();
         var pending = suite.Tasks.Count * sessions.Count * options.Repeats;
         foreach (var task in suite.Tasks)
@@ -191,6 +199,10 @@ public sealed class RunCommand(
                         }
 
                         trace = trace with { Oracle = oracle.Count > 0 ? oracle : null };
+                        if (Judge.ChecksOf(trace).Count > 0)
+                        {
+                            trace = trace with { Judgements = await judge.JudgeAsync(trace, settings.Model, settings.Judge, judgePricing, cancellationToken) };
+                        }
                     }
 
                     var evaluation = Evaluator.Evaluate(trace);

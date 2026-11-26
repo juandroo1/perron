@@ -116,9 +116,14 @@ public static class BenchCli
         modelOption.AcceptOnlyFromAmong("main", "control");
         var dryRunOption = new Option<bool>("--dry-run") { Description = "Estimate model calls and cost without calling the model." };
         var seedOption = new Option<int?>("--seed") { Description = "Seed for the order of the servers (default: random, recorded in the manifest)." };
+        var tasksOption = new Option<string[]>("--tasks")
+        {
+            Description = "Only these task IDs of the suite (comma-separated or repeated).",
+            AllowMultipleArgumentsPerToken = true,
+        };
 
         var run = new Command("run", "Run the tasks of a suite on the servers in the agent loop and write traces to bench/results.");
-        foreach (var option in new Option[] { suiteOption, runServers, repeatsOption, modelOption, dryRunOption, seedOption })
+        foreach (var option in new Option[] { suiteOption, runServers, repeatsOption, modelOption, dryRunOption, seedOption, tasksOption })
         {
             run.Options.Add(option);
         }
@@ -145,13 +150,27 @@ public static class BenchCli
                     return ExitCodes.UsageError;
                 }
 
+                var only = SplitValues(parseResult.GetValue(tasksOption));
+                if (only.Count > 0)
+                {
+                    var missing = only.Where(id => suite.Tasks.All(task => task.Id != id)).ToList();
+                    if (missing.Count > 0)
+                    {
+                        await error.WriteLineAsync($"Task(s) not in suite {suite.Name}: {string.Join(", ", missing)}.");
+                        return ExitCodes.UsageError;
+                    }
+
+                    suite = suite with { Tasks = [.. suite.Tasks.Where(task => only.Contains(task.Id))] };
+                }
+
                 var options = new RunOptions(
                     suite.Name,
                     context.ServerIds,
                     repeats,
                     parseResult.GetValue(modelOption) == "control",
                     parseResult.GetValue(dryRunOption),
-                    parseResult.GetValue(seedOption));
+                    parseResult.GetValue(seedOption),
+                    only.Count > 0 ? only : null);
                 var model = context.Services.GetService<IModelClient>() ?? CreateModelClient(context.Configuration);
                 var command = ActivatorUtilities.CreateInstance<RunCommand>(context.Services, context.TokenCounter);
                 return await command.RunAsync(
@@ -175,10 +194,85 @@ public static class BenchCli
             return await RescoreCommand.RunAsync(directory.Directory, runs.Count == 0 ? ["all"] : runs, output, error, cancellationToken);
         });
 
+        // judge
+        var judgeRuns = new Argument<string[]>("runs")
+        {
+            Description = "Run IDs under bench/results, or 'all' (default).",
+            Arity = ArgumentArity.ZeroOrMore,
+            DefaultValueFactory = _ => ["all"],
+        };
+        var forceOption = new Option<bool>("--force") { Description = "Judge again also where a verdict exists." };
+        var judgeCommand = new Command("judge", "Ask the judge (model of bench.json) for missing verdicts of judge checks in stored traces, then rescore. Costs tokens.");
+        judgeCommand.Arguments.Add(judgeRuns);
+        judgeCommand.Options.Add(forceOption);
+        judgeCommand.SetAction(async (parseResult, cancellationToken) =>
+        {
+            using var host = BuildHost(configuration, configureServices);
+            var directory = host.Services.GetRequiredService<IOptions<BenchDirectoryOptions>>().Value;
+            BenchSettings settings;
+            try
+            {
+                settings = BenchSettings.Load(directory.File(BenchSettings.FileName));
+            }
+            catch (InvalidDataException ex)
+            {
+                await error.WriteLineAsync($"Invalid configuration: {ex.Message}");
+                return ExitCodes.UsageError;
+            }
+
+            var config = host.Services.GetRequiredService<IConfiguration>();
+            var model = host.Services.GetService<IModelClient>() ?? CreateModelClient(config);
+            if (model is null)
+            {
+                await error.WriteLineAsync("ANTHROPIC_API_KEY is not set: bench judge needs it.");
+                return ExitCodes.UsageError;
+            }
+
+            var judge = new Judge(model, host.Services.GetRequiredService<TimeProvider>());
+            return await JudgeReview.JudgeAsync(
+                directory.Directory, SplitValues(parseResult.GetValue(judgeRuns)), parseResult.GetValue(forceOption), judge, settings, output, error, cancellationToken);
+        });
+
+        // judge-export
+        var exportRuns = new Argument<string[]>("runs")
+        {
+            Description = "Run IDs under bench/results, or 'all' (default).",
+            Arity = ArgumentArity.ZeroOrMore,
+            DefaultValueFactory = _ => ["all"],
+        };
+        var exportOut = new Option<string?>("--out") { Description = "Review sheet to write (default bench/judge-review/review.csv)." };
+        var export = new Command("judge-export", "Write a review sheet of judge verdicts for checking by hand, without server and without the judge's verdict.");
+        export.Arguments.Add(exportRuns);
+        export.Options.Add(exportOut);
+        export.SetAction(async (parseResult, cancellationToken) =>
+        {
+            using var host = BuildHost(configuration, configureServices);
+            var directory = host.Services.GetRequiredService<IOptions<BenchDirectoryOptions>>().Value;
+            var file = parseResult.GetValue(exportOut) ?? Path.Combine(directory.Directory, "judge-review", "review.csv");
+            return await JudgeReview.ExportAsync(directory.Directory, SplitValues(parseResult.GetValue(exportRuns)), file, output, error, cancellationToken);
+        });
+
+        // judge-agreement
+        var reviewFile = new Argument<string>("review") { Description = "Review sheet with human_verdict filled in." };
+        var agreementOut = new Option<string?>("--out") { Description = "Report to write (default bench/judge-review/agreement.md)." };
+        var agreement = new Command("judge-agreement", "Compare the verdicts by hand with the judge's: agreement, Cohen's kappa and disagreements.");
+        agreement.Arguments.Add(reviewFile);
+        agreement.Options.Add(agreementOut);
+        agreement.SetAction(async (parseResult, cancellationToken) =>
+        {
+            using var host = BuildHost(configuration, configureServices);
+            var directory = host.Services.GetRequiredService<IOptions<BenchDirectoryOptions>>().Value;
+            var report = parseResult.GetValue(agreementOut) ?? Path.Combine(directory.Directory, "judge-review", "agreement.md");
+            return await JudgeReview.AgreementAsync(directory.Directory, parseResult.GetValue(reviewFile)!, report, output, error, cancellationToken);
+        });
+
         var root = new RootCommand("Perron Bench: runs agent tasks against MCP servers and compares the results.");
         root.Subcommands.Add(check);
         root.Subcommands.Add(run);
         root.Subcommands.Add(rescore);
+        root.Subcommands.Add(judgeCommand);
+        root.Subcommands.Add(export);
+        root.Subcommands.Add(agreement);
         return root;
     }
 
