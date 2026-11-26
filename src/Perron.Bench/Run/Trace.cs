@@ -1,6 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
+using Perron.Bench.Scoring;
 using Perron.Bench.Settings;
 
 namespace Perron.Bench.Run;
@@ -51,8 +52,10 @@ public sealed record TraceTotals(int Turns, int ToolCalls, TokenUsage Usage, dec
 
 /// <summary>
 /// Complete record of one run of one task on one server (AK-8.2): system prompt, task, every turn with its blocks,
-/// tool calls with arguments, results and latency, tokens and cost. <see cref="Oracle"/> is filled by the checks (task 3.4).
+/// tool calls with arguments, results and latency, tokens and cost; the task's checks, the oracle data of its round
+/// and the evaluation (AK-9.x). <c>bench rescore</c> recomputes <see cref="Evaluation"/> from the rest (AK-9.6).
 /// </summary>
+/// <param name="Attempt">2 when the run was repeated after an infrastructure error (AK-9.5).</param>
 public sealed record RunTrace(
     string RunId,
     string TaskId,
@@ -68,7 +71,11 @@ public sealed record RunTrace(
     IReadOnlyList<TraceTurn> Turns,
     string? FinalAnswer,
     TraceTotals Totals,
-    JsonElement? Oracle = null)
+    string? Category = null,
+    JsonElement? Checks = null,
+    IReadOnlyList<OracleData>? Oracle = null,
+    Evaluation? Evaluation = null,
+    int Attempt = 1)
 {
     public string FileName => $"{TaskId}__{ServerId}__r{Repeat}.json";
 }
@@ -117,9 +124,10 @@ public sealed record RunSummary(
     WriteIndented = true)]
 [JsonSerializable(typeof(RunTrace))]
 [JsonSerializable(typeof(RunManifest))]
-internal sealed partial class TraceJsonContext : JsonSerializerContext;
+public sealed partial class TraceJsonContext : JsonSerializerContext;
 
 /// <summary>runs.jsonl: one compact line per run.</summary>
 [JsonSourceGenerationOptions(PropertyNamingPolicy = JsonKnownNamingPolicy.SnakeCaseLower)]
 [JsonSerializable(typeof(RunSummary))]
-internal sealed partial class SummaryJsonContext : JsonSerializerContext;
+[JsonSerializable(typeof(ScoreLine))]
+public sealed partial class SummaryJsonContext : JsonSerializerContext;

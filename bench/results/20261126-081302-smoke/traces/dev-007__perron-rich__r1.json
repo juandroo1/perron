@@ -94,5 +94,42 @@
     "tool_ms": 239.9965,
     "tool_result_chars": 724
   },
+  "category": "trip_constraints",
+  "checks": [
+    {
+      "type": "oracle",
+      "oracle": "latest_departure",
+      "params": {
+        "from": "Bern",
+        "to": "Lausanne",
+        "arrive_before": "\u002B1d 10:00"
+      },
+      "tolerance_minutes": 1
+    }
+  ],
+  "evaluation": {
+    "outcome": "unscored",
+    "checks": [
+      {
+        "index": 0,
+        "type": "oracle",
+        "result": "unscored",
+        "detail": "latest_departure: no oracle data in the trace"
+      }
+    ],
+    "grounding": {
+      "times": [
+        "08:34",
+        "09:43",
+        "07:34",
+        "08:43"
+      ],
+      "ungrounded": [],
+      "grounded": true
+    },
+    "errors": [],
+    "scorer_version": "1"
+  },
+  "attempt": 1,
   "file_name": "dev-007__perron-rich__r1.json"
 }

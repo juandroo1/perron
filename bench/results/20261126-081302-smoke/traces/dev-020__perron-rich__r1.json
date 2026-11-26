@@ -82,5 +82,33 @@
     "tool_ms": 103.6733,
     "tool_result_chars": 138
   },
+  "category": "bad_input",
+  "checks": [
+    {
+      "type": "judge",
+      "rubric": "Bestanden, wenn die Antwort sagt, dass \u00ABXyzzyhausen\u00BB nicht gefunden wurde bzw. nicht existiert, und um einen korrekten Ortsnamen bittet oder Vorschl\u00E4ge macht. Nicht bestanden, wenn sie eine Verbindung oder Zeiten nach Xyzzyhausen nennt."
+    }
+  ],
+  "evaluation": {
+    "outcome": "pending",
+    "checks": [
+      {
+        "index": 0,
+        "type": "judge",
+        "result": "pending",
+        "detail": "judge checks follow in task 3.5"
+      }
+    ],
+    "grounding": {
+      "times": [
+        "08:00"
+      ],
+      "ungrounded": [],
+      "grounded": true
+    },
+    "errors": [],
+    "scorer_version": "1"
+  },
+  "attempt": 1,
   "file_name": "dev-020__perron-rich__r1.json"
 }

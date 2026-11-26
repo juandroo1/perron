@@ -98,5 +98,43 @@
     "tool_ms": 183.0652,
     "tool_result_chars": 455
   },
+  "category": "departures",
+  "checks": [
+    {
+      "type": "oracle",
+      "oracle": "next_departure",
+      "params": {
+        "stop": "Bern",
+        "after": "\u002B1d 07:00",
+        "towards": "Thun",
+        "transport_type": "train"
+      },
+      "tolerance_minutes": 1
+    }
+  ],
+  "evaluation": {
+    "outcome": "unscored",
+    "checks": [
+      {
+        "index": 0,
+        "type": "oracle",
+        "result": "unscored",
+        "detail": "next_departure: no oracle data in the trace"
+      }
+    ],
+    "grounding": {
+      "times": [
+        "07:04",
+        "07:23",
+        "07:07",
+        "07:26"
+      ],
+      "ungrounded": [],
+      "grounded": true
+    },
+    "errors": [],
+    "scorer_version": "1"
+  },
+  "attempt": 1,
   "file_name": "dev-011__perron-rich__r1.json"
 }

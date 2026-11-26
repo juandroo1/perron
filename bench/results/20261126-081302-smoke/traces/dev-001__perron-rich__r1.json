@@ -78,5 +78,31 @@
     "tool_ms": 749.1453,
     "tool_result_chars": 368
   },
+  "category": "stops",
+  "checks": [
+    {
+      "type": "regex",
+      "pattern": "8505000"
+    }
+  ],
+  "evaluation": {
+    "outcome": "passed",
+    "checks": [
+      {
+        "index": 0,
+        "type": "regex",
+        "result": "passed",
+        "detail": "matches 8505000"
+      }
+    ],
+    "grounding": {
+      "times": [],
+      "ungrounded": [],
+      "grounded": true
+    },
+    "errors": [],
+    "scorer_version": "1"
+  },
+  "attempt": 1,
   "file_name": "dev-001__perron-rich__r1.json"
 }

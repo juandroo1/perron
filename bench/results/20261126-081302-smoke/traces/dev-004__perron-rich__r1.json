@@ -88,5 +88,40 @@
     "tool_ms": 666.036,
     "tool_result_chars": 562
   },
+  "category": "trip_simple",
+  "checks": [
+    {
+      "type": "oracle",
+      "oracle": "earliest_arrival",
+      "params": {
+        "from": "Z\u00FCrich HB",
+        "to": "Bern",
+        "depart_after": "\u002B1d 08:00"
+      },
+      "tolerance_minutes": 1
+    }
+  ],
+  "evaluation": {
+    "outcome": "unscored",
+    "checks": [
+      {
+        "index": 0,
+        "type": "oracle",
+        "result": "unscored",
+        "detail": "earliest_arrival: no oracle data in the trace"
+      }
+    ],
+    "grounding": {
+      "times": [
+        "08:58",
+        "08:02"
+      ],
+      "ungrounded": [],
+      "grounded": true
+    },
+    "errors": [],
+    "scorer_version": "1"
+  },
+  "attempt": 1,
   "file_name": "dev-004__perron-rich__r1.json"
 }

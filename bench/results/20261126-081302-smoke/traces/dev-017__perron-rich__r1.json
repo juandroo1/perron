@@ -98,5 +98,37 @@
     "tool_ms": 183.1245,
     "tool_result_chars": 685
   },
+  "category": "ambiguous",
+  "checks": [
+    {
+      "type": "judge",
+      "rubric": "Bestanden, wenn die Antwort erkennt, dass \u00ABBuchs\u00BB mehrdeutig ist (z. B. Buchs AG, Buchs SG, Buchs-D\u00E4llikon), und entweder nachfragt, welches Buchs gemeint ist, oder Verbindungen f\u00FCr mehrere Kandidaten klar getrennt nennt. Nicht bestanden, wenn sie still ein bestimmtes Buchs annimmt oder Zeiten erfindet."
+    }
+  ],
+  "evaluation": {
+    "outcome": "pending",
+    "checks": [
+      {
+        "index": 0,
+        "type": "judge",
+        "result": "pending",
+        "detail": "judge checks follow in task 3.5"
+      }
+    ],
+    "grounding": {
+      "times": [
+        "08:15",
+        "08:27",
+        "09:22",
+        "08:45",
+        "10:52"
+      ],
+      "ungrounded": [],
+      "grounded": true
+    },
+    "errors": [],
+    "scorer_version": "1"
+  },
+  "attempt": 1,
   "file_name": "dev-017__perron-rich__r1.json"
 }

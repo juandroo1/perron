@@ -182,7 +182,22 @@ docker compose --profile bench run --rm bench run --suite smoke --servers perron
 
 Every run uses the same system prompt, model, `effort`, `max_tokens`, reference time and tool-call limit for all servers; the methodology is versioned in `bench/bench.json`. The reference time is frozen per task, the order of the servers is shuffled per task, and a task whose capability a server does not cover is recorded as `not_covered` without a model call. Between runs the harness pauses (`pause_seconds`) to spare the transport API.
 
-Each run directory holds `manifest.json` (commit, harness version, model and settings, hashes of the system prompt template and the task set, per server its version, `tools/list` hash, tool tokens and covered capabilities), `runs.jsonl` (figures per run) and `traces/<task>__<server>__r<n>.json` (system prompt, every turn with tool calls, arguments, results, tokens, latency and cost). Results are committed: they are the basis of the report. On a Linux host, run the bench container with your user (`docker compose ... run --rm --user "$(id -u):$(id -g)" bench ...`) so it can write to `bench/results`.
+Each run directory holds `manifest.json` (commit, harness version, model and settings, hashes of the system prompt template and the task set, per server its version, `tools/list` hash, tool tokens and covered capabilities), `runs.jsonl` (figures per run) and `traces/<task>__<server>__r<n>.json` (system prompt, every turn with tool calls, arguments, results, tokens, latency and cost). Results are committed: they are the basis of the report.
+
+### Scoring
+
+Every run is scored from its trace alone, so `bench rescore` can score stored runs again with the current rules, without model or API calls:
+
+```bash
+docker compose --profile bench run --rm bench rescore            # all runs under bench/results
+docker compose --profile bench run --rm bench rescore <run-id>
+```
+
+- **Checks** of a task (all must pass): `regex` on the final answer; `oracle` against data from transport.opendata.ch, fetched once per task from the reference time and stored in the trace: the answer must name a connection or departure that exists, meets the task's constraints and is at most `tolerance_minutes` worse than the best one (planned or forecast times both count); `judge` for ambiguous and bad input (follows in task 3.5).
+- **Grounding**: every clock time in the answer must appear in a tool result of the same run (ISO timestamps converted to Swiss time), in the task or in the system prompt; otherwise the run counts as `hallucinated`, whether it passed or not.
+- **Outcome** per run: `passed`, `failed`, `pending` (judge still missing), `unscored` (no oracle data) or `excluded` (infrastructure error, capability not covered), with failure codes such as `not_optimal`, `wrong_time`, `gave_up`, `tool_limit`, `hallucinated`.
+
+The evaluation is stored in each trace (`evaluation`) and in `scores.jsonl` of the run. On a Linux host, run the bench container with your user (`docker compose ... run --rm --user "$(id -u):$(id -g)" bench ...`) so it can write to `bench/results`.
 
 ## Results
 

@@ -1,0 +1,85 @@
+{
+  "run_id": "golden",
+  "task_id": "judge-pending",
+  "server_id": "perron-rich",
+  "repeat": 1,
+  "model": "claude-haiku-5-5",
+  "status": "completed",
+  "reference_time": "2026-11-25T17:12:00+01:00",
+  "max_tool_calls": 8,
+  "system_prompt": "You help people with public transport in Switzerland, using the tools available to you.\n\nCurrent date and time: Wed 25.11.2026 17:12 (Europe/Zurich). Dates such as \"today\" or \"tomorrow\" refer to this time.\n\nAnswer briefly and with concrete times. Answer in the language of the question.\n\n## Server instructions\n(none)",
+  "prompt": "Wann fährt morgen um 08:00 der nächste Zug von Buchs nach Zürich HB?",
+  "turns": [
+    {
+      "number": 1,
+      "llm_ms": 900.0,
+      "stop_reason": "tool_use",
+      "usage": {
+        "input": 10,
+        "output": 50,
+        "cache_write": 0,
+        "cache_read": 2000
+      },
+      "content": [
+        {
+          "type": "tool_use",
+          "tool_use_id": "toolu_0",
+          "name": "plan_trip",
+          "input": {}
+        }
+      ],
+      "tool_calls": [
+        {
+          "id": "toolu_0",
+          "name": "plan_trip",
+          "arguments": {},
+          "result": "8502123 | Buchs AG",
+          "is_error": false,
+          "duration_ms": 12.5,
+          "over_limit": false
+        }
+      ]
+    },
+    {
+      "number": 2,
+      "llm_ms": 1200.0,
+      "stop_reason": "end_turn",
+      "usage": {
+        "input": 10,
+        "output": 120,
+        "cache_write": 0,
+        "cache_read": 2300
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "Welches Buchs meinen Sie: Buchs AG oder Buchs SG?"
+        }
+      ],
+      "tool_calls": []
+    }
+  ],
+  "totals": {
+    "turns": 2,
+    "tool_calls": 1,
+    "usage": {
+      "input": 20,
+      "output": 170,
+      "cache_write": 0,
+      "cache_read": 4300
+    },
+    "cost_usd": 0.0002,
+    "llm_ms": 2100.0,
+    "tool_ms": 12.5,
+    "tool_result_chars": 400
+  },
+  "category": "ambiguous",
+  "checks": [
+    {
+      "type": "judge",
+      "rubric": "Passed if the answer asks which Buchs is meant."
+    }
+  ],
+  "attempt": 1,
+  "final_answer": "Welches Buchs meinen Sie: Buchs AG oder Buchs SG?"
+}
