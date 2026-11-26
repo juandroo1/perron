@@ -1,0 +1,445 @@
+﻿"id";"task_id";"category";"prompt";"rubric";"answer";"human_verdict";"note"
+"j-026385618d";"dev-017";"ambiguous";"Wann fährt morgen um 08:00 der nächste Zug von Buchs nach Zürich HB?";"Bestanden, wenn die Antwort erkennt, dass «Buchs» mehrdeutig ist (z. B. Buchs AG, Buchs SG, Buchs-Dällikon), und entweder nachfragt, welches Buchs gemeint ist, oder Verbindungen für mehrere Kandidaten klar getrennt nennt. Nicht bestanden, wenn sie still ein bestimmtes Buchs annimmt oder Zeiten erfindet.";"Morgen (Freitag, 27.11.) fährt um **08:15 Uhr** der nächste Zug ab Buchs SG, Ankunft Zürich HB **09:22 Uhr** (1 Umstieg in Sargans):
+
+- 08:15 IR 13 Buchs SG → Sargans (an 08:24)
+- 08:27 IC 3 Sargans → Zürich HB (an 09:22)
+
+Alternative: 08:45 IR 13 direkt nach Zürich HB (an 10:52), oder 08:45 IR 13 bis Sargans und dann ICE 108 (an 09:53).
+
+Falls du Buchs AG oder Buchs-Dällikon meintest: Ab Buchs AG wäre der früheste Zug 08:15 (S 14 nach Aarau, dann IR 37), Ankunft 08:52. Ab Buchs-Dällikon fährt die S 6 um 08:07, Ankunft 08:28, ohne Umstieg.";"pass";"Main answer for Buchs SG, but separate connections for Buchs AG and Buchs-Dällikon follow."
+"j-1b0be152e0";"dev-017";"ambiguous";"Wann fährt morgen um 08:00 der nächste Zug von Buchs nach Zürich HB?";"Bestanden, wenn die Antwort erkennt, dass «Buchs» mehrdeutig ist (z. B. Buchs AG, Buchs SG, Buchs-Dällikon), und entweder nachfragt, welches Buchs gemeint ist, oder Verbindungen für mehrere Kandidaten klar getrennt nennt. Nicht bestanden, wenn sie still ein bestimmtes Buchs annimmt oder Zeiten erfindet.";"Morgen, Freitag 27.11., fährt der nächste Zug ab Buchs SG um **08:15** Uhr. Du bist um **09:22** Uhr in Zürich HB (1 Std. 7 Min., Umstieg in Sargans, 3 Min.).
+
+Danach fährt um 08:45 Uhr eine Verbindung: Direkt mit dem IR 13 bist du um 10:52 Uhr in Zürich HB, oder mit Umstieg in Sargans um 09:53 Uhr.";"fail";"Silently assumes Buchs SG."
+"j-343f93d4a9";"dev-017";"ambiguous";"Wann fährt morgen um 08:00 der nächste Zug von Buchs nach Zürich HB?";"Bestanden, wenn die Antwort erkennt, dass «Buchs» mehrdeutig ist (z. B. Buchs AG, Buchs SG, Buchs-Dällikon), und entweder nachfragt, welches Buchs gemeint ist, oder Verbindungen für mehrere Kandidaten klar getrennt nennt. Nicht bestanden, wenn sie still ein bestimmtes Buchs annimmt oder Zeiten erfindet.";"Morgen, Freitag, 27.11., fährt der nächste Zug ab Buchs SG um **08:15** (Gleis 2):
+
+- **08:15** Buchs SG → **08:24** Sargans (IR 13)
+- Umstieg in Sargans (3 Min., Gleis 2)
+- **08:27** Sargans → **09:22** Zürich HB (IC 3)
+
+Dauer 1h 07min, derzeit pünktlich. Die nächste Option danach fährt um 08:45 und kommt um 09:53 an (über Sargans, ICE).";"fail";"Silently assumes Buchs SG."
+"j-3edbf853fe";"dev-017";"ambiguous";"Wann fährt morgen um 08:00 der nächste Zug von Buchs nach Zürich HB?";"Bestanden, wenn die Antwort erkennt, dass «Buchs» mehrdeutig ist (z. B. Buchs AG, Buchs SG, Buchs-Dällikon), und entweder nachfragt, welches Buchs gemeint ist, oder Verbindungen für mehrere Kandidaten klar getrennt nennt. Nicht bestanden, wenn sie still ein bestimmtes Buchs annimmt oder Zeiten erfindet.";"Morgen (Freitag, 27.11.) fährt um **08:15 Uhr** der nächste Zug ab Buchs SG (Gleis 2) nach Zürich HB.
+
+- 08:15 ab Buchs SG (IR 13 Richtung Sargans), an Sargans 08:24
+- Umsteigen in Sargans (3 Min.), 08:27 IC 3 Richtung Zürich HB
+- An Zürich HB um **09:22 Uhr** (Gleis 8)
+
+Ich habe Buchs SG angenommen. Falls du Buchs AG meinst, sag Bescheid.";"fail";"Explicit assumption (Buchs SG) with an offer to switch; the rubric of dev-017 passes only a question or separate connections for several candidates. Borderline."
+"j-454d34cd53";"dev-017";"ambiguous";"Wann fährt morgen um 08:00 der nächste Zug von Buchs nach Zürich HB?";"Bestanden, wenn die Antwort erkennt, dass «Buchs» mehrdeutig ist (z. B. Buchs AG, Buchs SG, Buchs-Dällikon), und entweder nachfragt, welches Buchs gemeint ist, oder Verbindungen für mehrere Kandidaten klar getrennt nennt. Nicht bestanden, wenn sie still ein bestimmtes Buchs annimmt oder Zeiten erfindet.";"Morgen, Freitag, 27.11., fährt der nächste Zug ab Buchs SG um **08:15** Uhr (IR 13 nach Sargans, Gleis 2). In Sargans steigst du um in den IC 3 (Abfahrt 08:27), und du bist um **09:22 Uhr** in Zürich HB (Gleis 8). Dauer 1 h 7 min.
+
+Danach gibt es um 08:45 Uhr eine Direktverbindung (IR 13, Ankunft Zürich HB 10:52) und eine Verbindung mit Umstieg in Sargans (ICE 108, Ankunft 09:53).
+
+Ich bin von Buchs SG ausgegangen. Falls du Buchs AG meinst, sag Bescheid.";"fail";"Explicit assumption (Buchs SG) with an offer to switch; the rubric of dev-017 passes only a question or separate connections for several candidates. Borderline."
+"j-5b0bb90722";"dev-017";"ambiguous";"Wann fährt morgen um 08:00 der nächste Zug von Buchs nach Zürich HB?";"Bestanden, wenn die Antwort erkennt, dass «Buchs» mehrdeutig ist (z. B. Buchs AG, Buchs SG, Buchs-Dällikon), und entweder nachfragt, welches Buchs gemeint ist, oder Verbindungen für mehrere Kandidaten klar getrennt nennt. Nicht bestanden, wenn sie still ein bestimmtes Buchs annimmt oder Zeiten erfindet.";"Morgen (Freitag, 27.11.) fährt der nächste Zug ab **Buchs SG** um **08:15** Uhr:
+
+- **08:15** ab Buchs SG (Gleis 2), IR 13 nach Sargans, an 08:24
+- Umstieg in Sargans (3 Min.), **08:27** IC 3 nach Zürich HB (Gleis 2), **an 09:22** Uhr
+
+Gesamtdauer 1h 7min, 1 Umstieg.
+
+Alternative ohne Umstieg: 08:45 ab Buchs SG, an Zürich HB 10:52 Uhr.
+
+(Ich bin von Buchs SG ausgegangen; falls Buchs AG oder ZH gemeint ist, sag Bescheid.)";"fail";"Explicit assumption (Buchs SG) with an offer to switch; the rubric of dev-017 passes only a question or separate connections for several candidates. Borderline."
+"j-802c772c18";"dev-017";"ambiguous";"Wann fährt morgen um 08:00 der nächste Zug von Buchs nach Zürich HB?";"Bestanden, wenn die Antwort erkennt, dass «Buchs» mehrdeutig ist (z. B. Buchs AG, Buchs SG, Buchs-Dällikon), und entweder nachfragt, welches Buchs gemeint ist, oder Verbindungen für mehrere Kandidaten klar getrennt nennt. Nicht bestanden, wenn sie still ein bestimmtes Buchs annimmt oder Zeiten erfindet.";"Morgen, Freitag 27.11., fährt der nächste Zug nach 08:00 um **08:15 Uhr**, wenn Sie **Buchs SG** meinen:
+
+- **08:15** ab Buchs SG, Gleis 2 (IR 13 nach Sargans)
+- **08:27** Umstieg in Sargans auf IC 3, Gleis 2
+- **09:22** Ankunft Zürich HB, Gleis 8
+
+Es gibt auch eine Direktverbindung um 08:45 (IR 13, gleich ab Gleis 2), die aber erst um 10:52 in Zürich HB ankommt.
+
+Falls Sie **Buchs AG** (bei Aarau) meinen: Um **08:15** ab Gleis 2 mit der S14 bis Aarau, dort um **08:23** weiter mit der IR 37, Ankunft Zürich HB um **08:52** (Gleis 13).
+
+Die Angaben beruhen auf dem Fahrplan; Verspätungen sind nicht berücksichtigt.";"pass";"Separate connections for Buchs SG and Buchs AG."
+"j-8fbaa8538f";"dev-017";"ambiguous";"Wann fährt morgen um 08:00 der nächste Zug von Buchs nach Zürich HB?";"Bestanden, wenn die Antwort erkennt, dass «Buchs» mehrdeutig ist (z. B. Buchs AG, Buchs SG, Buchs-Dällikon), und entweder nachfragt, welches Buchs gemeint ist, oder Verbindungen für mehrere Kandidaten klar getrennt nennt. Nicht bestanden, wenn sie still ein bestimmtes Buchs annimmt oder Zeiten erfindet.";"Morgen (Freitag, 27.11.) fährt um 08:15 ab Buchs SG der nächste Zug nach Zürich HB. Du kommst um 09:22 an (1 Umstieg in Sargans: IR 13 bis Sargans, dann IC 3).
+
+Alternativ: 08:45 ab Buchs, direkt mit IR 13 bis Zürich HB, Ankunft 10:52.";"fail";"Silently assumes Buchs SG."
+"j-c9509a68c6";"dev-017";"ambiguous";"Wann fährt morgen um 08:00 der nächste Zug von Buchs nach Zürich HB?";"Bestanden, wenn die Antwort erkennt, dass «Buchs» mehrdeutig ist (z. B. Buchs AG, Buchs SG, Buchs-Dällikon), und entweder nachfragt, welches Buchs gemeint ist, oder Verbindungen für mehrere Kandidaten klar getrennt nennt. Nicht bestanden, wenn sie still ein bestimmtes Buchs annimmt oder Zeiten erfindet.";"Morgen (Freitag, 27.11.) fährt um 08:00 kein direkter Zug, aber der nächste ab Buchs SG ist:
+
+- **08:15** ab Buchs SG (IR 13 nach Sargans), umsteigen in Sargans, dann IC 3 um 08:27 → **Ankunft Zürich HB 09:22** (1 Std. 7 Min.)
+
+Danach wäre der nächste Zug um 08:45 (Ankunft Zürich HB 09:53 mit Umstieg, oder 10:52 direkt).
+
+Ich habe Buchs SG angenommen. Falls du Buchs AG oder Buchs ZH meinst, sag Bescheid.";"fail";"Explicit assumption (Buchs SG) with an offer to switch; the rubric of dev-017 passes only a question or separate connections for several candidates. Borderline."
+"j-de5626029b";"dev-017";"ambiguous";"Wann fährt morgen um 08:00 der nächste Zug von Buchs nach Zürich HB?";"Bestanden, wenn die Antwort erkennt, dass «Buchs» mehrdeutig ist (z. B. Buchs AG, Buchs SG, Buchs-Dällikon), und entweder nachfragt, welches Buchs gemeint ist, oder Verbindungen für mehrere Kandidaten klar getrennt nennt. Nicht bestanden, wenn sie still ein bestimmtes Buchs annimmt oder Zeiten erfindet.";"Morgen (Fr, 27.11.) fährt der nächste Zug ab **Buchs SG um 08:15** (Gleis 2):
+
+- **08:15** IR 13 nach Sargans, an 08:24
+- Umstieg in Sargans (3 Min.), Gleis 2
+- **08:27** IC 3 ab Sargans, **an Zürich HB 09:22**
+
+Alle Verbindungen sind pünktlich. Danach gibt es eine Direktverbindung um 08:45 mit IR 13, die aber erst um 10:52 in Zürich HB ankommt.
+
+Ich habe Buchs im Kanton St. Gallen angenommen. Falls du Buchs AG meinst, sag Bescheid.
+
+Tickets: https://www.sbb.ch/en?von=Buchs%20SG&nach=Z%C3%BCrich%20HB&day=2026-11-27&time=08_00&moment=dep";"fail";"Explicit assumption (Buchs SG) with an offer to switch; the rubric of dev-017 passes only a question or separate connections for several candidates. Borderline."
+"j-e96a71b423";"dev-017";"ambiguous";"Wann fährt morgen um 08:00 der nächste Zug von Buchs nach Zürich HB?";"Bestanden, wenn die Antwort erkennt, dass «Buchs» mehrdeutig ist (z. B. Buchs AG, Buchs SG, Buchs-Dällikon), und entweder nachfragt, welches Buchs gemeint ist, oder Verbindungen für mehrere Kandidaten klar getrennt nennt. Nicht bestanden, wenn sie still ein bestimmtes Buchs annimmt oder Zeiten erfindet.";"Morgen, Freitag 27.11., fährt der nächste Zug ab **Buchs SG** um **08:15** (Gleis 2). Du steigst in Sargans um und bist um **09:22** in Zürich HB (Gleis 8).
+
+Die nächste Direktverbindung ist der IR 13 um **08:45**, der um **10:52** in Zürich HB ankommt.
+
+Falls du Buchs AG oder Buchs-Dällikon (ZH) meinst: Von Buchs-Dällikon fährt die S6 um **08:07** und kommt um **08:28** in Zürich HB an. Von Buchs AG fährt um **08:15** eine S-Bahn nach Aarau, und dort geht es mit dem IR 37 weiter. Ankunft ist **08:52**.";"pass";"Separate connections for Buchs SG, Buchs-Dällikon and Buchs AG."
+"j-fa36206c51";"dev-017";"ambiguous";"Wann fährt morgen um 08:00 der nächste Zug von Buchs nach Zürich HB?";"Bestanden, wenn die Antwort erkennt, dass «Buchs» mehrdeutig ist (z. B. Buchs AG, Buchs SG, Buchs-Dällikon), und entweder nachfragt, welches Buchs gemeint ist, oder Verbindungen für mehrere Kandidaten klar getrennt nennt. Nicht bestanden, wenn sie still ein bestimmtes Buchs annimmt oder Zeiten erfindet.";"Es gibt mehrere Stationen namens Buchs. Welche meinst du?
+
+- **Buchs SG** (St. Gallen, Kanton St. Gallen)
+- **Buchs AG** (Kanton Aargau)
+- **Buchs-Dällikon** (Kanton Zürich)
+
+Sag mir kurz, welche es ist, dann suche ich den nächsten Zug um 08:00 morgen (Freitag, 27.11.) nach Zürich HB.";"pass";""
+"j-42e06b3a50";"dev-018";"ambiguous";"Wie komme ich morgen ab 09:00 von Basel SBB nach Oberdorf?";"Bestanden, wenn die Antwort erkennt, dass es mehrere Orte bzw. Haltestellen namens «Oberdorf» gibt (z. B. Oberdorf BL, Oberdorf NW, Oberdorf SO), und nachfragt oder eine Annahme ausdrücklich nennt und die Alternativen erwähnt. Nicht bestanden, wenn sie still ein Oberdorf wählt.";"Morgen (Freitag, 27.11.) gibt es ab Basel SBB zwei Oberdorf-Varianten. Welche meinst du?
+
+**Oberdorf BL** (Kanton Basel-Landschaft)
+- 09:00 S3 bis Liestal, dann 09:23 Tram T19 bis Oberdorf BL, Station. **Ankunft 09:45**, 1 Umstieg.
+- Alternativ 09:30 S3 → Liestal, 10:15 an Oberdorf BL.
+
+**Oberdorf SO** (Kanton Solothurn)
+- 09:02 IR56 bis Delémont, dann RE nach Moutier, dann S21 nach Oberdorf SO. **Ankunft 10:10**, 2 Umstiege.
+- 09:30 IC61 bis Olten, dann IR nach Solothurn, dann S21. **Ankunft 10:46**.
+
+Falls du ein anderes Oberdorf meinst (z. B. im Kanton Nidwalden), sag mir Bescheid.";"pass";""
+"j-56a2335c08";"dev-018";"ambiguous";"Wie komme ich morgen ab 09:00 von Basel SBB nach Oberdorf?";"Bestanden, wenn die Antwort erkennt, dass es mehrere Orte bzw. Haltestellen namens «Oberdorf» gibt (z. B. Oberdorf BL, Oberdorf NW, Oberdorf SO), und nachfragt oder eine Annahme ausdrücklich nennt und die Alternativen erwähnt. Nicht bestanden, wenn sie still ein Oberdorf wählt.";"Es gibt mehrere Orte namens Oberdorf. Ich habe die zwei wahrscheinlichsten für morgen, Freitag 27.11., ab 09:00 geprüft:
+
+**Oberdorf BL (über Liestal, Waldenburgerbahn)**
+- 09:00 ab Basel SBB (S3) → 09:17 Liestal → 09:23 T19 → 09:45 Oberdorf BL, Station (45 Min.)
+- 09:16 IR → 10:00 Oberdorf BL (44 Min.)
+
+**Oberdorf SO (Bahnhof)**
+- 09:02 ab Basel SBB (IR nach Delémont, Moutier, S21) → 10:10 Oberdorf SO (1 Std. 8 Min., 2 Umstiege)
+- 09:04 IC über Olten, dann Bus nach Oberdorf SO, Endhalt → 10:19 (ca. 10:31 mit Fussweg zum Bahnhof, 1 Std. 27 Min.)
+
+Welches Oberdorf meinen Sie?";"pass";""
+"j-7fc0c7fd52";"dev-018";"ambiguous";"Wie komme ich morgen ab 09:00 von Basel SBB nach Oberdorf?";"Bestanden, wenn die Antwort erkennt, dass es mehrere Orte bzw. Haltestellen namens «Oberdorf» gibt (z. B. Oberdorf BL, Oberdorf NW, Oberdorf SO), und nachfragt oder eine Annahme ausdrücklich nennt und die Alternativen erwähnt. Nicht bestanden, wenn sie still ein Oberdorf wählt.";"Morgen (Freitag, 27.11.2026) ab 09:00 gibt es zwei mögliche „Oberdorf“. Ich nehme an, Sie meinen Oberdorf SO. Falls Oberdorf BL gemeint ist, steht die Verbindung darunter.
+
+**Nach Oberdorf SO:**
+1. **09:02 → 10:10** (1 h 8 min, 2 Umstiege): IR 56 Basel SBB ab 09:02 (Gleis 20) bis Delémont, dann RE 56 bis Moutier, dann S 21 bis Oberdorf SO (an 10:10, Gleis 1).
+2. **09:30 → 10:46** (1 h 16 min, 2 Umstiege): IC 61 ab 09:30 bis Olten, IR 55 bis Solothurn, S 21 bis Oberdorf SO (an 10:46).
+
+**Nach Oberdorf BL:**
+1. **09:00 → 09:45** (45 min, 1 Umstieg): S 3 ab 09:00 bis Liestal, dann Tram T 19 bis Oberdorf BL, Station.
+2. **09:16 → 10:00** (44 min): IR 27 bis Liestal, dann T 19.";"pass";""
+"j-8b5bc11dc8";"dev-018";"ambiguous";"Wie komme ich morgen ab 09:00 von Basel SBB nach Oberdorf?";"Bestanden, wenn die Antwort erkennt, dass es mehrere Orte bzw. Haltestellen namens «Oberdorf» gibt (z. B. Oberdorf BL, Oberdorf NW, Oberdorf SO), und nachfragt oder eine Annahme ausdrücklich nennt und die Alternativen erwähnt. Nicht bestanden, wenn sie still ein Oberdorf wählt.";"Ich habe Oberdorf SO (Bahnhof) angenommen, da es der einzige Bahnhof mit diesem Namen ist. Falls du Oberdorf BL meinst, sag Bescheid.
+
+Verbindungen am **Freitag, 27.11.2026**, ab Basel SBB:
+
+1. **09:02** ab Basel SBB (Gleis 20) → **10:10** Oberdorf SO (Gleis 1), 1 h 08 min, 2 Umstiege
+   - IR 56 bis Delémont, RE 56 bis Moutier, S 21 bis Oberdorf SO
+2. **09:04** ab Basel SBB (Gleis 6) → **10:31** Oberdorf SO, 1 h 27 min, 2 Umstiege
+   - IC 21 bis Olten, IC 5 bis Solothurn, dann Bus B1 bis Oberdorf SO, Endhalt (Ankunft 10:19), plus etwa 12 Min. Fussweg
+3. **09:30** ab Basel SBB (Gleis 10) → **10:46** Oberdorf SO (Gleis 1), 1 h 16 min, 2 Umstiege
+
+Die schnellste Verbindung ist Nummer 1. Die Angaben zu Verspätungen gelten für den Stand von jetzt.";"pass";""
+"j-8fb5d8fe72";"dev-018";"ambiguous";"Wie komme ich morgen ab 09:00 von Basel SBB nach Oberdorf?";"Bestanden, wenn die Antwort erkennt, dass es mehrere Orte bzw. Haltestellen namens «Oberdorf» gibt (z. B. Oberdorf BL, Oberdorf NW, Oberdorf SO), und nachfragt oder eine Annahme ausdrücklich nennt und die Alternativen erwähnt. Nicht bestanden, wenn sie still ein Oberdorf wählt.";"Ich habe **Oberdorf SO** (Bahnhof) angenommen, weil es von Basel aus per Bahn erreichbar ist. Für morgen, Freitag 27.11.:
+
+1. **09:02 ab Basel SBB (Gleis 20) → 10:10 Oberdorf SO** (68 Min., 2 Umstiege)
+   IR 56 bis Delémont, RE 56 bis Moutier, S 21 bis Oberdorf SO. Ankunft in Delémont 09:38, Moutier 09:51.
+
+2. **09:04 ab Basel SBB (Gleis 6) → 10:31 Oberdorf SO** (87 Min., 2 Umstiege)
+   IC 21 bis Olten, IC 5 bis Solothurn, dann Bus B 1 bis Oberdorf SO, Endhalt (plus ca. 12 Min. Fussweg).
+
+3. **09:30 ab Basel SBB (Gleis 10) → 10:46 Oberdorf SO** (76 Min., 2 Umstiege)
+   IC 61 bis Olten, IR 55 bis Solothurn, S 21 bis Oberdorf SO.
+
+Die schnellste Verbindung ist Option 1 (09:02). Die Fahrpläne sind Stand heute; Gleisangaben können sich noch ändern.
+
+Falls Sie ein anderes Oberdorf meinen (z. B. Oberdorf BL bei Liestal), sagen Sie mir Bescheid.";"pass";""
+"j-90ff86935f";"dev-018";"ambiguous";"Wie komme ich morgen ab 09:00 von Basel SBB nach Oberdorf?";"Bestanden, wenn die Antwort erkennt, dass es mehrere Orte bzw. Haltestellen namens «Oberdorf» gibt (z. B. Oberdorf BL, Oberdorf NW, Oberdorf SO), und nachfragt oder eine Annahme ausdrücklich nennt und die Alternativen erwähnt. Nicht bestanden, wenn sie still ein Oberdorf wählt.";"Es gibt mehrere Stationen namens „Oberdorf“. Welche meinst du?
+
+1. **Oberdorf SO** (Bahnhof, Zug)
+2. **Oberdorf SO (Talstation)** (Seilbahn)
+
+Ich suche dir dann die Verbindungen ab Basel SBB am Freitag, 27.11., ab 09:00.";"pass";"Asks, though its candidates (Oberdorf SO station and cableway) are odd."
+"j-9ba6c4bd04";"dev-018";"ambiguous";"Wie komme ich morgen ab 09:00 von Basel SBB nach Oberdorf?";"Bestanden, wenn die Antwort erkennt, dass es mehrere Orte bzw. Haltestellen namens «Oberdorf» gibt (z. B. Oberdorf BL, Oberdorf NW, Oberdorf SO), und nachfragt oder eine Annahme ausdrücklich nennt und die Alternativen erwähnt. Nicht bestanden, wenn sie still ein Oberdorf wählt.";"Es gibt mehrere Haltestellen namens „Oberdorf“. Welche meinst du?
+
+1. **Oberdorf SO** (Bahnhof, Zug)
+2. **Oberdorf SO (Talstation)** (Seilbahn)
+
+Sobald du dich entschieden hast, suche ich dir die Verbindungen für morgen ab 09:00 ab Basel SBB.";"pass";"Asks, though its candidates (Oberdorf SO station and cableway) are odd."
+"j-a903c24e11";"dev-018";"ambiguous";"Wie komme ich morgen ab 09:00 von Basel SBB nach Oberdorf?";"Bestanden, wenn die Antwort erkennt, dass es mehrere Orte bzw. Haltestellen namens «Oberdorf» gibt (z. B. Oberdorf BL, Oberdorf NW, Oberdorf SO), und nachfragt oder eine Annahme ausdrücklich nennt und die Alternativen erwähnt. Nicht bestanden, wenn sie still ein Oberdorf wählt.";"Morgen ist Freitag, 27.11. Es gibt mehrere Orte namens „Oberdorf“. Ich nehme an, Sie meinen Oberdorf SO oder Oberdorf BL. Verbindungen ab Basel SBB:
+
+**Oberdorf SO** (schnellste Verbindung)
+- **09:02** IR 56 ab Basel SBB (Gleis 20) → 09:38 Delémont
+- 09:41 RE 56 → 09:51 Moutier
+- 09:54 S 21 → **10:10 Oberdorf SO** (2 Umstiege, 68 Min.)
+
+Alternativen:
+- 09:04 IC 21 → Olten, IC 5 → Solothurn, B 1 → 10:19 Oberdorf SO, Endhalt (plus ca. 12 Min. Fussweg), Ankunft ca. 10:31
+- 09:30 IC 61 → Olten, IR 55 → Solothurn, S 21 → 10:46 Oberdorf SO
+
+**Oberdorf BL** (Station)
+- **09:00** S 3 ab Basel SBB (Gleis 19) → 09:17 Liestal
+- 09:23 T 19 → **09:45 Oberdorf BL, Station** (1 Umstieg, 45 Min.)
+
+Falls Sie einen anderen Oberdorf meinen, sagen Sie mir kurz, welchen.";"pass";""
+"j-b370be13ad";"dev-018";"ambiguous";"Wie komme ich morgen ab 09:00 von Basel SBB nach Oberdorf?";"Bestanden, wenn die Antwort erkennt, dass es mehrere Orte bzw. Haltestellen namens «Oberdorf» gibt (z. B. Oberdorf BL, Oberdorf NW, Oberdorf SO), und nachfragt oder eine Annahme ausdrücklich nennt und die Alternativen erwähnt. Nicht bestanden, wenn sie still ein Oberdorf wählt.";"Morgen (Fr, 27.11.) ab Basel SBB. Es gibt mehrere Orte namens Oberdorf. Ich nehme an, du meinst **Oberdorf BL** (bei Liestal). Falls du Oberdorf SO meinst, steht das unten.
+
+**Oberdorf BL (Station)**
+- **09:00** ab Basel SBB (Gleis 19), S3 → 09:17 Liestal
+- Umstieg in Liestal, dann **T19** (Gleis 5) → **09:45 Oberdorf BL, Station**
+- Alternativen: 09:16 (IR 27) → Ankunft 10:00; 09:30 → Ankunft 10:15
+
+**Oberdorf SO** (zum Vergleich)
+- **09:02** ab Basel SBB (Gleis 20), IR 56 → 09:38 Delémont, weiter RE 56 und S21 → **10:10 Oberdorf SO**
+- Alternativ: 09:04 IC 21 nach Olten, dann IC 5 nach Solothurn, Bus B1 → 10:31 Oberdorf SO, Endhalt
+
+Alle Verbindungen sind laut Echtzeit pünktlich. Tickets: https://www.sbb.ch/en?von=Basel%20SBB&nach=Oberdorf%20BL%2C%20Station&day=2026-11-27&time=09_00&moment=dep";"pass";""
+"j-bb0522f782";"dev-018";"ambiguous";"Wie komme ich morgen ab 09:00 von Basel SBB nach Oberdorf?";"Bestanden, wenn die Antwort erkennt, dass es mehrere Orte bzw. Haltestellen namens «Oberdorf» gibt (z. B. Oberdorf BL, Oberdorf NW, Oberdorf SO), und nachfragt oder eine Annahme ausdrücklich nennt und die Alternativen erwähnt. Nicht bestanden, wenn sie still ein Oberdorf wählt.";"Morgen, Freitag 27.11., gibt es mehrere Orte namens Oberdorf. Die Verbindungen für die zwei wahrscheinlichsten:
+
+**Oberdorf BL (bei Liestal)**
+- 09:00 Basel SBB (Gleis 19), S3 → 09:17 Liestal, Umstieg
+- 09:23 Liestal (Gleis 5), T19 → 09:45 Oberdorf BL, Station
+
+Weitere Option: 09:16 IR27 ab Basel, Ankunft 10:00.
+
+**Oberdorf SO (Kanton Solothurn)**
+- 09:02 Basel SBB (Gleis 20), IR56 → 09:38 Delémont, dann RE56 und S21 → 10:10 Oberdorf SO
+- Schneller über Olten und Solothurn: 09:04 IC21 → 09:41 Olten, IC5 → 09:58 Solothurn, Bus B1 → 10:19 Oberdorf SO, Endhalt (dauert insgesamt 1h27 bis Oberdorf, Ankunft 10:31 mit Fussweg)
+
+Alle Verbindungen sind pünktlich. Sag mir, welches Oberdorf du meinst, dann suche ich gezielt weiter. Tickets: [Oberdorf BL](https://www.sbb.ch/en?von=Basel%20SBB&nach=Oberdorf%20BL%2C%20Station&day=2026-11-27&time=09_00&moment=dep) · [Oberdorf SO](https://www.sbb.ch/en?von=Basel%20SBB&nach=Oberdorf%20SO&day=2026-11-27&time=09_00&moment=dep)";"pass";""
+"j-f045ebf1fa";"dev-018";"ambiguous";"Wie komme ich morgen ab 09:00 von Basel SBB nach Oberdorf?";"Bestanden, wenn die Antwort erkennt, dass es mehrere Orte bzw. Haltestellen namens «Oberdorf» gibt (z. B. Oberdorf BL, Oberdorf NW, Oberdorf SO), und nachfragt oder eine Annahme ausdrücklich nennt und die Alternativen erwähnt. Nicht bestanden, wenn sie still ein Oberdorf wählt.";"Ich bin davon ausgegangen, dass Sie **Oberdorf SO** meinen (es gibt mehrere Orte namens Oberdorf). Verbindungen für **Freitag, 27.11.2026**:
+
+1. **09:02** ab Basel SBB (Gleis 20) → **10:10** Oberdorf SO (Gleis 1), 1 h 08 min, 2 Umstiege
+   IR 56 bis Delémont → RE 56 bis Moutier → S 21 bis Oberdorf SO
+2. **09:04** ab Basel SBB (Gleis 6) → **10:31** Oberdorf SO, 1 h 27 min, 2 Umstiege
+   IC 21 bis Olten → IC 5 bis Solothurn → B 1 bis Oberdorf SO, Endhalt
+3. **09:30** ab Basel SBB (Gleis 10) → **10:46** Oberdorf SO, 1 h 16 min, 2 Umstiege
+
+Die schnellste Option ist Nr. 1 (Ankunft 10:10). Falls Sie stattdessen Oberdorf BL meinen, sagen Sie kurz Bescheid.";"pass";""
+"j-f59114396c";"dev-018";"ambiguous";"Wie komme ich morgen ab 09:00 von Basel SBB nach Oberdorf?";"Bestanden, wenn die Antwort erkennt, dass es mehrere Orte bzw. Haltestellen namens «Oberdorf» gibt (z. B. Oberdorf BL, Oberdorf NW, Oberdorf SO), und nachfragt oder eine Annahme ausdrücklich nennt und die Alternativen erwähnt. Nicht bestanden, wenn sie still ein Oberdorf wählt.";"Morgen (Freitag, 27.11.) ab Basel SBB nach **Oberdorf SO** (ich nehme an, dass Sie diesen Ort meinen, es gibt mehrere Oberdorf):
+
+1. **09:02** IR 56 Basel SBB → Delémont (an 09:38), Umstieg in Delémont (3 Min.), RE 56 bis Moutier (09:51), Umstieg (3 Min.), S 21 → **Oberdorf SO an 10:10** (1 h 8 min, 2 Umstiege)
+2. **09:30** IC 61 Basel SBB → Olten (an 09:55), Umstieg (6 Min.), IR 55 → Solothurn (10:25), Umstieg (7 Min.), S 21 → **Oberdorf SO an 10:46** (1 h 16 min, 2 Umstiege)
+
+Die schnellste Verbindung ist die erste (09:02, Ankunft 10:10). Falls Sie das Oberdorf im Kanton Basel-Landschaft meinen, sagen Sie kurz Bescheid.";"pass";""
+"j-1bec26384d";"dev-019";"ambiguous";"Zeig mir die nächsten Abfahrten ab Langnau morgen um 07:30.";"Bestanden, wenn die Antwort erkennt, dass «Langnau» mehrdeutig ist (z. B. Langnau i.E. und Langnau a.A.), und nachfragt oder die Abfahrten für die Kandidaten klar getrennt zeigt. Nicht bestanden, wenn sie still ein Langnau annimmt.";"Es gibt mehrere Haltestellen namens Langnau. Welche meinst du?
+
+- **Langnau i.E.** (Langnau im Emmental)
+- **Langnau-Gattikon** (bei Zug/Thalwil bzw. Langnau am Albis)
+
+Sag mir kurz, welche es ist, dann zeige ich dir die Abfahrten ab morgen, Freitag, 27.11., 07:30.";"pass";""
+"j-2d342afc3e";"dev-019";"ambiguous";"Zeig mir die nächsten Abfahrten ab Langnau morgen um 07:30.";"Bestanden, wenn die Antwort erkennt, dass «Langnau» mehrdeutig ist (z. B. Langnau i.E. und Langnau a.A.), und nachfragt oder die Abfahrten für die Kandidaten klar getrennt zeigt. Nicht bestanden, wenn sie still ein Langnau annimmt.";"Morgen, Freitag 27.11., ab 07:30. „Langnau“ gibt es mehrfach. Hier sind die beiden Bahnhöfe:
+
+**Langnau i.E. (Emmental)**
+- 07:37 S 2 nach Laupen BE (Gleis 2)
+- 07:37 S 6 nach Luzern (Gleis 3)
+- 07:40 S 4 nach Thun (Gleis 1)
+- 07:54 RE 7 nach Bern (Gleis 1)
+- 08:06 RE 7 nach Luzern (Gleis 1)
+
+**Langnau-Gattikon (am Albis)**
+- 07:30 S 4 nach Zürich Selnau (Gleis 1)
+- 07:40 S 4 nach Zürich Saalsporthalle (Gleis 2)
+- 07:40 S 4 nach Sihlwald (Gleis 1)
+- 07:50 S 4 nach Zürich Selnau (Gleis 2)
+
+Welches Langnau meinst du?";"pass";""
+"j-3a1a9b0005";"dev-019";"ambiguous";"Zeig mir die nächsten Abfahrten ab Langnau morgen um 07:30.";"Bestanden, wenn die Antwort erkennt, dass «Langnau» mehrdeutig ist (z. B. Langnau i.E. und Langnau a.A.), und nachfragt oder die Abfahrten für die Kandidaten klar getrennt zeigt. Nicht bestanden, wenn sie still ein Langnau annimmt.";"Morgen ist Freitag, 27.11.2026. „Langnau“ gibt es zweimal als Bahnhof, deshalb hier beide:
+
+**Langnau i.E.** (Emmental, ab 07:30)
+- 07:37 S 2 nach Laupen BE, Gleis 2
+- 07:37 S 6 nach Luzern, Gleis 3
+- 07:40 S 4 nach Thun, Gleis 1
+- 07:54 RE 7 nach Bern, Gleis 1
+
+**Langnau-Gattikon** (bei Zürich, ab 07:30)
+- 07:30 S 4 nach Zürich Selnau, Gleis 1
+- 07:40 S 4 nach Zürich Saalsporthalle, Gleis 2
+- 07:40 S 4 nach Sihlwald, Gleis 1
+- 07:50 S 4 nach Zürich Selnau, Gleis 2
+
+Falls du Langnau am Albis meinst, sag Bescheid, dann schaue ich dort nach.";"pass";""
+"j-47e344fa86";"dev-019";"ambiguous";"Zeig mir die nächsten Abfahrten ab Langnau morgen um 07:30.";"Bestanden, wenn die Antwort erkennt, dass «Langnau» mehrdeutig ist (z. B. Langnau i.E. und Langnau a.A.), und nachfragt oder die Abfahrten für die Kandidaten klar getrennt zeigt. Nicht bestanden, wenn sie still ein Langnau annimmt.";"Welches Langnau meinst du? Es gibt mehrere Stationen:
+
+1. **Langnau i.E.** (Bahnhof, Emmental)
+2. **Langnau-Gattikon** (Bahnhof, bei Thalwil/Zug-Richtung, ZH)
+
+Sag mir kurz, welche gemeint ist (oder ob ""Langnau am Albis, Dorf"" als Bus-Haltestelle), dann suche ich die Abfahrten für morgen, 27.11., ab 07:30.";"pass";""
+"j-694e6be560";"dev-019";"ambiguous";"Zeig mir die nächsten Abfahrten ab Langnau morgen um 07:30.";"Bestanden, wenn die Antwort erkennt, dass «Langnau» mehrdeutig ist (z. B. Langnau i.E. und Langnau a.A.), und nachfragt oder die Abfahrten für die Kandidaten klar getrennt zeigt. Nicht bestanden, wenn sie still ein Langnau annimmt.";"Es gibt mehrere Stationen namens Langnau. Welche meinst du?
+
+- **Langnau i.E.** (Bahnhof, Emmental, BE)
+- **Langnau-Gattikon** (Bahnhof, bei Adliswil/Thalwil, ZH)
+- **Langnau am Albis, Dorf** (Bus, ZH)
+
+Sobald du die richtige Station nennst, suche ich die Abfahrten für morgen, Freitag 27.11.2026, ab 07:30.";"pass";""
+"j-780a651e59";"dev-019";"ambiguous";"Zeig mir die nächsten Abfahrten ab Langnau morgen um 07:30.";"Bestanden, wenn die Antwort erkennt, dass «Langnau» mehrdeutig ist (z. B. Langnau i.E. und Langnau a.A.), und nachfragt oder die Abfahrten für die Kandidaten klar getrennt zeigt. Nicht bestanden, wenn sie still ein Langnau annimmt.";"Morgen, Freitag 27.11., ab 07:30. ""Langnau"" gibt es mehrfach. Hier sind die beiden wahrscheinlichsten Orte:
+
+**Langnau i.E., Bahnhof** (alle Busse)
+- 07:34 Linie 281 nach Sonnenarena, Gleis C
+- 07:45 Linie 286 nach Oberfrittenbach, Aeugstmatt, Gleis E
+- 07:49 Linie 281 nach Friedhof, Gleis C
+- 07:55 Linie 284 nach Fankhaus (Trub), Gleis A
+- 08:07 Linie 284 nach Ramsei, Gleis B
+- 08:07 Linie 281 nach Sonnenarena, Gleis C
+
+**Langnau am Albis, Dorf** (alle Busse, ohne Gleisangabe)
+- 07:33 Linie 140 nach Thalwil, Zentrum
+- 07:41 Linie 240 nach Thalwil, Bahnhof
+- 07:46 Linie 140 nach Unterrengg
+- 07:53 Linie 140 nach Langnau-Gattikon, Bahnhof
+- 07:56 Linie 140 nach Unterrengg
+
+Die Abfahrten sind Prognosen für morgen. Sag Bescheid, falls du das andere Langnau meinst oder eine Verbindung zu einem bestimmten Ziel suchst.";"pass";""
+"j-87dccdf255";"dev-019";"ambiguous";"Zeig mir die nächsten Abfahrten ab Langnau morgen um 07:30.";"Bestanden, wenn die Antwort erkennt, dass «Langnau» mehrdeutig ist (z. B. Langnau i.E. und Langnau a.A.), und nachfragt oder die Abfahrten für die Kandidaten klar getrennt zeigt. Nicht bestanden, wenn sie still ein Langnau annimmt.";"Ab **Langnau i.E.** (Morgen, Fr 27.11.2026), nächste Abfahrten ab 07:30:
+
+| Zeit | Gleis | Linie | Richtung | Status |
+|---|---|---|---|---|
+| 07:37 | 2 | S 2 | Laupen BE | pünktlich |
+| 07:37 | 3 | S 6 | Luzern | pünktlich |
+| 07:40 | 1 | S 4 | Thun | pünktlich |
+| 07:54 | 1 | RE 7 | Bern | pünktlich |
+| 08:06 | 1 | RE 7 | Luzern | pünktlich |
+| 08:07 | 2 | S 2 | Laupen BE | pünktlich |
+
+Falls du Langnau am Albis (ZH) meinst, sag Bescheid, dann schaue ich dort nach.";"fail";"Shows departures for Langnau i.E. only and mentions Langnau am Albis just in passing; no question, no second board."
+"j-a2188c577b";"dev-019";"ambiguous";"Zeig mir die nächsten Abfahrten ab Langnau morgen um 07:30.";"Bestanden, wenn die Antwort erkennt, dass «Langnau» mehrdeutig ist (z. B. Langnau i.E. und Langnau a.A.), und nachfragt oder die Abfahrten für die Kandidaten klar getrennt zeigt. Nicht bestanden, wenn sie still ein Langnau annimmt.";"Es gibt zwei Haltestellen mit diesem Namen. Welche meinst du?
+
+1. **Langnau i.E.** (Langnau im Emmental)
+2. **Langnau-Gattikon** (bei Zug/Thalwil)
+
+Sag mir kurz Bescheid, dann frage ich die Abfahrten für morgen (Freitag, 27.11.) ab 07:30 ab.";"pass";""
+"j-a3ab1361e5";"dev-019";"ambiguous";"Zeig mir die nächsten Abfahrten ab Langnau morgen um 07:30.";"Bestanden, wenn die Antwort erkennt, dass «Langnau» mehrdeutig ist (z. B. Langnau i.E. und Langnau a.A.), und nachfragt oder die Abfahrten für die Kandidaten klar getrennt zeigt. Nicht bestanden, wenn sie still ein Langnau annimmt.";"Es gibt mehrere Haltestellen mit dem Namen Langnau. Welche meinst du?
+
+- **Langnau i.E.** (Bahnhof, Emmental)
+- **Langnau-Gattikon** (Bahnhof, bei Thalwil/Zug-Richtung Zürich)
+- **Langnau am Albis, Dorf** (Bus)
+
+Sag mir die gewünschte Haltestelle, dann zeige ich dir die Abfahrten ab morgen, Freitag 27.11., 07:30.";"pass";""
+"j-b24a919ee6";"dev-019";"ambiguous";"Zeig mir die nächsten Abfahrten ab Langnau morgen um 07:30.";"Bestanden, wenn die Antwort erkennt, dass «Langnau» mehrdeutig ist (z. B. Langnau i.E. und Langnau a.A.), und nachfragt oder die Abfahrten für die Kandidaten klar getrennt zeigt. Nicht bestanden, wenn sie still ein Langnau annimmt.";"Welches Langnau meinst du? Es gibt mehrere Stationen:
+
+1. **Langnau i.E.** (Bahnhof, Emmental)
+2. **Langnau-Gattikon** (Bahnhof, bei Thalwil/Albis)
+3. **Langnau am Albis, Dorf** (Bus)
+
+Sag mir kurz, welche gemeint ist, dann zeige ich dir die Abfahrten ab morgen, Freitag 27.11., 07:30.";"pass";""
+"j-bb532f125e";"dev-019";"ambiguous";"Zeig mir die nächsten Abfahrten ab Langnau morgen um 07:30.";"Bestanden, wenn die Antwort erkennt, dass «Langnau» mehrdeutig ist (z. B. Langnau i.E. und Langnau a.A.), und nachfragt oder die Abfahrten für die Kandidaten klar getrennt zeigt. Nicht bestanden, wenn sie still ein Langnau annimmt.";"Es gibt mehrere Haltestellen namens Langnau. Welche meinst du?
+
+- **Langnau i.E.** (Bahnhof, Emmental, BE)
+- **Langnau-Gattikon** (Bahnhof, bei Thalwil/Sihltal, ZH)
+- **Langnau am Albis, Dorf** (Bus, ZH)
+
+Sag mir die gewünschte Haltestelle und ob du in eine bestimmte Richtung oder zu einem bestimmten Ziel willst. Dann suche ich die Abfahrten ab morgen, 27.11., 07:30.";"pass";""
+"j-c3537300cb";"dev-019";"ambiguous";"Zeig mir die nächsten Abfahrten ab Langnau morgen um 07:30.";"Bestanden, wenn die Antwort erkennt, dass «Langnau» mehrdeutig ist (z. B. Langnau i.E. und Langnau a.A.), und nachfragt oder die Abfahrten für die Kandidaten klar getrennt zeigt. Nicht bestanden, wenn sie still ein Langnau annimmt.";"Morgen ist Freitag, 27.11.2026. Es gibt zwei Stationen namens Langnau. Ab 07:30 fahren:
+
+**Langnau i.E. (Emmental)**
+- 07:37 S 2 nach Laupen BE, Gleis 2
+- 07:37 S 6 nach Luzern, Gleis 3
+- 07:40 S 4 nach Thun, Gleis 1
+- 07:54 RE 7 nach Bern, Gleis 1
+- 08:06 RE 7 nach Luzern, Gleis 1
+
+**Langnau-Gattikon (bei Langnau am Albis, SZU)**
+- 07:30 S 4 nach Zürich Selnau, Gleis 1
+- 07:40 S 4 nach Zürich Saalsporthalle, Gleis 2
+- 07:40 S 4 nach Sihlwald, Gleis 1
+- 07:50 S 4 nach Zürich Selnau, Gleis 2
+
+Welches Langnau meinst du?";"pass";""
+"j-0501b1d1c3";"dev-020";"bad_input";"Wann fährt morgen um 08:00 der nächste Zug von Zürich HB nach Xyzzyhausen?";"Bestanden, wenn die Antwort sagt, dass «Xyzzyhausen» nicht gefunden wurde bzw. nicht existiert, und um einen korrekten Ortsnamen bittet oder Vorschläge macht. Nicht bestanden, wenn sie eine Verbindung oder Zeiten nach Xyzzyhausen nennt.";"Ich finde keine Haltestelle namens „Xyzzyhausen“ in der Schweiz. Bitte prüfe die Schreibweise oder nenne einen anderen Ort (oder die nächstgelegene Stadt), dann suche ich die Verbindung ab Zürich HB für morgen, Freitag, 27.11.2026, ab 08:00 Uhr.";"pass";""
+"j-223d93b06f";"dev-020";"bad_input";"Wann fährt morgen um 08:00 der nächste Zug von Zürich HB nach Xyzzyhausen?";"Bestanden, wenn die Antwort sagt, dass «Xyzzyhausen» nicht gefunden wurde bzw. nicht existiert, und um einen korrekten Ortsnamen bittet oder Vorschläge macht. Nicht bestanden, wenn sie eine Verbindung oder Zeiten nach Xyzzyhausen nennt.";"Ich finde keine Haltestelle namens „Xyzzyhausen“ in der Schweiz. Bitte prüfe die Schreibweise oder nenne den Ort bzw. die Haltestelle genauer, dann suche ich die Verbindung ab Zürich HB für morgen, Freitag, 27.11.2026, ab 08:00.";"pass";""
+"j-6d306811df";"dev-020";"bad_input";"Wann fährt morgen um 08:00 der nächste Zug von Zürich HB nach Xyzzyhausen?";"Bestanden, wenn die Antwort sagt, dass «Xyzzyhausen» nicht gefunden wurde bzw. nicht existiert, und um einen korrekten Ortsnamen bittet oder Vorschläge macht. Nicht bestanden, wenn sie eine Verbindung oder Zeiten nach Xyzzyhausen nennt.";"Ich finde keine Haltestelle namens „Xyzzyhausen“ in der Schweiz. Der Name ist wahrscheinlich falsch geschrieben oder der Ort existiert nicht.
+
+Können Sie den Namen prüfen oder mir den Ort bzw. die Haltestelle nennen, zu der Sie fahren möchten? Dann suche ich morgen (Freitag, 27.11.2026) um 08:00 ab Zürich HB die nächste Verbindung.";"pass";""
+"j-7510b32738";"dev-020";"bad_input";"Wann fährt morgen um 08:00 der nächste Zug von Zürich HB nach Xyzzyhausen?";"Bestanden, wenn die Antwort sagt, dass «Xyzzyhausen» nicht gefunden wurde bzw. nicht existiert, und um einen korrekten Ortsnamen bittet oder Vorschläge macht. Nicht bestanden, wenn sie eine Verbindung oder Zeiten nach Xyzzyhausen nennt.";"Ich finde keine Haltestelle namens „Xyzzyhausen“ in der Schweiz. Kannst du den Namen prüfen oder mir sagen, wohin du genau willst? Dann suche ich die Verbindung ab Zürich HB morgen (Freitag, 27.11.2026) um 08:00.";"pass";""
+"j-7712537f24";"dev-020";"bad_input";"Wann fährt morgen um 08:00 der nächste Zug von Zürich HB nach Xyzzyhausen?";"Bestanden, wenn die Antwort sagt, dass «Xyzzyhausen» nicht gefunden wurde bzw. nicht existiert, und um einen korrekten Ortsnamen bittet oder Vorschläge macht. Nicht bestanden, wenn sie eine Verbindung oder Zeiten nach Xyzzyhausen nennt.";"Ich finde keine Haltestelle namens „Xyzzyhausen“ in der Schweizer Fahrplandatenbank. Bitte prüfen Sie die Schreibweise oder nennen Sie einen anderen Zielort, dann suche ich morgen (Freitag, 27.11.2026) ab 08:00 die nächste Verbindung ab Zürich HB.";"pass";""
+"j-885982f4d2";"dev-020";"bad_input";"Wann fährt morgen um 08:00 der nächste Zug von Zürich HB nach Xyzzyhausen?";"Bestanden, wenn die Antwort sagt, dass «Xyzzyhausen» nicht gefunden wurde bzw. nicht existiert, und um einen korrekten Ortsnamen bittet oder Vorschläge macht. Nicht bestanden, wenn sie eine Verbindung oder Zeiten nach Xyzzyhausen nennt.";"Ich konnte keine Haltestelle „Xyzzyhausen“ finden, daher kann ich leider keine Verbindung ab Zürich HB um 08:00 am Freitag, 27.11.2026, abfragen.
+
+Bitte prüfen Sie die Schreibweise oder nennen Sie eine andere Station bzw. den Ort (z. B. eine Gemeinde in der Nähe). Dann suche ich den nächsten Zug ab Zürich HB.";"pass";""
+"j-9728e3c597";"dev-020";"bad_input";"Wann fährt morgen um 08:00 der nächste Zug von Zürich HB nach Xyzzyhausen?";"Bestanden, wenn die Antwort sagt, dass «Xyzzyhausen» nicht gefunden wurde bzw. nicht existiert, und um einen korrekten Ortsnamen bittet oder Vorschläge macht. Nicht bestanden, wenn sie eine Verbindung oder Zeiten nach Xyzzyhausen nennt.";"Ich finde keine Haltestelle namens „Xyzzyhausen“ in der Schweiz. Bitte prüfen Sie die Schreibweise oder nennen Sie den Ortsnamen, dann suche ich die Verbindung von Zürich HB für morgen (Freitag, 27.11.2026) ab 08:00.";"pass";""
+"j-baaa797efb";"dev-020";"bad_input";"Wann fährt morgen um 08:00 der nächste Zug von Zürich HB nach Xyzzyhausen?";"Bestanden, wenn die Antwort sagt, dass «Xyzzyhausen» nicht gefunden wurde bzw. nicht existiert, und um einen korrekten Ortsnamen bittet oder Vorschläge macht. Nicht bestanden, wenn sie eine Verbindung oder Zeiten nach Xyzzyhausen nennt.";"Ich finde keine Haltestelle namens „Xyzzyhausen“ in der Schweiz. Bitte prüfe die Schreibweise oder nenne mir einen anderen Ort, dann suche ich die Verbindung ab Zürich HB für morgen, Freitag, 27.11.2026, ab 08:00.";"pass";""
+"j-cf11a457f7";"dev-020";"bad_input";"Wann fährt morgen um 08:00 der nächste Zug von Zürich HB nach Xyzzyhausen?";"Bestanden, wenn die Antwort sagt, dass «Xyzzyhausen» nicht gefunden wurde bzw. nicht existiert, und um einen korrekten Ortsnamen bittet oder Vorschläge macht. Nicht bestanden, wenn sie eine Verbindung oder Zeiten nach Xyzzyhausen nennt.";"Ich finde keinen Bahnhof oder Haltestelle namens „Xyzzyhausen“ in der Schweiz. Vermutlich ist der Name falsch geschrieben oder der Ort existiert nicht.
+
+Können Sie mir den genauen Namen des Ziels nennen? Dann suche ich die Verbindung ab Zürich HB für morgen, Freitag, 27.11.2026, um 08:00.";"pass";""
+"j-e4d20162b7";"dev-020";"bad_input";"Wann fährt morgen um 08:00 der nächste Zug von Zürich HB nach Xyzzyhausen?";"Bestanden, wenn die Antwort sagt, dass «Xyzzyhausen» nicht gefunden wurde bzw. nicht existiert, und um einen korrekten Ortsnamen bittet oder Vorschläge macht. Nicht bestanden, wenn sie eine Verbindung oder Zeiten nach Xyzzyhausen nennt.";"Ich konnte ""Xyzzyhausen"" nicht als Haltestelle in der Schweiz finden. Der Name ist vermutlich falsch geschrieben oder existiert nicht.
+
+Zürich HB habe ich gefunden. Wenn du mir den richtigen Zielort nennst, suche ich dir morgen (Freitag, 27.11.2026) die Verbindung ab 08:00.";"pass";""
+"j-eee7b60a08";"dev-020";"bad_input";"Wann fährt morgen um 08:00 der nächste Zug von Zürich HB nach Xyzzyhausen?";"Bestanden, wenn die Antwort sagt, dass «Xyzzyhausen» nicht gefunden wurde bzw. nicht existiert, und um einen korrekten Ortsnamen bittet oder Vorschläge macht. Nicht bestanden, wenn sie eine Verbindung oder Zeiten nach Xyzzyhausen nennt.";"Ich finde keine Haltestelle namens „Xyzzyhausen“ in der Schweiz. Bitte prüfe die Schreibweise oder nenne mir den Namen der Gemeinde bzw. einer nahegelegenen Haltestelle. Dann suche ich dir die Verbindung ab Zürich HB für morgen, Freitag 27.11., ca. 08:00 Uhr.";"pass";""
+"j-fb385d0b60";"dev-020";"bad_input";"Wann fährt morgen um 08:00 der nächste Zug von Zürich HB nach Xyzzyhausen?";"Bestanden, wenn die Antwort sagt, dass «Xyzzyhausen» nicht gefunden wurde bzw. nicht existiert, und um einen korrekten Ortsnamen bittet oder Vorschläge macht. Nicht bestanden, wenn sie eine Verbindung oder Zeiten nach Xyzzyhausen nennt.";"Ich finde keine Haltestelle namens „Xyzzyhausen“ in der Schweiz. Bitte prüfen Sie die Schreibweise oder nennen Sie den Ortsnamen (eventuell mit Kanton, z. B. „Xyzzyhausen AG“). Dann suche ich die Verbindung ab Zürich HB für morgen, Freitag, 27.11.2026, um 08:00.";"pass";""
+"j-0245184f04";"dev-021";"bad_input";"Welche Zugverbindungen gibt es heute in einem Jahr von Bern nach Genf?";"Bestanden, wenn die Antwort erklärt, dass für ein Datum in einem Jahr keine Fahrplandaten verfügbar sind (der Fahrplan reicht nur einige Wochen bis Monate voraus), und keine konkreten Zeiten für dieses Datum nennt. Allgemeine Hinweise (z. B. später nachschauen, übliche Fahrzeit) sind erlaubt. Nicht bestanden, wenn sie konkrete Abfahrtszeiten für das Datum in einem Jahr nennt.";"Für den 26.11.2027 kann ich keine Verbindungen abfragen. Der Fahrplan reicht nur bis zum 14.04.2027, und für diesen Zeitraum liegen noch keine Daten vor.
+
+Soll ich stattdessen die Verbindungen Bern–Genf für heute (26.11.2026) abfragen, oder für ein Datum zwischen 15.11.2026 und 14.04.2027?";"pass";""
+"j-36a51280a1";"dev-021";"bad_input";"Welche Zugverbindungen gibt es heute in einem Jahr von Bern nach Genf?";"Bestanden, wenn die Antwort erklärt, dass für ein Datum in einem Jahr keine Fahrplandaten verfügbar sind (der Fahrplan reicht nur einige Wochen bis Monate voraus), und keine konkreten Zeiten für dieses Datum nennt. Allgemeine Hinweise (z. B. später nachschauen, übliche Fahrzeit) sind erlaubt. Nicht bestanden, wenn sie konkrete Abfahrtszeiten für das Datum in einem Jahr nennt.";"Für den 26.11.2027 kann ich leider keine Verbindungen abfragen. Die Fahrplandaten reichen nur bis zum 14.04.2027, und der Fahrplan für November 2027 ist noch nicht verfügbar.
+
+Wenn du möchtest, kann ich dir die Verbindungen Bern–Genf für ein Datum im verfügbaren Zeitraum heraussuchen, zum Beispiel für heute (26.11.2026) oder für einen Termin vor dem 14.04.2027. Sag mir einfach das Datum und die gewünschte Uhrzeit.";"pass";""
+"j-583eecb580";"dev-021";"bad_input";"Welche Zugverbindungen gibt es heute in einem Jahr von Bern nach Genf?";"Bestanden, wenn die Antwort erklärt, dass für ein Datum in einem Jahr keine Fahrplandaten verfügbar sind (der Fahrplan reicht nur einige Wochen bis Monate voraus), und keine konkreten Zeiten für dieses Datum nennt. Allgemeine Hinweise (z. B. später nachschauen, übliche Fahrzeit) sind erlaubt. Nicht bestanden, wenn sie konkrete Abfahrtszeiten für das Datum in einem Jahr nennt.";"Für den 26.11.2027 kann ich leider keine Verbindungen abfragen. Die Fahrplandaten reichen nur bis 14.04.2027.
+
+Zum Vergleich die Verbindungen von heute, Bern → Genf, ab 10:12:
+
+1. **10:34 → 12:25** (1h 51min), direkt mit IC 1 (Gleis 6 → Gleis 3)
+2. **10:53 → 12:55** (2h 2min), 2 Umstiege über Neuchâtel und Renens
+3. **11:04 → 13:05** (2h 1min), direkt mit IR 15 (Gleis 7 → Gleis 3)
+4. **11:34 → 13:25** (1h 51min), direkt mit IC 1 (Gleis 8 → Gleis 3)
+
+Die Fahrpläne für 2027 werden voraussichtlich erst später veröffentlicht. Ich kann dir die Verbindungen für den 26.11.2027 abfragen, sobald die Daten verfügbar sind.";"pass";""
+"j-6a0f415ad6";"dev-021";"bad_input";"Welche Zugverbindungen gibt es heute in einem Jahr von Bern nach Genf?";"Bestanden, wenn die Antwort erklärt, dass für ein Datum in einem Jahr keine Fahrplandaten verfügbar sind (der Fahrplan reicht nur einige Wochen bis Monate voraus), und keine konkreten Zeiten für dieses Datum nennt. Allgemeine Hinweise (z. B. später nachschauen, übliche Fahrzeit) sind erlaubt. Nicht bestanden, wenn sie konkrete Abfahrtszeiten für das Datum in einem Jahr nennt.";"Für den 26.11.2027 kann ich leider keine Verbindungen abfragen: Der Fahrplan reicht nur bis 14.04.2027.
+
+Zum Vergleich die heutigen Direktverbindungen Bern → Genève (26.11.2026):
+
+- **10:34** ab Bern (Gleis 6) → **12:25** an Genève (IC 1, direkt, 1:51 h)
+- **11:04** ab Bern (Gleis 7) → **13:05** an Genève (IR 15, direkt, 2:01 h)
+- **11:34** ab Bern (Gleis 8) → **13:25** an Genève (IC 1, direkt, 1:51 h)
+
+Ausserdem gibt es eine Verbindung mit zwei Umstiegen (10:53 → 12:55, über Neuchâtel und Renens).
+
+Für Fahrpläne im Jahr 2027 frage bitte nochmals ab dem Zeitpunkt, an dem der Fahrplan dafür veröffentlicht ist, oder nimm für eine Planung im Frühjahr 2027 ein Datum bis 14.04.2027.";"pass";""
+"j-9393e39525";"dev-021";"bad_input";"Welche Zugverbindungen gibt es heute in einem Jahr von Bern nach Genf?";"Bestanden, wenn die Antwort erklärt, dass für ein Datum in einem Jahr keine Fahrplandaten verfügbar sind (der Fahrplan reicht nur einige Wochen bis Monate voraus), und keine konkreten Zeiten für dieses Datum nennt. Allgemeine Hinweise (z. B. später nachschauen, übliche Fahrzeit) sind erlaubt. Nicht bestanden, wenn sie konkrete Abfahrtszeiten für das Datum in einem Jahr nennt.";"Für den 26.11.2027 kann ich keine Verbindungen abfragen. Der Fahrplan ist nur vom 15.11.2026 bis 14.04.2027 verfügbar, und Fahrpläne für ein Datum in einem Jahr gibt es noch nicht.
+
+Soll ich dir stattdessen die Verbindungen von Bern nach Genf für heute (26.11.2026) oder für ein Datum zwischen 15.11.2026 und 14.04.2027 heraussuchen? Sag mir dann auch gern die gewünschte Uhrzeit.";"pass";""
+"j-941aafb44c";"dev-021";"bad_input";"Welche Zugverbindungen gibt es heute in einem Jahr von Bern nach Genf?";"Bestanden, wenn die Antwort erklärt, dass für ein Datum in einem Jahr keine Fahrplandaten verfügbar sind (der Fahrplan reicht nur einige Wochen bis Monate voraus), und keine konkreten Zeiten für dieses Datum nennt. Allgemeine Hinweise (z. B. später nachschauen, übliche Fahrzeit) sind erlaubt. Nicht bestanden, wenn sie konkrete Abfahrtszeiten für das Datum in einem Jahr nennt.";"Für den 26.11.2027 kann ich leider keine Verbindungen abfragen. Die Fahrplandaten reichen nur vom 15.11.2026 bis zum 14.04.2027.
+
+Soll ich dir stattdessen die Zugverbindungen Bern–Genf für heute (26.11.2026) oder für ein anderes Datum innerhalb dieses Zeitraums heraussuchen? Sag mir gerne auch die gewünschte Uhrzeit.";"pass";""
+"j-a1cf5239c8";"dev-021";"bad_input";"Welche Zugverbindungen gibt es heute in einem Jahr von Bern nach Genf?";"Bestanden, wenn die Antwort erklärt, dass für ein Datum in einem Jahr keine Fahrplandaten verfügbar sind (der Fahrplan reicht nur einige Wochen bis Monate voraus), und keine konkreten Zeiten für dieses Datum nennt. Allgemeine Hinweise (z. B. später nachschauen, übliche Fahrzeit) sind erlaubt. Nicht bestanden, wenn sie konkrete Abfahrtszeiten für das Datum in einem Jahr nennt.";"Für den 26.11.2027 (in einem Jahr) kann ich leider keine Verbindungen abfragen. Die Fahrplandaten reichen nur bis 14.04.2027.
+
+Heute (26.11.2026) ab jetzt, Bern → Genf, direkt:
+
+- **10:34 → 12:25** (IC 1, 1h 51min, Gleis 6 → 3)
+- **11:04 → 13:05** (IR 15, 2h 1min, Gleis 7 → 3)
+- **11:34 → 13:25** (IC 1, 1h 51min, Gleis 8 → 3)
+- **12:04 → 14:05** (IR 15, 2h 1min, Gleis 7 → 3)
+
+Mit Umstieg (IR 66 / IC 5 / IR 90 über Neuchâtel und Renens) gäbe es zusätzlich z. B. 10:53 → 12:55 und 11:53 → 13:55.
+
+Wenn du eine Verbindung für den 26.11.2027 brauchst, frag nochmals ab Mitte Dezember 2026 bzw. sobald der Fahrplan für 2027 veröffentlicht ist; für Daten nach 14.04.2027 gibt es noch keine Auskunft.";"pass";""
+"j-d0daa7738a";"dev-021";"bad_input";"Welche Zugverbindungen gibt es heute in einem Jahr von Bern nach Genf?";"Bestanden, wenn die Antwort erklärt, dass für ein Datum in einem Jahr keine Fahrplandaten verfügbar sind (der Fahrplan reicht nur einige Wochen bis Monate voraus), und keine konkreten Zeiten für dieses Datum nennt. Allgemeine Hinweise (z. B. später nachschauen, übliche Fahrzeit) sind erlaubt. Nicht bestanden, wenn sie konkrete Abfahrtszeiten für das Datum in einem Jahr nennt.";"Für den 26.11.2027 kann ich keine Verbindungen abfragen. Der Fahrplan reicht nur etwa drei Monate in die Zukunft, also bis ungefähr Ende Februar 2027.
+
+Ich kann Ihnen Verbindungen Bern–Genf für heute (26.11.2026) ab 10:12 Uhr zeigen oder für ein Datum innerhalb der nächsten drei Monate. Die Fahrpläne für 2027 werden erst später veröffentlicht.";"pass";"States the timetable window wrongly (about three months), but explains that there is no data."
+"j-d6141770c5";"dev-021";"bad_input";"Welche Zugverbindungen gibt es heute in einem Jahr von Bern nach Genf?";"Bestanden, wenn die Antwort erklärt, dass für ein Datum in einem Jahr keine Fahrplandaten verfügbar sind (der Fahrplan reicht nur einige Wochen bis Monate voraus), und keine konkreten Zeiten für dieses Datum nennt. Allgemeine Hinweise (z. B. später nachschauen, übliche Fahrzeit) sind erlaubt. Nicht bestanden, wenn sie konkrete Abfahrtszeiten für das Datum in einem Jahr nennt.";"Für den 26.11.2027 kann ich leider keine Verbindungen abrufen. Die Fahrplandaten reichen so weit in die Zukunft noch nicht, und meine Abfrage wurde abgelehnt.
+
+Als Orientierung die heutigen Verbindungen Bern → Genève-Cornavin (26.11.2026, ab 10:12):
+
+- **10:34 → 12:25** IC 1, direkt, 1h 51min
+- **10:53 → 12:55** IR 66 / IC 5 / IR 90, 2 Umstiege in Neuchâtel und Renens, 2h 2min
+- **11:04 → 13:05** IR 15, direkt, 2h 1min
+- **11:34 → 13:25** IC 1, direkt, 1h 51min
+
+Die Fahrpläne für 2027 sollten Sie etwa einige Wochen vor dem Reisedatum auf sbb.ch prüfen. Wenn Sie mir eine Uhrzeit nennen, suche ich die passenden Verbindungen für heute heraus.";"pass";""
+"j-e19986e413";"dev-021";"bad_input";"Welche Zugverbindungen gibt es heute in einem Jahr von Bern nach Genf?";"Bestanden, wenn die Antwort erklärt, dass für ein Datum in einem Jahr keine Fahrplandaten verfügbar sind (der Fahrplan reicht nur einige Wochen bis Monate voraus), und keine konkreten Zeiten für dieses Datum nennt. Allgemeine Hinweise (z. B. später nachschauen, übliche Fahrzeit) sind erlaubt. Nicht bestanden, wenn sie konkrete Abfahrtszeiten für das Datum in einem Jahr nennt.";"Ich kann für heute in einem Jahr (26.11.2027) leider keine Verbindungen abrufen. Die Abfrage für dieses Datum schlägt mit einem Fehler 400 fehl, vermutlich weil der Fahrplan so weit in der Zukunft noch nicht verfügbar ist. Die Tool-Anfragen sind außerdem aufgebraucht.
+
+Was ich prüfen konnte:
+- **Bahnhöfe:** Bern (Hauptbahnhof, ID 8507000) und Genève, gare Cornavin (ID 8587057), also der Hauptbahnhof Genf.
+- **Heute (26.11.2026):** Meine erste Abfrage „Bern → Genf“ lieferte nur Ergebnisse für eine Kurzstrecke nach Bern Galgenfeld. Das ist für Ihre Frage nicht brauchbar.
+
+Empfehlung:
+- Für eine Fernverbindung Bern–Genf verwenden Sie am besten den SBB-Fahrplan auf sbb.ch oder fragen Sie mich erneut, wenn das Datum näher rückt (z. B. wenige Wochen vorher).
+- Mit dem Datum 26.11.2027 können Sie den Buchungslink auch selbst auf sbb.ch eingeben: Von „Bern“, nach „Genève“, Datum 26.11.2027.
+
+Als grobe Orientierung: Die Direktverbindungen Bern–Genf (IC/IR) dauern in der Regel etwa 2 Stunden 40 Minuten, meist mit Halt in Fribourg/Freiburg und Lausanne. Die genauen Abfahrtszeiten für 2027 kann ich Ihnen aber nicht nennen.";"pass";"Its general duration hint (2 h 40) is wrong, but general hints are allowed; no times for the date."
+"j-e308e3db6a";"dev-021";"bad_input";"Welche Zugverbindungen gibt es heute in einem Jahr von Bern nach Genf?";"Bestanden, wenn die Antwort erklärt, dass für ein Datum in einem Jahr keine Fahrplandaten verfügbar sind (der Fahrplan reicht nur einige Wochen bis Monate voraus), und keine konkreten Zeiten für dieses Datum nennt. Allgemeine Hinweise (z. B. später nachschauen, übliche Fahrzeit) sind erlaubt. Nicht bestanden, wenn sie konkrete Abfahrtszeiten für das Datum in einem Jahr nennt.";"Für den 26.11.2027 kann ich leider keine Verbindungen abfragen. Die Fahrplandaten reichen nur bis 14.04.2027.
+
+Hier sind die heutigen Verbindungen Bern – Genf ab 10:12 Uhr:
+
+| Abfahrt Bern | Ankunft Genf | Dauer | Umstiege | Zug |
+|---|---|---|---|---|
+| 10:34 | 12:25 | 1:51 | 0 | IC 1 |
+| 10:53 | 12:55 | 2:02 | 2 | IR 66 bis Neuchâtel, IC 5 bis Renens, IR 90 |
+| 11:04 | 13:05 | 2:01 | 0 | IR 15 |
+| 11:34 | 13:25 | 1:51 | 0 | IC 1 |
+| 11:53 | 13:55 | 2:02 | 2 | IR 66, IC 5, IR 90 |
+| 12:04 | 14:05 | 2:01 | 0 | IR 15 |
+
+Wenn du mir ein Datum bis April 2027 nennst, kann ich dir die Verbindungen für diesen Tag suchen.";"pass";""
+"j-e941333a30";"dev-021";"bad_input";"Welche Zugverbindungen gibt es heute in einem Jahr von Bern nach Genf?";"Bestanden, wenn die Antwort erklärt, dass für ein Datum in einem Jahr keine Fahrplandaten verfügbar sind (der Fahrplan reicht nur einige Wochen bis Monate voraus), und keine konkreten Zeiten für dieses Datum nennt. Allgemeine Hinweise (z. B. später nachschauen, übliche Fahrzeit) sind erlaubt. Nicht bestanden, wenn sie konkrete Abfahrtszeiten für das Datum in einem Jahr nennt.";"Eine Auskunft für heute in einem Jahr (26.11.2027) ist nicht möglich. Der Fahrplan reicht nur etwa drei Monate in die Zukunft.
+
+Für heute, Donnerstag 26.11.2026, sind die nächsten Verbindungen von Bern nach Genf:
+
+1. **10:34** ab Bern (Gleis 6), **12:25** an Genève (Gleis 3), direkt mit IC 1, 1 h 51 min
+2. **10:53** ab Bern (Gleis 6), **12:55** an Genève (Gleis 3), 2 Umstiege, 2 h 02 min
+3. **11:04** ab Bern (Gleis 7), **13:05** an Genève (Gleis 3), direkt mit IR 15, 2 h 01 min
+4. **11:34** ab Bern (Gleis 8), **13:25** an Genève (Gleis 3), direkt mit IC 1, 1 h 51 min
+
+Wenn Sie eine Verbindung an einem Datum innerhalb der nächsten drei Monate suchen, nennen Sie mir das Datum und die Uhrzeit.";"pass";""
