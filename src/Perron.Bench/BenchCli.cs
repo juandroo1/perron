@@ -11,6 +11,7 @@ using Microsoft.Extensions.Options;
 using Perron.Bench.Checks;
 using Perron.Bench.Registry;
 using Perron.Bench.Run;
+using Perron.Bench.Scoring;
 using Perron.Bench.Settings;
 using Perron.Bench.Tasks;
 
@@ -156,9 +157,27 @@ public static class BenchCli
                     context.Settings, context.Registry, suite, context.Directory.Directory, options, model, output, cancellationToken);
             }));
 
+        // rescore
+        var runsArgument = new Argument<string[]>("runs")
+        {
+            Description = "Run IDs under bench/results, or 'all' (default).",
+            Arity = ArgumentArity.ZeroOrMore,
+            DefaultValueFactory = _ => ["all"],
+        };
+        var rescore = new Command("rescore", "Score stored traces again with the current rules, without model or API calls.");
+        rescore.Arguments.Add(runsArgument);
+        rescore.SetAction(async (parseResult, cancellationToken) =>
+        {
+            using var host = BuildHost(configuration, configureServices);
+            var directory = host.Services.GetRequiredService<IOptions<BenchDirectoryOptions>>().Value;
+            var runs = SplitValues(parseResult.GetValue(runsArgument));
+            return await RescoreCommand.RunAsync(directory.Directory, runs.Count == 0 ? ["all"] : runs, output, error, cancellationToken);
+        });
+
         var root = new RootCommand("Perron Bench: runs agent tasks against MCP servers and compares the results.");
         root.Subcommands.Add(check);
         root.Subcommands.Add(run);
+        root.Subcommands.Add(rescore);
         return root;
     }
 

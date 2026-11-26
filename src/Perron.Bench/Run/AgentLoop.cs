@@ -246,7 +246,9 @@ public sealed class AgentLoop(IModelClient model)
             request.Task.Prompt,
             turns,
             finalAnswer,
-            totals);
+            totals,
+            request.Task.Category,
+            request.Task.Checks.ValueKind == JsonValueKind.Undefined ? null : request.Task.Checks);
     }
 
     /// <summary>The assistant turn as request blocks (unchanged, thinking with signature), as trace blocks, and its tool calls.</summary>

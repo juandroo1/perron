@@ -7,6 +7,7 @@ using ModelContextProtocol.Client;
 
 using Perron.Bench.Checks;
 using Perron.Bench.Registry;
+using Perron.Bench.Scoring;
 using Perron.Bench.Settings;
 using Perron.Bench.Tasks;
 
@@ -170,6 +171,8 @@ public sealed class RunCommand(McpServerConnector connector, IToolTokenCounter t
                     var trace = missing.Count > 0
                         ? AgentLoop.NotCovered(request, missing)
                         : await loop.RunAsync(request, new McpToolInvoker(session.Client), cancellationToken);
+                    var evaluation = Evaluator.Evaluate(trace);
+                    trace = trace with { Evaluation = evaluation };
 
                     await File.WriteAllTextAsync(
                         Path.Combine(directory, "traces", trace.FileName),
@@ -181,9 +184,13 @@ public sealed class RunCommand(McpServerConnector connector, IToolTokenCounter t
                         Path.Combine(directory, "runs.jsonl"),
                         JsonSerializer.Serialize(summary, SummaryJsonContext.Default.RunSummary) + "\n",
                         cancellationToken);
+                    await File.AppendAllTextAsync(
+                        Path.Combine(directory, "scores.jsonl"),
+                        JsonSerializer.Serialize(Evaluator.Line(trace, evaluation), SummaryJsonContext.Default.ScoreLine) + "\n",
+                        cancellationToken);
                     await output.WriteLineAsync(string.Create(
                         CultureInfo.InvariantCulture,
-                        $"{task.Id} {session.Definition.Id} r{repeat}: {trace.Status} ({trace.Totals.Turns} turns, {trace.Totals.ToolCalls} tool calls, ${trace.Totals.CostUsd:0.0000})"));
+                        $"{task.Id} {session.Definition.Id} r{repeat}: {trace.Status}, {evaluation.Outcome}{Codes(evaluation)} ({trace.Totals.Turns} turns, {trace.Totals.ToolCalls} tool calls, ${trace.Totals.CostUsd:0.0000})"));
 
                     pending--;
                     if (trace.Totals.Turns > 0 && pending > 0 && settings.PauseSeconds > 0)
@@ -285,6 +292,9 @@ public sealed class RunCommand(McpServerConnector connector, IToolTokenCounter t
             throw;
         }
     }
+
+    private static string Codes(Evaluation evaluation) =>
+        evaluation.Errors.Count == 0 ? "" : $" [{string.Join(", ", evaluation.Errors)}]";
 
     private static int ToolChars(IReadOnlyList<McpTool> tools) =>
         tools.Sum(tool => tool.Name.Length + (tool.Description?.Length ?? 0) + tool.InputSchema.GetRawText().Length);
