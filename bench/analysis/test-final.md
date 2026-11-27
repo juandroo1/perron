@@ -46,8 +46,8 @@ Sonnet solves a few more tasks on every server than Haiku (perron-rich 95 → 10
 
 No interval excludes 0, as on the development set. The variants differ in cost, not measurably in success:
 
-- **Number of tools:** `perron-many` uses 66 % more tokens per run and costs 40 % more per solved task, for the same success.
-- **Descriptions:** `perron-minimal` is the cheapest variant (−30 % per solved task) and lost nothing on the test set. On dev it had the most failures (task 4.2: dev-017, Haiku adds the canton itself); none of the test tasks hit that weakness.
+- **Number of tools:** `perron-many` uses 66 % more tokens per run and costs 46 % more per solved task ($0.00143 against $0.00098), for the same success.
+- **Descriptions:** `perron-minimal` is the cheapest variant (−34 % per solved task, $0.00065) and lost nothing on the test set. On dev it had the most failures (task 4.2: dev-017, Haiku adds the canton itself); none of the test tasks hit that weakness.
 - **Format:** `perron-json` and `perron-rich` cost the same and solve the same tasks.
 
 `perron-rich` is the variant with the most failures here (3 runs, two of them judge verdicts on test-014, below); with 19 tasks and 3 repeats a single task decides such differences.

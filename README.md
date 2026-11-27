@@ -7,11 +7,135 @@
 Perron answers this for Swiss public transport, a domain with several existing MCP servers and live data:
 
 1. **Perron MCP:** an MCP server in .NET for Swiss public transport (stops, connections, departures), based on [transport.opendata.ch](https://transport.opendata.ch).
-2. **Perron Bench:** an eval harness in .NET that runs the same agent tasks against several MCP servers (Perron and existing ones) and compares task success, tool calls, tokens, cost and latency.
+2. **Perron Bench:** an eval harness in .NET that runs the same agent tasks against several MCP servers (Perron, its variants and existing servers) and compares task success, tool calls, tokens, cost and latency.
 
 The goal is an honest, reproducible comparison, not a leaderboard Perron has to top.
 
-> **Status:** early development. Nothing below is usable yet; results will be published here once the benchmark has run.
+**Short answer.** In the range tested, tool design changed what a solved task costs, not measurably how many tasks were solved:
+
+- Three or seven tools, rich or one-sentence descriptions, text or JSON results, Perron or two existing servers: on the held-out test set every server solved 93–100 % of its tasks with Claude Haiku 5.5. No paired difference excludes 0.
+- The cost per solved task follows the size of the tool definitions and the number of calls. Seven tools instead of three cost 46 % more per solved task, one-sentence descriptions 34 % less.
+- What did make tasks fail were missing capabilities, not wording. No server could ask for a minimum transfer time until Perron got one, and incomplete tool output (arrivals without times) made the smaller model fail where the larger one worked around it.
+
+![Perron in Claude Code: a trip with a minimum transfer time, then candidates for an ambiguous stop name](docs/demo.gif)
+
+## Architecture
+
+```mermaid
+flowchart LR
+    subgraph bench["Perron.Bench"]
+        tasks[/"tasks: dev, test"/] --> runner["Runner"]
+        runner --> loop["Agent loop"]
+        loop --> clients["MCP clients"]
+        runner --> checks["Checks: regex, oracle,<br>grounding, judge"]
+        checks --> report["Report"]
+    end
+    loop <--> claude(["Claude<br>Anthropic API"])
+    clients -- HTTP --> perron["Perron MCP<br>4 variants"]
+    clients -- HTTP --> official["official<br>transport.opendata.ch/mcp"]
+    clients -- stdio --> spt["spt"]
+    clients -- stdio --> stm["stm, optional"]
+    perron --> transport["Perron.Transport<br>cache, retries"]
+    transport --> api[("transport.opendata.ch<br>REST API")]
+    checks -- oracle --> api
+    checks -- judge --> claude
+```
+
+- **Perron MCP** (`src/Perron.Mcp`) offers three read-only tools over Streamable HTTP and stdio. Its variants switch the tool cut, the descriptions and the result format, one at a time.
+- **Perron.Transport** (`src/Perron.Transport`) is a typed client for transport.opendata.ch with caching and retries.
+- **Perron Bench** (`src/Perron.Bench`) connects to every server with the official MCP C# SDK, runs each task in an agent loop with Claude, stores a trace per run and scores it from the trace alone: an oracle checks the named connection against the transport API, a grounding check looks for times that appear in no tool result, and an LLM judge grades ambiguous and bad input tasks.
+
+## Results
+
+Final comparison on the held-out test set: 20 tasks, 3 repeats per task and server, run on 2026-11-26 (Perron at commit `53a4d91`). Analysis in [`bench/analysis/test-final.md`](bench/analysis/test-final.md), full reports for [Haiku](bench/results/20261126-193532-test/report.md) and [Sonnet](bench/results/20261126-201722-test/report.md).
+
+**Claude Haiku 5.5, all servers** (19 tasks covered by every server; the occupancy task only by `spt`):
+
+| Server | Tools | Tool definition tokens | Success, covered tasks (95 % CI) | pass^3 | Difference to perron-rich (95 % CI) | Tool calls per run | Tokens per run | Cost per solved task |
+|---|---|---|---|---|---|---|---|---|
+| perron-rich | 3 | 2250 | 95 % (86–100) | 89 % | – | 1.5 | 7085 | $0.00098 |
+| perron-minimal | 3, one-sentence descriptions | 1211 | 100 % (100–100) | 100 % | +5 pp (0 to +14) | 1.3 | 4454 | $0.00065 |
+| perron-json | 3, results as JSON | 2250 | 100 % (100–100) | 100 % | +5 pp (0 to +14) | 1.5 | 7681 | $0.00099 |
+| perron-many | 7 | 4248 | 98 % (95–100) | 95 % | +4 pp (0 to +9) | 1.5 | 11748 | $0.00143 |
+| official | 4 | 1386 | 93 % (81–100) | 89 % | −2 pp (−14 to +7) | 1.8 | 8565 | $0.00128 |
+| spt | 4 | 2063 | 93 % (85–100) | 85 % | −2 pp (−7 to +4) | 1.8 | 9007 | $0.00128 |
+
+**Claude Sonnet 5.5, control** (servers of the main comparison):
+
+| Server | Success, covered tasks (95 % CI) | pass^3 | Difference to perron-rich (95 % CI) | Tokens per run | Cost per solved task |
+|---|---|---|---|---|---|
+| perron-rich | 100 % (100–100) | 100 % | – | 6373 | $0.0160 |
+| official | 95 % (86–100) | 89 % | −5 pp (−14 to 0) | 6020 | $0.0171 |
+| spt | 97 % (92–100) | 90 % | −4 pp (−9 to 0) | 7129 | $0.0190 |
+
+```mermaid
+xychart-beta
+    title "Haiku 5.5, test set: success on covered tasks (%)"
+    x-axis ["perron-rich", "perron-minimal", "perron-json", "perron-many", "official", "spt"]
+    y-axis "Success (%)" 0 --> 100
+    bar [95, 100, 100, 98, 93, 93]
+```
+
+```mermaid
+xychart-beta
+    title "Perron variants, Haiku 5.5: cost per solved task (US cents) by tool definition tokens"
+    x-axis ["minimal (1211)", "rich (2250)", "json (2250)", "many (4248)"]
+    y-axis "US cents" 0 --> 0.16
+    bar [0.065, 0.098, 0.099, 0.143]
+```
+
+- **Success:** the mean over tasks of the share of passed runs, with a 95 % bootstrap interval over tasks. Differences are paired on the tasks both servers cover; only a difference whose interval excludes 0 would support a claim, and none does.
+- **Cost:** without prompt caching, the basis of comparison, because caching favours servers with large tool definitions. The judge is not counted. With caching the runs cost $0.21 (Haiku, 345 runs) and $1.53 (Sonnet, 174 runs).
+- **Target of the spec** (at least 0.85 for Perron with Haiku, with an interval): reached, 95 % with a lower bound of 86 %.
+- **Development set:** before the final comparison, Perron was improved on the 25 development tasks. The baseline over all servers ([report](bench/results/20261126-105446-full/report.md)) had 87–94 % success for every server; after the changes of task 4.2 ([analysis](bench/analysis/dev-baseline.md)) the Perron variants reached 93–100 %. These numbers favour Perron, because only Perron was changed after reading its failures.
+
+## What the benchmark shows about tool design
+
+1. **Cut, wording and format of the tools did not change success measurably.** Neither seven tools instead of three, nor one-sentence instead of rich descriptions, nor JSON instead of text results: no paired interval excludes 0, on the development set or on the test set. With 19 to 25 tasks and success near the ceiling, small effects would not show (see the limitations).
+2. **The size of the tool definitions sets the cost.** With the same data and results, cost per solved task rises with the definitions: 1211 tokens $0.00065, 2250 tokens $0.00098, 4248 tokens $0.00143 (Haiku, test set). The definitions go with every model call. Across servers the number of calls matters as much: `official` has the smallest definitions but makes more calls with longer results, and costs about 30 % more per solved task than `perron-rich`.
+3. **A missing capability costs more than any wording.** In the development baseline, dev-009 (at least 10 minutes per transfer) failed on every server in every run: no server could ask for a minimum transfer time, and the agents fell back to a later direct train. Perron got `min_transfer_minutes` in task 4.2. On the held-out test-008 (at least 15 minutes per transfer, with a pram) all 15 Perron runs used it and passed; `official` and `spt` had to work around it via other stops and failed 3 of 12 runs. This is one task per set, an observation rather than a statistical result.
+4. **Let the tool resolve ambiguous names.** On dev-017 ("Buchs") Haiku often added a canton itself before the tool could list the candidates. One sentence in the rich descriptions ("Pass place names as the user wrote them; do not add a canton or region yourself.") fixed it for `perron-rich` (2 → 3 of 3 runs), not for `perron-minimal` (0 of 3).
+5. **Incomplete results hurt the smaller model more.** On test-011 (first arrival at Brig) the arrivals of `official` came without times: Haiku failed 3 of 3 runs, Sonnet worked around it in 3 of 3. One task.
+6. **A larger model buys a few points at a high price.** Sonnet 5.5 solved a few more tasks on every server than Haiku 5.5 (perron-rich 95 → 100 %, official 93 → 95 %, spt 93 → 97 %; separate runs) at about 16 times the cost per solved task.
+
+## Methodology and fairness
+
+The rules are fixed in [`CLAUDE.md`](CLAUDE.md), the methodology in [`plan.md`](specs/001-perron/plan.md), section 6.
+
+- **Same conditions for every server:** the same model, system prompt, tasks, tool-call limit, `effort`, `max_tokens` and reference time in a task round; the order of the servers is shuffled per task. Server `instructions` go into a fixed section of the system prompt. The methodology is versioned in [`bench/bench.json`](bench/bench.json) and recorded in every run manifest.
+- **Foreign servers as documented:** no patches, no rewritten tools. The stdio servers run with pinned versions (`spt` 0.1.10, `stm` 0.5.0) and dependencies pinned with hashes. The hosted `official` server cannot be pinned, so every run records the hash of its `tools/list`; it was the same in all runs (`f899f0f82cbb`).
+- **Capabilities decided before the first run**, with reasons, in [`bench/servers.json`](bench/servers.json). A task a server cannot do (occupancy) counts as not covered, not as failed; the report shows success on covered and on all tasks.
+- **Tasks written before the tools:** the development set by Claude, the test set by an isolated Claude subagent (task 1.3). The test set was frozen with its SHA-256, locked for reading in Claude Code and used once, for the final comparison.
+- **Verify, don't recompute:** the oracle asks the transport API once per task round from the reference time; an answer passes if the connection it names exists, meets the constraints and is at most a few minutes worse than the best one. Planned and forecast times both count.
+- **Judge:** Claude Haiku 5.5 grades ambiguous and bad input tasks against a rubric, blind to the server and its tool results.
+- **Statistics:** 3 repeats per task and server, 95 % bootstrap intervals over tasks, paired differences, no claim without an interval that excludes 0.
+- **Reproducible:** every run stores its manifest (commit, model, settings, hashes of prompt, task set and tool lists) and a trace per run; `bench rescore` scores stored runs again without model calls, `bench report` rebuilds the reports.
+
+## Known limitations
+
+- **Small task sets, success near the ceiling.** 25 development and 20 test tasks with 3 repeats. Most tasks are solved by every server, so the benchmark separates servers poorly; effects of a few percentage points would not be detected.
+- **One day, live data.** All runs took place on 2026-11-26 against the live timetable, with relative dates ("tomorrow", "the day after tomorrow"). Other days, times or disruptions may give other results.
+- **Task sets written by Claude.** The development set (`bench/tasks/dev.jsonl`) was written by Claude in the working session, the held-out test set by a separate Claude subagent without that session's context; both were spot-checked by a human. The working session never read the test set before the final comparison. Tasks written by the same model family that solves them may favour it, and the author of the development set knew the planned Perron tool design.
+- **Perron tuned on the development set.** Perron's tools were improved after reading their failures on the development set; the foreign servers were not. Results on the development set therefore favour Perron. The test set is the fair comparison, but the minimum transfer time added after dev-009 also helps on the similar test-008.
+- **One corrected test task.** The check of test-002 had a JSON escaping error (`\b` as a backspace) and failed every answer. It was corrected after the final runs and the stored runs were rescored without model calls; the agents never see the checks. See the [analysis](bench/analysis/test-final.md).
+- **Only Claude models, and not every server.** Haiku 5.5 and Sonnet 5.5 at `effort` medium. `stm` needs an API key and was not part of any run.
+- **Third-party Python servers** run with their dependencies as of their release date (`uv --exclude-newer`), because one of them no longer starts with today's dependencies.
+- **Oracle check and partly named connections.** If an answer names the best arrival with a different departure time (for example the user's time) and an alternative in full, the check counts only the alternative and fails the run (dev-004, one run of `perron-minimal` after task 4.2).
+- **Grounding check and French durations.** The hallucination rate counts a clock time that appears in no tool result. It reads French durations such as "2h21" as clock times and does not count times the agent put into its own tool calls, so on the test set 10 of 11 flagged runs are false positives. The rate does not decide whether a task passed.
+- **Blind judge and real times.** The judge sees no tool results, so it sometimes calls correct times invented (test-015, three runs on foreign servers).
+- **Judge checked by a model, not by a person.** The LLM judge was compared with a blind review by Claude (Opus 5.5) instead of a human review: 85 % agreement, Cohen's κ 0.38 on 60 verdicts, with two known disagreement patterns (see [Scoring](#scoring)).
+- **Latency is rough.** The development baseline ran while the host was under heavy CPU load from other work.
+
+## How this project is built
+
+Perron is developed spec-first with Claude Code:
+
+- [`spec.md`](specs/001-perron/spec.md) defines what and why: user stories, acceptance criteria, non-goals and open questions.
+- [`plan.md`](specs/001-perron/plan.md) defines how: architecture, stack, tool design, benchmark methodology, and a decision log. Every deviation from the plan is recorded there before it is made, with its reason.
+- [`tasks.md`](specs/001-perron/tasks.md) breaks the work into numbered tasks with checkboxes.
+- [`CLAUDE.md`](CLAUDE.md) holds the rules for the agent: fairness, Git workflow, Docker as the reference environment, the definition of done.
+- [`/next-task`](.claude/commands/next-task.md) runs one task at a time: read spec, plan and task, propose a plan and wait for approval, implement with tests, run build, format, tests and the Docker check, estimate benchmark cost with a dry run and ask before larger runs, then open a pull request. A human merges after green CI.
+- The held-out test set is protected from the agent by a read lock in [`.claude/settings.json`](.claude/settings.json) and a rule in `CLAUDE.md`.
 
 ## Repository layout
 
@@ -231,58 +355,6 @@ Runs are combined only if model, `effort`, `max_tokens` and task set are the sam
 - **Methodology:** runs with commit and seed, model, `effort`, `max_tokens`, task set and prompt hashes, prices, and per server its version, `tools/list` hash (marked if it changed between runs), tool tokens and capabilities.
 
 On a Linux host, run the bench container with your user (`docker compose ... run --rm --user "$(id -u):$(id -g)" bench ...`) so it can write to `bench/results`.
-
-## Results
-
-**Final comparison on the held-out test set** (task 4.3, 2026-11-26, analysis in [`bench/analysis/test-final.md`](bench/analysis/test-final.md), reports for [Haiku](bench/results/20261126-193532-test/report.md) and [Sonnet](bench/results/20261126-201722-test/report.md)):
-
-| Server | Haiku 5.5: success, covered tasks (95 % CI) | Haiku 5.5: cost per solved task | Sonnet 5.5: success, covered tasks (95 % CI) | Sonnet 5.5: cost per solved task |
-|---|---|---|---|---|
-| perron-rich | 95 % (86–100) | $0.0010 | 100 % (100–100) | $0.0160 |
-| official | 93 % (81–100) | $0.0013 | 95 % (86–100) | $0.0171 |
-| spt | 93 % (85–100) | $0.0013 | 97 % (92–100) | $0.0190 |
-
-- **Run:** 20 test tasks × 3 repeats; Haiku over all six servers (345 runs), Sonnet over the three servers of the main comparison (174 runs). No infrastructure errors. Cost $0.21 (Haiku) and $1.53 (Sonnet) with caching.
-- **Success:** no paired difference to `perron-rich` excludes 0, with either model. The data do not support a claim that Perron solves more tasks than the official or the community server.
-- **Cost:** with Haiku, Perron needs fewer tool calls and tokens per run and costs about a quarter less per solved task.
-- **Ablations (Haiku):** `perron-minimal` 100 %, `perron-json` 100 %, `perron-many` 98 %; no interval excludes 0. `perron-many` costs 40 % more per solved task, `perron-minimal` 30 % less.
-- **Target of spec.md (≥ 0.85 for Perron with Haiku):** reached, 95 % with a lower bound of 86 %.
-- **Corrected task:** the check of test-002 had a JSON escaping error and failed every answer; it was corrected and the stored runs rescored without model calls (see the analysis).
-
-**Baseline on the development set** (task 4.1, [`bench/results/20261126-105446-full/report.md`](bench/results/20261126-105446-full/report.md)):
-- **Run:** 25 dev tasks × 6 servers × 3 repeats with Claude Haiku 5.5. That made 420 runs plus 30 not covered, with no infrastructure errors.
-- **Cost:** $0.21 with prompt caching, $0.37 without (the dry run estimated $0.42), plus $0.02 for the judge.
-- **Success on covered tasks:** between 87 % and 94 % for all servers. No paired difference to `perron-rich` excludes 0, so these runs support no claim that one server or variant is better.
-- **A finding for tool design:** dev-009 (at least 10 minutes per transfer) fails on every server in every repeat.
-  - The best connection waits 33 minutes at the change in Zürich HB.
-  - No server offered a minimum transfer time, so the agents only saw a 5-minute transfer and fell back to a later direct train.
-- **Not the final comparison:** this is the development set, used to improve the tools (task 4.2). The final comparison runs on the held-out test set (task 4.3).
-- **Latency:** the host was under heavy CPU load from other work during this run, so the latency columns are rough.
-
-**Ablations and tool improvements on the development set** (task 4.2, analysis in [`bench/analysis/dev-baseline.md`](bench/analysis/dev-baseline.md)):
-- **Ablations:** in the baseline, neither the number of tools (`perron-many`), nor the descriptions (`perron-minimal`), nor the format (`perron-json`) changed success measurably; no paired interval excludes 0.
-- **Cost of the variants:** `perron-many` costs about 45 % more per solved task, because of its larger tool definitions. `perron-minimal` costs about 24 % less.
-- **Changes from the traces:**
-  - a minimum transfer time `min_transfer_minutes` (dev-009);
-  - ambiguous names now also list places that only have stops within them, such as Oberdorf BL (dev-018);
-  - the `rich` descriptions ask the agent to pass place names as written (dev-017);
-  - a scorer fix for connections that start with a walk (dev-014).
-- **After the changes** ([`bench/results/20261126-175920-full/report.md`](bench/results/20261126-175920-full/report.md), Perron variants only): success on covered tasks went from 91 % to 100 % for `perron-rich`, 88 % to 93 % for `perron-minimal`, 93 % to 97 % for `perron-json` and 94 % to 97 % for `perron-many`. dev-009 now passes on `perron-rich`, `perron-json` and `perron-many` in every run.
-- **Not a fair comparison with the foreign servers:** they were neither changed nor run again.
-
-Known limitations:
-
-- **Task sets written by Claude.** The development set (`bench/tasks/dev.jsonl`) was written by Claude in the working session, the held-out test set by a separate Claude subagent without that session's context; both were spot-checked by a human. The working session never reads the test set. Tasks written by the same model family that solves them may favour it, and the author of the development set knew the planned Perron tool design.
-- **Third-party Python servers** run with their dependencies as of their release date (`uv --exclude-newer`), because one of them no longer starts with today's dependencies.
-- **Perron tuned on the development set.** Perron's tools were improved after reading their failures on the development set; the foreign servers were not. Results on the development set therefore favour Perron. The fair comparison is the held-out test set.
-- **Oracle check and partly named connections.** If an answer names the best arrival with a different departure time (for example the user's time) and an alternative in full, the check counts only the alternative and fails the run (dev-004, one run of `perron-minimal` after task 4.2).
-- **Grounding check and French durations.** The hallucination rate counts a clock time that appears in no tool result. It reads French durations such as "2h21" as clock times and does not count times the agent put into its own tool calls, so on the test set nearly all flagged runs are false positives (see the analysis of task 4.3). The rate does not decide whether a task passed.
-- **Blind judge and real times.** The judge sees no tool results, so it sometimes calls correct times invented (test-015, three runs on foreign servers).
-- **Judge checked by a model, not by a person.** The LLM judge for ambiguous and bad input tasks was compared with a blind review by Claude (Opus 5.5) instead of a human review: 85 % agreement, Cohen's κ 0.38 on 60 verdicts, with two known disagreement patterns (see above).
-
-## How this project is built
-
-Perron is developed spec-first: [`spec.md`](specs/001-perron/spec.md) defines what and why, [`plan.md`](specs/001-perron/plan.md) defines how (including a decision log), and [`tasks.md`](specs/001-perron/tasks.md) tracks implementation step by step.
 
 ## Data source
 
