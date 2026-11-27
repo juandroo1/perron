@@ -1,0 +1,397 @@
+{
+  "run_id": "20261126-201722-test",
+  "task_id": "test-008",
+  "server_id": "official",
+  "repeat": 3,
+  "model": "claude-sonnet-5-5",
+  "status": "completed",
+  "reference_time": "2026-11-26T21:24:00+01:00",
+  "max_tool_calls": 8,
+  "system_prompt": "You help people with public transport in Switzerland, using the tools available to you.\n\nCurrent date and time: Thu 26.11.2026 21:24 (Europe/Zurich). Dates such as \u0022today\u0022 or \u0022tomorrow\u0022 refer to this time.\n\nAnswer briefly and with concrete times. Answer in the language of the question.\n\n## Server instructions\nSwiss public transport timetable with real-time delays, from the national timetable (opentransportdata.swiss), run by the association Opendata.ch. Times are Swiss local time (Europe/Zurich). Station names can be given as people say them (\u0027Bern\u0027, \u0027Z\u00FCrich HB\u0027, \u0027Lausanne, gare\u0027); when a name is ambiguous, call find_stations first and use the exact name or id it returns. Addresses and places of interest work as start and destination of a connection too. Coverage is Switzerland (and border stations); for journeys abroad say that the data ends at the border. The timetable covers the days from a week ago to about three months ahead; nothing found for a date outside that range means no data, not no service.",
+  "prompt": "Ich bin \u00FCbermorgen mit Kinderwagen unterwegs von Del\u00E9mont nach Lausanne, Abfahrt fr\u00FChestens um 08:00. Bei jedem Umstieg brauche ich mindestens 15 Minuten. Welche Verbindung passt, und wann komme ich an?",
+  "turns": [
+    {
+      "number": 1,
+      "llm_ms": 1798.92,
+      "stop_reason": "tool_use",
+      "usage": {
+        "input": 4,
+        "output": 169,
+        "cache_write": 0,
+        "cache_read": 1825
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "\u00DCbermorgen ist Samstag, 28.11.2026."
+        },
+        {
+          "type": "tool_use",
+          "tool_use_id": "toolu_01SnzSYToDoutDG47ZRo2A7h",
+          "name": "connections",
+          "input": {
+            "origin": "Del\u00E9mont",
+            "destination": "Lausanne",
+            "date": "2026-11-28",
+            "time": "08:00",
+            "limit": 8
+          }
+        }
+      ],
+      "tool_calls": [
+        {
+          "id": "toolu_01SnzSYToDoutDG47ZRo2A7h",
+          "name": "connections",
+          "arguments": {
+            "origin": "Del\u00E9mont",
+            "destination": "Lausanne",
+            "date": "2026-11-28",
+            "time": "08:00",
+            "limit": 8
+          },
+          "result": "Connections Del\u00E9mont \u2192 Lausanne (times Swiss local, delays as \u002Bmin):\n1. Sat 2026-11-28 08:11 Del\u00E9mont, platform 3 \u2192 10:26 Lausanne, platform 4 \u00B7 2 h 15 min \u00B7 2 changes\n   - IR 30612 to Grenchen Nord (BLS-bls): 08:11 Del\u00E9mont, platform 3 \u2192 08:29 Grenchen Nord, platform 2\n   - walk 3 min to Grenchen Nord, Bahnhof\n   - EV 6 to Biel/Bienne, Carterminal (SBB-EV): 08:35 Grenchen Nord, Bahnhof \u2192 09:00 Biel/Bienne, Carterminal\n   - walk 4 min to Biel/Bienne\n   - IC 51 to Lausanne (SBB): 09:18 Biel/Bienne, platform 5 \u2192 10:26 Lausanne, platform 4\n2. Sat 2026-11-28 08:41 Del\u00E9mont, platform 3 \u2192 10:56 Lausanne, platform 3 \u00B7 2 h 15 min \u00B7 2 changes\n   - IC 30858 to Grenchen Nord (SBB): 08:41 Del\u00E9mont, platform 3 \u2192 08:58 Grenchen Nord, platform 1\n   - walk 3 min to Grenchen Nord, Bahnhof\n   - EV 6 to Biel/Bienne, Carterminal (SBB-EV): 09:05 Grenchen Nord, Bahnhof \u2192 09:30 Biel/Bienne, Carterminal\n   - walk 4 min to Biel/Bienne\n   - IC 51 to Lausanne (SBB): 09:48 Biel/Bienne, platform 5 \u2192 10:56 Lausanne, platform 3\n3. Sat 2026-11-28 09:11 Del\u00E9mont, platform 3 \u2192 11:26 Lausanne, platform 4 \u00B7 2 h 15 min \u00B7 2 changes\n   - IR 30614 to Grenchen Nord (BLS-bls): 09:11 Del\u00E9mont, platform 3 \u2192 09:29 Grenchen Nord, platform 2\n   - walk 3 min to Grenchen Nord, Bahnhof\n   - EV 6 to Biel/Bienne, Carterminal (SBB-EV): 09:35 Grenchen Nord, Bahnhof \u2192 10:00 Biel/Bienne, Carterminal\n   - walk 4 min to Biel/Bienne\n   - IC 51 to Lausanne (SBB): 10:18 Biel/Bienne, platform 5 \u2192 11:26 Lausanne, platform 4\n4. Sat 2026-11-28 09:41 Del\u00E9mont, platform 3 \u2192 11:56 Lausanne, platform 3 \u00B7 2 h 15 min \u00B7 2 changes\n   - IR 56 to Grenchen Nord (BLS-bls): 09:41 Del\u00E9mont, platform 3 \u2192 09:59 Grenchen Nord, platform 1\n   - walk 3 min to Grenchen Nord, Bahnhof\n   - EV 6 to Biel/Bienne, Carterminal (SBB-EV): 10:05 Grenchen Nord, Bahnhof \u2192 10:30 Biel/Bienne, Carterminal\n   - walk 4 min to Biel/Bienne\n   - IC 51 to Lausanne (SBB): 10:48 Biel/Bienne, platform 5 \u2192 11:56 Lausanne, platform 3\n5. Sat 2026-11-28 10:11 Del\u00E9mont, platform 3 \u2192 12:26 Lausanne, platform 4 \u00B7 2 h 15 min \u00B7 2 changes\n   - IC 51 to Grenchen Nord (SBB): 10:11 Del\u00E9mont, platform 3 \u2192 10:29 Grenchen Nord, platform 2\n   - walk 3 min to Grenchen Nord, Bahnhof\n   - EV 6 to Biel/Bienne, Carterminal (SBB-EV): 10:35 Grenchen Nord, Bahnhof \u2192 11:00 Biel/Bienne, Carterminal\n   - walk 4 min to Biel/Bienne\n   - IC 51 to Lausanne (SBB): 11:18 Biel/Bienne, platform 5 \u2192 12:26 Lausanne, platform 4\n6. Sat 2026-11-28 10:41 Del\u00E9mont, platform 3 \u2192 12:56 Lausanne, platform 3 \u00B7 2 h 15 min \u00B7 2 changes\n   - IR 56 to Grenchen Nord (BLS-bls): 10:41 Del\u00E9mont, platform 3 \u2192 10:59 Grenchen Nord, platform 1\n   - walk 3 min to Grenchen Nord, Bahnhof\n   - EV 6 to Biel/Bienne, Carterminal (SBB-EV): 11:05 Grenchen Nord, Bahnhof \u2192 11:30 Biel/Bienne, Carterminal\n   - walk 4 min to Biel/Bienne\n   - IC 51 to Lausanne (SBB): 11:48 Biel/Bienne, platform 5 \u2192 12:56 Lausanne, platform 3\n7. Sat 2026-11-28 11:11 Del\u00E9mont, platform 3 \u2192 13:26 Lausanne, platform 4 \u00B7 2 h 15 min \u00B7 2 changes\n   - IC 51 to Grenchen Nord (SBB): 11:11 Del\u00E9mont, platform 3 \u2192 11:29 Grenchen Nord, platform 2\n   - walk 3 min to Grenchen Nord, Bahnhof\n   - EV 6 to Biel/Bienne, Carterminal (SBB-EV): 11:35 Grenchen Nord, Bahnhof \u2192 12:00 Biel/Bienne, Carterminal\n   - walk 4 min to Biel/Bienne\n   - IC 51 to Lausanne (SBB): 12:18 Biel/Bienne, platform 5 \u2192 13:26 Lausanne, platform 4\n8. Sat 2026-11-28 11:41 Del\u00E9mont, platform 3 \u2192 13:56 Lausanne, platform 3 \u00B7 2 h 15 min \u00B7 2 changes\n   - IR 56 to Grenchen Nord (BLS-bls): 11:41 Del\u00E9mont, platform 3 \u2192 11:59 Grenchen Nord, platform 1\n   - walk 3 min to Grenchen Nord, Bahnhof\n   - EV 6 to Biel/Bienne, Carterminal (SBB-EV): 12:05 Grenchen Nord, Bahnhof \u2192 12:30 Biel/Bienne, Carterminal\n   - walk 4 min to Biel/Bienne\n   - IC 51 to Lausanne (SBB): 12:48 Biel/Bienne, platform 5 \u2192 13:56 Lausanne, platform 3",
+          "is_error": false,
+          "duration_ms": 474.0733,
+          "over_limit": false
+        }
+      ]
+    },
+    {
+      "number": 2,
+      "llm_ms": 4646.019,
+      "stop_reason": "tool_use",
+      "usage": {
+        "input": 2,
+        "output": 619,
+        "cache_write": 0,
+        "cache_read": 4318
+      },
+      "content": [
+        {
+          "type": "thinking",
+          "text": ""
+        },
+        {
+          "type": "tool_use",
+          "tool_use_id": "toolu_0195fHfk4LwMGZcoDZsMAHXq",
+          "name": "connections",
+          "input": {
+            "origin": "Del\u00E9mont",
+            "destination": "Lausanne",
+            "date": "2026-11-28",
+            "time": "08:00",
+            "via": [
+              "Biel/Bienne"
+            ],
+            "limit": 4
+          }
+        },
+        {
+          "type": "tool_use",
+          "tool_use_id": "toolu_01WpdS4Zi5MbqEpB5qAn7Poj",
+          "name": "connections",
+          "input": {
+            "origin": "Del\u00E9mont",
+            "destination": "Lausanne",
+            "date": "2026-11-28",
+            "time": "08:00",
+            "via": [
+              "Basel SBB"
+            ],
+            "limit": 3
+          }
+        }
+      ],
+      "tool_calls": [
+        {
+          "id": "toolu_0195fHfk4LwMGZcoDZsMAHXq",
+          "name": "connections",
+          "arguments": {
+            "origin": "Del\u00E9mont",
+            "destination": "Lausanne",
+            "date": "2026-11-28",
+            "time": "08:00",
+            "via": [
+              "Biel/Bienne"
+            ],
+            "limit": 4
+          },
+          "result": "Connections Del\u00E9mont \u2192 Biel/Bienne (times Swiss local, delays as \u002Bmin):\n1. Sat 2026-11-28 08:11 Del\u00E9mont, platform 3 \u2192 10:26 Lausanne, platform 4 \u00B7 2 h 15 min \u00B7 2 changes\n   - IR 30612 to Grenchen Nord (BLS-bls): 08:11 Del\u00E9mont, platform 3 \u2192 08:29 Grenchen Nord, platform 2\n   - walk 3 min to Grenchen Nord, Bahnhof\n   - EV 6 to Biel/Bienne, Carterminal (SBB-EV): 08:35 Grenchen Nord, Bahnhof \u2192 09:00 Biel/Bienne, Carterminal\n   - walk 4 min to Biel/Bienne\n   - IC 51 to Lausanne (SBB): 09:18 Biel/Bienne, platform 5 \u2192 10:26 Lausanne, platform 4\n2. Sat 2026-11-28 08:41 Del\u00E9mont, platform 3 \u2192 10:56 Lausanne, platform 3 \u00B7 2 h 15 min \u00B7 2 changes\n   - IC 30858 to Grenchen Nord (SBB): 08:41 Del\u00E9mont, platform 3 \u2192 08:58 Grenchen Nord, platform 1\n   - walk 3 min to Grenchen Nord, Bahnhof\n   - EV 6 to Biel/Bienne, Carterminal (SBB-EV): 09:05 Grenchen Nord, Bahnhof \u2192 09:30 Biel/Bienne, Carterminal\n   - walk 4 min to Biel/Bienne\n   - IC 51 to Lausanne (SBB): 09:48 Biel/Bienne, platform 5 \u2192 10:56 Lausanne, platform 3\n3. Sat 2026-11-28 09:11 Del\u00E9mont, platform 3 \u2192 11:26 Lausanne, platform 4 \u00B7 2 h 15 min \u00B7 2 changes\n   - IR 30614 to Grenchen Nord (BLS-bls): 09:11 Del\u00E9mont, platform 3 \u2192 09:29 Grenchen Nord, platform 2\n   - walk 3 min to Grenchen Nord, Bahnhof\n   - EV 6 to Biel/Bienne, Carterminal (SBB-EV): 09:35 Grenchen Nord, Bahnhof \u2192 10:00 Biel/Bienne, Carterminal\n   - walk 4 min to Biel/Bienne\n   - IC 51 to Lausanne (SBB): 10:18 Biel/Bienne, platform 5 \u2192 11:26 Lausanne, platform 4\n4. Sat 2026-11-28 09:41 Del\u00E9mont, platform 3 \u2192 11:56 Lausanne, platform 3 \u00B7 2 h 15 min \u00B7 2 changes\n   - IR 56 to Grenchen Nord (BLS-bls): 09:41 Del\u00E9mont, platform 3 \u2192 09:59 Grenchen Nord, platform 1\n   - walk 3 min to Grenchen Nord, Bahnhof\n   - EV 6 to Biel/Bienne, Carterminal (SBB-EV): 10:05 Grenchen Nord, Bahnhof \u2192 10:30 Biel/Bienne, Carterminal\n   - walk 4 min to Biel/Bienne\n   - IC 51 to Lausanne (SBB): 10:48 Biel/Bienne, platform 5 \u2192 11:56 Lausanne, platform 3",
+          "is_error": false,
+          "duration_ms": 481.2631,
+          "over_limit": false
+        },
+        {
+          "id": "toolu_01WpdS4Zi5MbqEpB5qAn7Poj",
+          "name": "connections",
+          "arguments": {
+            "origin": "Del\u00E9mont",
+            "destination": "Lausanne",
+            "date": "2026-11-28",
+            "time": "08:00",
+            "via": [
+              "Basel SBB"
+            ],
+            "limit": 3
+          },
+          "result": "Connections Del\u00E9mont \u2192 Basel SBB (times Swiss local, delays as \u002Bmin):\n1. Sat 2026-11-28 08:21 Del\u00E9mont, platform 1 \u2192 11:43 Lausanne, platform 4 \u00B7 3 h 22 min \u00B7 2 changes\n   - IR 56 to Basel SBB (BLS-bls): 08:21 Del\u00E9mont, platform 1 \u2192 08:56 Basel SBB, platform 20\n   - IC 61 to Interlaken West (SBB): 09:30 Basel SBB, platform 10 \u2192 10:26 Bern, platform 5\n   - IC 1 to Gen\u00E8ve-A\u00E9roport (SBB): 10:34 Bern, platform 7 \u2192 11:43 Lausanne, platform 4\n2. Sat 2026-11-28 08:52 Del\u00E9mont, platform 1 \u2192 12:20 Lausanne, platform 5 \u00B7 3 h 28 min \u00B7 2 changes\n   - IC 51 to Basel SBB (SBB): 08:52 Del\u00E9mont, platform 1 \u2192 09:26 Basel SBB, platform 20\n   - IC 61 to Interlaken West (SBB): 09:58 Basel SBB, platform 6 \u2192 10:56 Bern, platform 8\n   - IR 15 to Lausanne (SBB): 11:04 Bern, platform 7 \u2192 12:20 Lausanne, platform 5\n3. Sat 2026-11-28 09:21 Del\u00E9mont, platform 1 \u2192 12:43 Lausanne, platform 4 \u00B7 3 h 22 min \u00B7 2 changes\n   - IR 56 to Basel SBB (BLS-bls): 09:21 Del\u00E9mont, platform 1 \u2192 09:56 Basel SBB, platform 20\n   - EC 63 to Domodossola (I) (SBB): 10:30 Basel SBB, platform 8 \u2192 11:26 Bern, platform 5\n   - IC 1 to Gen\u00E8ve-A\u00E9roport (SBB): 11:34 Bern, platform 7 \u2192 12:43 Lausanne, platform 4",
+          "is_error": false,
+          "duration_ms": 536.6241,
+          "over_limit": false
+        }
+      ]
+    },
+    {
+      "number": 3,
+      "llm_ms": 10193.3463,
+      "stop_reason": "end_turn",
+      "usage": {
+        "input": 2,
+        "output": 1390,
+        "cache_write": 2531,
+        "cache_read": 4318
+      },
+      "content": [
+        {
+          "type": "thinking",
+          "text": ""
+        },
+        {
+          "type": "text",
+          "text": "Es gibt am Samstag, 28.11. keine Verbindung, die Ihre 15 Minuten Umsteigezeit \u00FCberall einh\u00E4lt, ohne einen Umweg zu nehmen.\n\n**Warum nicht die direkte Route \u00FCber Grenchen und Biel?** Sie ist zwar die schnellste (Ankunft 10:26, 2 h 15 min). In Grenchen Nord bleiben aber nur etwa 6 Minuten, davon 3 Minuten zu Fuss zwischen Bahnhof und Haltestelle. Das ist mit Kinderwagen zu knapp. In Biel h\u00E4tten Sie dagegen 18 Minuten.\n\n**Empfehlung: Umweg \u00FCber Basel und Bern**\n- 08:21 ab Del\u00E9mont (Gleis 1), IR 56\n- 08:56 an Basel SBB (Gleis 20)\n- 09:30 ab Basel SBB (Gleis 10), IC 61 Richtung Interlaken West. Umsteigezeit 34 min.\n- 10:26 an Bern (Gleis 5)\n- 11:04 ab Bern (Gleis 7), IR 15 Richtung Lausanne. Umsteigezeit 38 min.\n- **12:20 an Lausanne (Gleis 5)**\n\nDaf\u00FCr brauchen Sie 3 h 59 min. Der IC 1 um 10:34 in Bern w\u00E4re mit nur 8 Minuten Umsteigezeit zu knapp. Deshalb nehmen Sie den IR 15 um 11:04.\n\nFalls Sie die Umsteigezeit in Grenchen doch riskieren wollen: Abfahrt 08:11 in Del\u00E9mont, Ankunft 10:26 in Lausanne."
+        }
+      ],
+      "tool_calls": []
+    }
+  ],
+  "final_answer": "Es gibt am Samstag, 28.11. keine Verbindung, die Ihre 15 Minuten Umsteigezeit \u00FCberall einh\u00E4lt, ohne einen Umweg zu nehmen.\n\n**Warum nicht die direkte Route \u00FCber Grenchen und Biel?** Sie ist zwar die schnellste (Ankunft 10:26, 2 h 15 min). In Grenchen Nord bleiben aber nur etwa 6 Minuten, davon 3 Minuten zu Fuss zwischen Bahnhof und Haltestelle. Das ist mit Kinderwagen zu knapp. In Biel h\u00E4tten Sie dagegen 18 Minuten.\n\n**Empfehlung: Umweg \u00FCber Basel und Bern**\n- 08:21 ab Del\u00E9mont (Gleis 1), IR 56\n- 08:56 an Basel SBB (Gleis 20)\n- 09:30 ab Basel SBB (Gleis 10), IC 61 Richtung Interlaken West. Umsteigezeit 34 min.\n- 10:26 an Bern (Gleis 5)\n- 11:04 ab Bern (Gleis 7), IR 15 Richtung Lausanne. Umsteigezeit 38 min.\n- **12:20 an Lausanne (Gleis 5)**\n\nDaf\u00FCr brauchen Sie 3 h 59 min. Der IC 1 um 10:34 in Bern w\u00E4re mit nur 8 Minuten Umsteigezeit zu knapp. Deshalb nehmen Sie den IR 15 um 11:04.\n\nFalls Sie die Umsteigezeit in Grenchen doch riskieren wollen: Abfahrt 08:11 in Del\u00E9mont, Ankunft 10:26 in Lausanne.",
+  "totals": {
+    "turns": 3,
+    "tool_calls": 3,
+    "usage": {
+      "input": 8,
+      "output": 2178,
+      "cache_write": 2531,
+      "cache_read": 10461
+    },
+    "cost_usd": 0.0291696,
+    "llm_ms": 16638.2853,
+    "tool_ms": 1491.9605000000001,
+    "tool_result_chars": 6963
+  },
+  "category": "trip_constraints",
+  "checks": [
+    {
+      "type": "oracle",
+      "oracle": "earliest_arrival",
+      "params": {
+        "from": "Del\u00E9mont",
+        "to": "Lausanne",
+        "depart_after": "\u002B2d 08:00",
+        "min_transfer_minutes": 15
+      },
+      "tolerance_minutes": 1
+    }
+  ],
+  "oracle": [
+    {
+      "check_index": 0,
+      "oracle": "earliest_arrival",
+      "fetched_at": "2026-11-26T20:24:53.6173453+00:00",
+      "connections": [
+        {
+          "departure": "2026-11-28T08:11:00+01:00",
+          "arrival": "2026-11-28T10:56:00+01:00",
+          "transfers": 2,
+          "lines": [
+            "IR 30612",
+            "EV 6",
+            "IC 51"
+          ]
+        },
+        {
+          "departure": "2026-11-28T08:41:00+01:00",
+          "arrival": "2026-11-28T11:26:00+01:00",
+          "transfers": 2,
+          "lines": [
+            "IC 30858",
+            "EV 6",
+            "IC 51"
+          ]
+        },
+        {
+          "departure": "2026-11-28T09:11:00+01:00",
+          "arrival": "2026-11-28T11:56:00+01:00",
+          "transfers": 2,
+          "lines": [
+            "IR 30614",
+            "EV 6",
+            "IC 51"
+          ]
+        },
+        {
+          "departure": "2026-11-28T09:41:00+01:00",
+          "arrival": "2026-11-28T12:26:00+01:00",
+          "transfers": 2,
+          "lines": [
+            "IR 56",
+            "EV 6",
+            "IC 51"
+          ]
+        },
+        {
+          "departure": "2026-11-28T10:11:00+01:00",
+          "arrival": "2026-11-28T12:56:00+01:00",
+          "transfers": 2,
+          "lines": [
+            "IC 51",
+            "EV 6",
+            "IC 51"
+          ]
+        },
+        {
+          "departure": "2026-11-28T10:41:00+01:00",
+          "arrival": "2026-11-28T13:26:00+01:00",
+          "transfers": 2,
+          "lines": [
+            "IR 56",
+            "EV 6",
+            "IC 51"
+          ]
+        },
+        {
+          "departure": "2026-11-28T11:11:00+01:00",
+          "arrival": "2026-11-28T13:56:00+01:00",
+          "transfers": 2,
+          "lines": [
+            "IC 51",
+            "EV 6",
+            "IC 51"
+          ]
+        },
+        {
+          "departure": "2026-11-28T11:41:00+01:00",
+          "arrival": "2026-11-28T14:26:00+01:00",
+          "transfers": 2,
+          "lines": [
+            "IR 56",
+            "EV 6",
+            "IC 51"
+          ]
+        },
+        {
+          "departure": "2026-11-28T12:11:00+01:00",
+          "arrival": "2026-11-28T14:56:00+01:00",
+          "transfers": 2,
+          "lines": [
+            "IR 30620",
+            "EV 6",
+            "IC 51"
+          ]
+        },
+        {
+          "departure": "2026-11-28T12:41:00+01:00",
+          "arrival": "2026-11-28T15:26:00+01:00",
+          "transfers": 2,
+          "lines": [
+            "IC 30866",
+            "EV 6",
+            "IC 51"
+          ]
+        },
+        {
+          "departure": "2026-11-28T13:11:00+01:00",
+          "arrival": "2026-11-28T15:56:00+01:00",
+          "transfers": 2,
+          "lines": [
+            "IR 30622",
+            "EV 6",
+            "IC 51"
+          ]
+        },
+        {
+          "departure": "2026-11-28T13:41:00+01:00",
+          "arrival": "2026-11-28T16:26:00+01:00",
+          "transfers": 2,
+          "lines": [
+            "IC 30868",
+            "EV 6",
+            "IC 51"
+          ]
+        },
+        {
+          "departure": "2026-11-28T14:11:00+01:00",
+          "arrival": "2026-11-28T16:56:00+01:00",
+          "transfers": 2,
+          "lines": [
+            "IR 30624",
+            "EV 6",
+            "IC 51"
+          ]
+        },
+        {
+          "departure": "2026-11-28T14:41:00+01:00",
+          "arrival": "2026-11-28T17:26:00+01:00",
+          "transfers": 2,
+          "lines": [
+            "IR 56",
+            "EV 6",
+            "IC 51"
+          ]
+        },
+        {
+          "departure": "2026-11-28T15:11:00+01:00",
+          "arrival": "2026-11-28T17:56:00+01:00",
+          "transfers": 2,
+          "lines": [
+            "IC 51",
+            "EV 6",
+            "IC 51"
+          ]
+        },
+        {
+          "departure": "2026-11-28T15:41:00+01:00",
+          "arrival": "2026-11-28T18:26:00+01:00",
+          "transfers": 2,
+          "lines": [
+            "IR 56",
+            "EV 6",
+            "IC 51"
+          ]
+        }
+      ]
+    }
+  ],
+  "evaluation": {
+    "outcome": "failed",
+    "checks": [
+      {
+        "index": 0,
+        "type": "oracle",
+        "result": "failed",
+        "detail": "earliest_arrival: no valid entry matches the times 08:11, 08:21, 08:56, 09:30, 10:26, 10:34, 11:04, 12:20 (best arrival 10:56)",
+        "code": "wrong_time"
+      }
+    ],
+    "grounding": {
+      "times": [
+        "10:26",
+        "08:21",
+        "08:56",
+        "09:30",
+        "11:04",
+        "12:20",
+        "10:34",
+        "08:11"
+      ],
+      "ungrounded": [],
+      "grounded": true
+    },
+    "errors": [
+      "wrong_time"
+    ],
+    "scorer_version": "3"
+  },
+  "attempt": 1,
+  "file_name": "test-008__official__r3.json"
+}

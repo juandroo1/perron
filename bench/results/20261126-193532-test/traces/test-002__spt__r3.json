@@ -1,0 +1,150 @@
+{
+  "run_id": "20261126-193532-test",
+  "task_id": "test-002",
+  "server_id": "spt",
+  "repeat": 3,
+  "model": "claude-haiku-5-5",
+  "status": "completed",
+  "reference_time": "2026-11-26T20:36:00+01:00",
+  "max_tool_calls": 4,
+  "system_prompt": "You help people with public transport in Switzerland, using the tools available to you.\n\nCurrent date and time: Thu 26.11.2026 20:36 (Europe/Zurich). Dates such as \u0022today\u0022 or \u0022tomorrow\u0022 refer to this time.\n\nAnswer briefly and with concrete times. Answer in the language of the question.\n\n## Server instructions\nReal-time Swiss public transport: connections, stationboards, and station search",
+  "prompt": "Welcher Bahnhof hat die Haltestellen-ID 8500218?",
+  "turns": [
+    {
+      "number": 1,
+      "llm_ms": 702.9337,
+      "stop_reason": "tool_use",
+      "usage": {
+        "input": 4,
+        "output": 85,
+        "cache_write": 0,
+        "cache_read": 2226
+      },
+      "content": [
+        {
+          "type": "thinking",
+          "text": ""
+        },
+        {
+          "type": "tool_use",
+          "tool_use_id": "toolu_01PhPhdYkaHW51mAmMwWQxNN",
+          "name": "search_locations",
+          "input": {
+            "query": "8500218"
+          }
+        }
+      ],
+      "tool_calls": [
+        {
+          "id": "toolu_01PhPhdYkaHW51mAmMwWQxNN",
+          "name": "search_locations",
+          "arguments": {
+            "query": "8500218"
+          },
+          "result": "No stations found matching your query.",
+          "is_error": false,
+          "duration_ms": 81.5253,
+          "over_limit": false
+        }
+      ]
+    },
+    {
+      "number": 2,
+      "llm_ms": 992.8507,
+      "stop_reason": "tool_use",
+      "usage": {
+        "input": 2,
+        "output": 142,
+        "cache_write": 101,
+        "cache_read": 2226
+      },
+      "content": [
+        {
+          "type": "thinking",
+          "text": ""
+        },
+        {
+          "type": "tool_use",
+          "tool_use_id": "toolu_01219NymbRNamof8HuqpbGyA",
+          "name": "search_locations",
+          "input": {
+            "query": "Olten"
+          }
+        }
+      ],
+      "tool_calls": [
+        {
+          "id": "toolu_01219NymbRNamof8HuqpbGyA",
+          "name": "search_locations",
+          "arguments": {
+            "query": "Olten"
+          },
+          "result": "Found 10 station(s):\n\n1. Olten (ID: 8500218)\n   Coordinates: 47.3519, 7.9077\n2. Olten, Bahnhof (ID: 8572352)\n   Coordinates: 47.3519, 7.9069\n3. Olten, Postplatz (ID: 8500598)\n   Coordinates: 47.3496, 7.9062\n4. Olten Hammer (ID: 8500217)\n   Coordinates: 47.3486, 7.8977\n5. Olten, Museen (ID: 8578038)\n   Coordinates: 47.3506, 7.9017\n6. Olten, Baslerstrasse (ID: 8578039)\n   Coordinates: 47.3516, 7.9026\n7. Olten, Spital (ID: 8578054)\n   Coordinates: 47.3558, 7.9015\n8. Olten, Jurastrasse (ID: 8578055)\n   Coordinates: 47.3530, 7.9025\n9. Olten, Solothurnerstrasse (ID: 8595987)\n   Coordinates: 47.3500, 7.8997\n10. Olten, Sch\u00FCtzenmatt (ID: 8590432)\n   Coordinates: 47.3483, 7.9016",
+          "is_error": false,
+          "duration_ms": 37.5194,
+          "over_limit": false
+        }
+      ]
+    },
+    {
+      "number": 3,
+      "llm_ms": 480.7935,
+      "stop_reason": "end_turn",
+      "usage": {
+        "input": 2,
+        "output": 56,
+        "cache_write": 557,
+        "cache_read": 2327
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "Die Haltestellen-ID 8500218 geh\u00F6rt zum Bahnhof **Olten** (Koordinaten ca. 47.3519, 7.9077)."
+        }
+      ],
+      "tool_calls": []
+    }
+  ],
+  "final_answer": "Die Haltestellen-ID 8500218 geh\u00F6rt zum Bahnhof **Olten** (Koordinaten ca. 47.3519, 7.9077).",
+  "totals": {
+    "turns": 3,
+    "tool_calls": 2,
+    "usage": {
+      "input": 8,
+      "output": 283,
+      "cache_write": 658,
+      "cache_read": 6779
+    },
+    "cost_usd": 0.00029234,
+    "llm_ms": 2176.5779,
+    "tool_ms": 119.0447,
+    "tool_result_chars": 715
+  },
+  "category": "stops",
+  "checks": [
+    {
+      "type": "regex",
+      "pattern": "(?i)\\bOlten\\b"
+    }
+  ],
+  "evaluation": {
+    "outcome": "passed",
+    "checks": [
+      {
+        "index": 0,
+        "type": "regex",
+        "result": "passed",
+        "detail": "matches (?i)\\bOlten\\b"
+      }
+    ],
+    "grounding": {
+      "times": [],
+      "ungrounded": [],
+      "grounded": true
+    },
+    "errors": [],
+    "scorer_version": "3"
+  },
+  "attempt": 1,
+  "file_name": "test-002__spt__r3.json"
+}
