@@ -189,6 +189,12 @@ public partial class TaskSetTests
                     yield return regexError ?? $"{id}: regex check needs a pattern";
                 }
 
+                // "\b" in JSON is a backspace, not a word boundary; a pattern with control characters never matches (task 4.3, test-002).
+                if (pattern is not null && pattern.Any(char.IsControl))
+                {
+                    yield return $"{id}: regex pattern contains a control character (write \\\\b in JSON for a word boundary)";
+                }
+
                 break;
 
             case "judge":

@@ -234,7 +234,20 @@ On a Linux host, run the bench container with your user (`docker compose ... run
 
 ## Results
 
-*Pending.* The report will include methodology, model, server versions, run dates, confidence intervals and known limitations of the benchmark.
+**Final comparison on the held-out test set** (task 4.3, 2026-11-26, analysis in [`bench/analysis/test-final.md`](bench/analysis/test-final.md), reports for [Haiku](bench/results/20261126-193532-test/report.md) and [Sonnet](bench/results/20261126-201722-test/report.md)):
+
+| Server | Haiku 5.5: success, covered tasks (95 % CI) | Haiku 5.5: cost per solved task | Sonnet 5.5: success, covered tasks (95 % CI) | Sonnet 5.5: cost per solved task |
+|---|---|---|---|---|
+| perron-rich | 95 % (86–100) | $0.0010 | 100 % (100–100) | $0.0160 |
+| official | 93 % (81–100) | $0.0013 | 95 % (86–100) | $0.0171 |
+| spt | 93 % (85–100) | $0.0013 | 97 % (92–100) | $0.0190 |
+
+- **Run:** 20 test tasks × 3 repeats; Haiku over all six servers (345 runs), Sonnet over the three servers of the main comparison (174 runs). No infrastructure errors. Cost $0.21 (Haiku) and $1.53 (Sonnet) with caching.
+- **Success:** no paired difference to `perron-rich` excludes 0, with either model. The data do not support a claim that Perron solves more tasks than the official or the community server.
+- **Cost:** with Haiku, Perron needs fewer tool calls and tokens per run and costs about a quarter less per solved task.
+- **Ablations (Haiku):** `perron-minimal` 100 %, `perron-json` 100 %, `perron-many` 98 %; no interval excludes 0. `perron-many` costs 40 % more per solved task, `perron-minimal` 30 % less.
+- **Target of spec.md (≥ 0.85 for Perron with Haiku):** reached, 95 % with a lower bound of 86 %.
+- **Corrected task:** the check of test-002 had a JSON escaping error and failed every answer; it was corrected and the stored runs rescored without model calls (see the analysis).
 
 **Baseline on the development set** (task 4.1, [`bench/results/20261126-105446-full/report.md`](bench/results/20261126-105446-full/report.md)):
 - **Run:** 25 dev tasks × 6 servers × 3 repeats with Claude Haiku 5.5. That made 420 runs plus 30 not covered, with no infrastructure errors.
@@ -257,12 +270,14 @@ On a Linux host, run the bench container with your user (`docker compose ... run
 - **After the changes** ([`bench/results/20261126-175920-full/report.md`](bench/results/20261126-175920-full/report.md), Perron variants only): success on covered tasks went from 91 % to 100 % for `perron-rich`, 88 % to 93 % for `perron-minimal`, 93 % to 97 % for `perron-json` and 94 % to 97 % for `perron-many`. dev-009 now passes on `perron-rich`, `perron-json` and `perron-many` in every run.
 - **Not a fair comparison with the foreign servers:** they were neither changed nor run again.
 
-Known limitations so far:
+Known limitations:
 
 - **Task sets written by Claude.** The development set (`bench/tasks/dev.jsonl`) was written by Claude in the working session, the held-out test set by a separate Claude subagent without that session's context; both were spot-checked by a human. The working session never reads the test set. Tasks written by the same model family that solves them may favour it, and the author of the development set knew the planned Perron tool design.
 - **Third-party Python servers** run with their dependencies as of their release date (`uv --exclude-newer`), because one of them no longer starts with today's dependencies.
 - **Perron tuned on the development set.** Perron's tools were improved after reading their failures on the development set; the foreign servers were not. Results on the development set therefore favour Perron. The fair comparison is the held-out test set.
 - **Oracle check and partly named connections.** If an answer names the best arrival with a different departure time (for example the user's time) and an alternative in full, the check counts only the alternative and fails the run (dev-004, one run of `perron-minimal` after task 4.2).
+- **Grounding check and French durations.** The hallucination rate counts a clock time that appears in no tool result. It reads French durations such as "2h21" as clock times and does not count times the agent put into its own tool calls, so on the test set nearly all flagged runs are false positives (see the analysis of task 4.3). The rate does not decide whether a task passed.
+- **Blind judge and real times.** The judge sees no tool results, so it sometimes calls correct times invented (test-015, three runs on foreign servers).
 - **Judge checked by a model, not by a person.** The LLM judge for ambiguous and bad input tasks was compared with a blind review by Claude (Opus 5.5) instead of a human review: 85 % agreement, Cohen's κ 0.38 on 60 verdicts, with two known disagreement patterns (see above).
 
 ## How this project is built

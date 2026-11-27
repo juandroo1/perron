@@ -1,0 +1,105 @@
+{
+  "run_id": "20261126-201722-test",
+  "started_at": "2026-11-26T20:17:22.1903527+00:00",
+  "finished_at": "2026-11-26T20:41:35.8489662+00:00",
+  "git_sha": "53a4d915e47f5b5b42717ac3620b6fa38df14293",
+  "harness_version": "1.0.0",
+  "suite": "test",
+  "task_file": "tasks/test.jsonl",
+  "task_set_sha256": "429b02dfd6cf698d353a04543ba64dbd419de72d92d1249379d5f6e6379a3fca",
+  "task_count": 20,
+  "repeats": 3,
+  "seed": 1113845917,
+  "model": "claude-sonnet-5-5",
+  "effort": "medium",
+  "max_tokens": 16000,
+  "pause_seconds": 3,
+  "default_max_tool_calls": 8,
+  "pricing": {
+    "input": 2.00,
+    "output": 10.00,
+    "cache_write": 2.50,
+    "cache_read": 0.10
+  },
+  "system_prompt_template_sha256": "026578e015b73b29972b19ef31d4483e86087422689cf76d7aa56c8805ab692d",
+  "servers": [
+    {
+      "id": "perron-rich",
+      "version": "repository",
+      "hosted": false,
+      "server_name": "perron-rich",
+      "server_version": "1.0.0",
+      "protocol_version": "2026-07-28",
+      "tools": [
+        "find_stops",
+        "get_departures",
+        "plan_trip"
+      ],
+      "tools_hash": "c6ac2ff1eb5cb14517d4fab5f3f485b3692edb96bca0bf12c4087f3d888595c6",
+      "tool_tokens": 2250,
+      "instructions_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "capabilities_covered": [
+        "stops",
+        "trips",
+        "departures"
+      ],
+      "capabilities_not_covered": []
+    },
+    {
+      "id": "official",
+      "hosted": true,
+      "server_name": "transport.opendata.ch",
+      "server_version": "2c28784a",
+      "protocol_version": "2026-07-28",
+      "tools": [
+        "connections",
+        "departures",
+        "find_stations",
+        "stations_nearby"
+      ],
+      "tools_hash": "f899f0f82cbb66f9f67a888d703851b831038486dac19f44609af44e19b36367",
+      "tool_tokens": 1386,
+      "instructions_sha256": "f6a58f5d55f12bd4b7a6ce5bcbb185a21485b3f865358faca0444df6ef7f5cbe",
+      "capabilities_covered": [
+        "stops",
+        "trips",
+        "departures"
+      ],
+      "capabilities_not_covered": []
+    },
+    {
+      "id": "spt",
+      "version": "swiss-public-transport-mcp 0.1.10",
+      "hosted": false,
+      "server_name": "Swiss Public Transport",
+      "server_version": "1.27.1",
+      "protocol_version": "2025-11-25",
+      "tools": [
+        "get_booking_link",
+        "get_stationboard",
+        "plan_journey",
+        "search_locations"
+      ],
+      "tools_hash": "4052b02f3b2b585147d428e8bbf3ea428084ecec11da90730bfc53372c23c217",
+      "tool_tokens": 2063,
+      "instructions_sha256": "edff466e21307ef8cc6b49b5f0f7dce606d64c1fca3bfc2d4fc2c5a7bbd689e5",
+      "capabilities_covered": [
+        "stops",
+        "trips",
+        "departures",
+        "occupancy"
+      ],
+      "capabilities_not_covered": []
+    }
+  ],
+  "status_counts": {
+    "completed": 174,
+    "not_covered": 6
+  },
+  "total_cost_usd": 1.5265050,
+  "judge_prompt_sha256": "792656604e817b8d8fa72d7446161e390f19e719c020d8984311219876704d46",
+  "judge": {
+    "effort": "medium",
+    "max_tokens": 2000
+  }
+}

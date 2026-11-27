@@ -227,6 +227,21 @@ public sealed class ReportTests
     }
 
     [Fact]
+    public void Build_NamesTheJudgeModelOfTheVerdicts_AlsoInARunWithTheControlModel()
+    {
+        var manifest = Manifest("r1") with { Model = "claude-sonnet-5-5", JudgePromptSha256 = "judge-hash" };
+        var judged = Trace("t1", "perron-rich", 1, Results.Passed) with
+        {
+            Judgements = [new Judgement(0, "claude-haiku-5-5", "pass", "ok", new TokenUsage(10, 5, 0, 0), 0.0001m, 100, DateTimeOffset.UnixEpoch)],
+        };
+
+        var (markdown, _) = ReportBuilder.Build([manifest], [judged], "perron-rich");
+
+        Assert.Contains("- Model `claude-sonnet-5-5`", markdown);
+        Assert.Contains("- Judge for ambiguous and bad input tasks: `claude-haiku-5-5`, effort", markdown);
+    }
+
+    [Fact]
     public void Build_MarksChangedToolListsAcrossRuns()
     {
         var second = Manifest("r2") with
